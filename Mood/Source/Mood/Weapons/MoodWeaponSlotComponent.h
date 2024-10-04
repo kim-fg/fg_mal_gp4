@@ -3,6 +3,7 @@
 #include "CoreMinimal.h"
 #include "MoodWeaponSlotComponent.generated.h"
 
+class AMoodWeaponPickup;
 class UMoodWeaponComponent;
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnWeaponUsed, UMoodWeaponComponent*, Weapon);
@@ -38,10 +39,11 @@ public:
 		TriggerHeld = InTriggerHeld;
 	}
 private:
+	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<UMoodWeaponComponent>> DefaultWeapons = {};
+	TArray<TSubclassOf<AMoodWeaponPickup>> DefaultWeapons = {};
 	
 	void UseSelectedWeapon();
 

@@ -11,6 +11,11 @@ class AMoodWeaponPickup : public AActor {
 public:
 	AMoodWeaponPickup();
 
+	UFUNCTION(BlueprintCallable)
+	UMoodWeaponComponent* GetWeapon() { return Weapon; }
+	UFUNCTION(BlueprintCallable)
+	UMoodPickUpComponent* GetPickup() { return Pickup; }
+	
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UMoodWeaponComponent> Weapon;
