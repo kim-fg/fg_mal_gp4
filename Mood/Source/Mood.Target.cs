@@ -11,5 +11,6 @@ public class MoodTarget : TargetRules
 		DefaultBuildSettings = BuildSettingsVersion.V5;
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
 		ExtraModuleNames.Add("Mood");
+		ExtraModuleNames.Add("AdvancedWidgets");
 	}
 }

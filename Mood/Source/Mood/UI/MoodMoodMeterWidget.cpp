@@ -1,0 +1,1 @@
+﻿#include "MoodMoodMeterWidget.h"

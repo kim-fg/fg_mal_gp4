@@ -14,6 +14,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "../Weapons/MoodWeaponSlotComponent.h"
 #include "../MoodHealthComponent.h"
+#include "Mood/Weapons/MoodWeaponComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -48,6 +49,8 @@ void AMoodCharacter::BeginPlay()
 
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
+
+	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
 }
 
 void AMoodCharacter::Tick(float const DeltaTime)
@@ -59,6 +62,8 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	
 	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
 		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
+
+	
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -134,6 +139,7 @@ void AMoodCharacter::CheckPlayerState()
 	case Eps_ClimbingLedge:
 		GetCharacterMovement()->Velocity = FVector(0,0, 0);
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
+		StopShootWeapon();
 		TimeSinceClimbStart += GetWorld()->DeltaTimeSeconds;
 		if (TimeSinceClimbStart >= ClimbingTime)
 			CurrentState = Eps_Walking;
@@ -209,6 +215,15 @@ void AMoodCharacter::SelectWeapon3()
 	WeaponSlotComponent->SelectWeapon(2);
 }
 
+void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
+{
+	// Weapon.
+	if (Weapon->PelletsPerShot >= 5)
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ShotgunCameraShake, 1.f);
+	else if (Weapon->PelletsPerShot >= 2)
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(GunCameraShake, 1.f);
+}
+
 void AMoodCharacter::Interact()
 {
 	
@@ -254,11 +269,6 @@ void AMoodCharacter::ShootWeapon()
 	if (CurrentState != Eps_ClimbingLedge)
 	{
 		WeaponSlotComponent->SetTriggerHeld(true);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ShootCameraShake, 1.f);
-
-		// GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayWorldCameraShake(GetWorld(), CameraShake, GetActorLocation(), 10.f, 10.f, 1.f, false);
-		// GetLocalViewingPlayerController()->ClientStartCameraShake(CameraShake);
-		// GetWorld()->GetFirstPlayerController()->PlayerCameraManager->PlayWorldCameraShake(this, CameraShake, GetActorLocation(), 10.f, 10.f, 1.f, false);
 	}
 }
 

@@ -11,6 +11,11 @@
 			"AdditionalDependencies": [
 				"GameplayCameras"
 			]
+		},
+		{
+			"Name": "AdvancedWidgets",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
 		}
 	],
 	"Plugins": [

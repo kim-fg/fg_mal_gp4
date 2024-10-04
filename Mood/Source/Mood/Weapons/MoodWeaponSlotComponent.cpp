@@ -1,6 +1,7 @@
 ﻿#include "MoodWeaponSlotComponent.h"
 
 #include "MoodWeaponComponent.h"
+#include "MoodWeaponPickup.h"
 #include "GameFramework/Character.h"
 
 UMoodWeaponSlotComponent::UMoodWeaponSlotComponent() {
@@ -94,6 +95,15 @@ void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 
 	if (WeaponUsedSuccess) {
 		OnWeaponUsed.Broadcast(SelectedWeapon);
+	}
+}
+
+void UMoodWeaponSlotComponent::BeginPlay() {
+	Super::BeginPlay();
+
+	for (auto i = 0; i < DefaultWeapons.Num(); i++) {
+		auto WeaponPickup = GetWorld()->SpawnActor<AMoodWeaponPickup>(DefaultWeapons[i]);
+		AddWeapon(WeaponPickup->GetWeapon());
 	}
 }
 
