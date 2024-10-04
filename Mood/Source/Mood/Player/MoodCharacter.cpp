@@ -38,9 +38,9 @@ AMoodCharacter::AMoodCharacter()
 	WeaponSlotComponent = CreateDefaultSubobject<UMoodWeaponSlotComponent>(TEXT("WeaponSlotComponent"));
 	WeaponSlotComponent->SetMuzzleRoot(FirstPersonCameraComponent);
 	
-	// Create melee attack box.
-	MeleeAttackBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeAttackBox"));
-	MeleeAttackBoxComponent->SetupAttachment(GetCapsuleComponent());
+	// // Create melee attack box.
+	// MeleeAttackBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeAttackBox"));
+	// MeleeAttackBoxComponent->SetupAttachment(GetCapsuleComponent());
 }
 
 void AMoodCharacter::BeginPlay()
@@ -62,14 +62,12 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	
 	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
 		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
-
-	
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
 
 void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{	
+{
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
@@ -145,6 +143,15 @@ void AMoodCharacter::CheckPlayerState()
 			CurrentState = Eps_Walking;
 		break;
 
+	case Eps_NoControl:
+		if (FirstPersonCameraComponent->GetComponentRotation().Roll < 40.f)
+		{
+			AddControllerRollInput(GetWorld()->DeltaTimeSeconds * DeathFallSpeed * 1.5f);
+			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+		}
+		break;
+
 		default:
 			UE_LOG(LogTemp, Error, TEXT("No player state found. MoodCharacter.cpp - CheckPlayerState"));
 			CurrentState = Eps_Idle;
@@ -157,7 +164,7 @@ void AMoodCharacter::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
 		// add movement 
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
@@ -170,7 +177,7 @@ void AMoodCharacter::Look(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
@@ -277,8 +284,6 @@ void AMoodCharacter::StopShootWeapon()
 	WeaponSlotComponent->SetTriggerHeld(false);
 }
 
-// Could in the future add ECC_GameTraceChannel2 (LedgeClimb) to line traces
-// and have it default Block and set it to ignore on certain objects we don't want it applied to
 void AMoodCharacter::FindLedge()
 {
 	if (CurrentState == Eps_ClimbingLedge)
@@ -318,4 +323,11 @@ void AMoodCharacter::FindLedge()
 			EMoveComponentAction::Move,
 			LatentInfo);
 	}
+}
+
+// Call this if dead
+void AMoodCharacter::DeathMovement()
+{
+	// bool isdead = true
+	CurrentState = Eps_NoControl;
 }

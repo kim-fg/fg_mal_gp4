@@ -16,8 +16,6 @@ class UInputAction;
 class UInputMappingContext;
 class UMoodWeaponSlotComponent;
 class UMoodHealthComponent;
-// class UCameraShake;
-// class UCameraShake
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -28,7 +26,8 @@ enum EPlayerState
 	Eps_Walking,
 	Eps_Sprinting,
 	Eps_MeleeAttacking,
-	Eps_ClimbingLedge
+	Eps_ClimbingLedge,
+	Eps_NoControl
 };
 
 UCLASS(config=Game)
@@ -48,9 +47,9 @@ class AMoodCharacter : public ACharacter
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UMoodWeaponSlotComponent* WeaponSlotComponent;
 	
-	/** Melee attack box */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UBoxComponent* MeleeAttackBoxComponent;
+	// /** Melee attack box */
+	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
+	// UBoxComponent* MeleeAttackBoxComponent;
 
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -144,6 +143,9 @@ private:
 	float WalkingFOV;
 	float TimeSinceMeleeAttack = 1.f;
 	float TimeSinceClimbStart = 0.f;
+	
+	UPROPERTY(EditDefaultsOnly)
+	float DeathFallSpeed = 20.f;
 
 protected:
 	void CheckPlayerState();
@@ -171,6 +173,8 @@ protected:
 	void StopShootWeapon();
 
 	void FindLedge();
+
+	void DeathMovement();
 
 protected:
 	// APawn interface
