@@ -10,11 +10,11 @@
  * 
  */
 UCLASS()
-class MOOD_API UMoodShootCameraShake : public ULegacyCameraShake
+class MOOD_API UMoodGunCameraShake : public ULegacyCameraShake
 {
 	GENERATED_BODY()
 
-	UMoodShootCameraShake();
+	UMoodGunCameraShake();
 };
 
 UCLASS()

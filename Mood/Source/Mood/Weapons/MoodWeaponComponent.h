@@ -35,6 +35,9 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     FString GetAnimationID() { return AnimationID; }
 
+    UPROPERTY(EditDefaultsOnly)
+    int PelletsPerShot = 5;
+
 protected:
     virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection);
     
@@ -46,8 +49,8 @@ private:
     float Range = 10000.0f;
     UPROPERTY(EditDefaultsOnly)
     int DamagePerPellet = 5;
-    UPROPERTY(EditDefaultsOnly)
-    int PelletsPerShot = 5;
+    // UPROPERTY(EditDefaultsOnly)
+    // int PelletsPerShot = 5;
     UPROPERTY(EditDefaultsOnly)
     FVector2f MaxSpread = {0, 0};
 
