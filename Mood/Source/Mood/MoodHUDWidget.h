@@ -9,6 +9,7 @@ class UMoodWinScreen;
 class UMoodLostScreen;
 class UMoodPlayerHealthBar;
 class UMoodHealthComponent;
+struct FInputModeUIOnly;
 
 UCLASS()
 

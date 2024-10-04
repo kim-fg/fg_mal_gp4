@@ -15,6 +15,9 @@ class UMoodMainMenuWidget : public UUserWidget
 public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* StartGameButton;
+
+	UPROPERTY(meta = (BindWidget))
+	UButton* LevelSelectButton;
 	
 	UPROPERTY(meta = (BindWidget))
 	UButton* OptionsButton;
@@ -29,4 +32,7 @@ public:
 
 	UFUNCTION(Blueprintable)
 	void StartGame();
+
+	UFUNCTION(Blueprintable)
+	void LevelSelect();
 };

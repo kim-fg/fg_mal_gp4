@@ -15,6 +15,8 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* MainMenuButton;
 
+	//Show stats for the player upon finish?
+
 	UFUNCTION(Blueprintable)
 	void ReturnToMainMenu();
 

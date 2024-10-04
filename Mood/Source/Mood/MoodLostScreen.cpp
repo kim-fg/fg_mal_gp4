@@ -11,7 +11,15 @@ void UMoodLostScreen::RestartLevel()
 
 void UMoodLostScreen::ToMainMenu()
 {
-	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->MainMenu, false);
+	if (MoodGameInstance != nullptr)
+	{
+		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->MainMenu, false);
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("Game Instance is nullptr in LostScreen!"));
+
+	}
 }
 
 void UMoodLostScreen::NativeConstruct()

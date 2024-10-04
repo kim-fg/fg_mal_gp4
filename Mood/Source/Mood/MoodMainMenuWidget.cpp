@@ -10,19 +10,25 @@ void UMoodMainMenuWidget::NativeConstruct()
 	
 	MoodGameInstance = Cast<UMoodGameInstance>(GetGameInstance());
 	StartGameButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::StartGame);
+	LevelSelectButton->OnClicked.AddDynamic(this, &UMoodMainMenuWidget::LevelSelect);
 	
 }
 
 void UMoodMainMenuWidget::StartGame()
 {
 
-	if (MoodGameInstance->Level1 != nullptr)
+	if (MoodGameInstance != nullptr)
 	{	
 		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(),MoodGameInstance->Level1);
 	}
 	else
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Level 1 reference is missing in the game instance!"));
+		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Game Instance is nullptr in MainMenuWidget!"));
 	}
 	
+}
+
+void UMoodMainMenuWidget::LevelSelect()
+{
+	//Extra button press stuff here
 }

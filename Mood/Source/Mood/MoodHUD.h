@@ -15,8 +15,8 @@ class AMoodHUD : public AHUD
 	
 protected:
 
-	UPROPERTY()
-	UMoodHUDWidget* MainWidget;
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> WidgetClass;
 
 	virtual void BeginPlay() override;
 
@@ -25,5 +25,7 @@ protected:
 	AMoodHUD();
 
 	void GetPlayerHealthComponent();
+
+	void CheckCurrentLevel();
 
 };

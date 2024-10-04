@@ -5,6 +5,7 @@
 #include "MoodLostScreen.h"
 #include "MoodPlayerHealthbar.h"
 #include "MoodWinScreen.h"
+#include "MoodPlayerController.h"
 #include "Components/ProgressBar.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
