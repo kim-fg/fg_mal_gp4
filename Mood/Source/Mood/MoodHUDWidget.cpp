@@ -2,7 +2,9 @@
 #include "Kismet/GameplayStatics.h"
 #include "MoodCharacter.h"
 #include "MoodHealthComponent.h"
+#include "MoodLostScreen.h"
 #include "MoodPlayerHealthbar.h"
+#include "MoodWinScreen.h"
 #include "Components/ProgressBar.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -23,10 +25,15 @@ void UMoodHUDWidget::GetHealthComponent()
 	HealthComponent = UGameplayStatics::GetPlayerCharacter(GetWorld(),0)->FindComponentByClass<UMoodHealthComponent>();
 }
 
-bool UMoodHUDWidget::Initialize()
+void UMoodHUDWidget::DisplayLostScreen()
 {
-	return Super::Initialize();
+	LostScreen->SetVisibility(ESlateVisibility::Visible);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->SetInputMode(FInputModeUIOnly());
+	PlayerController->SetShowMouseCursor(true);
+	
 }
+
 
 void UMoodHUDWidget::NativeConstruct()
 {
@@ -35,5 +42,8 @@ void UMoodHUDWidget::NativeConstruct()
 	{
 		GetHealthComponent();
 	}
+	HealthComponent->OnDeath.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayLostScreen);
+	LostScreen->SetVisibility(ESlateVisibility::Hidden);
+	WinScreen->SetVisibility(ESlateVisibility::Hidden);
 }
 

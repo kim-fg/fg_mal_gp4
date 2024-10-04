@@ -5,6 +5,8 @@
 #include "MoodHUDWidget.generated.h"
 
 
+class UMoodWinScreen;
+class UMoodLostScreen;
 class UMoodPlayerHealthBar;
 class UMoodHealthComponent;
 
@@ -22,11 +24,18 @@ public:
 	UPROPERTY()
 	UMoodHealthComponent* HealthComponent;
 
+	UPROPERTY(meta = (BindWidget))
+	UMoodLostScreen* LostScreen;
+
+	UPROPERTY(meta = (BindWidget))
+	UMoodWinScreen* WinScreen;
+
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	void GetHealthComponent();
 
-	virtual bool Initialize() override;
+	UFUNCTION(Blueprintable)
+	void DisplayLostScreen();
 
 	virtual void NativeConstruct() override;
 
