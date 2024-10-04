@@ -102,7 +102,7 @@ void UMoodWeaponSlotComponent::BeginPlay() {
 	Super::BeginPlay();
 
 	for (auto i = 0; i < DefaultWeapons.Num(); i++) {
-		auto WeaponPickup = NewObject<AMoodWeaponPickup>(this, DefaultWeapons[i]);
+		auto WeaponPickup = GetWorld()->SpawnActor<AMoodWeaponPickup>(DefaultWeapons[i]);
 		AddWeapon(WeaponPickup->GetWeapon());
 	}
 }
