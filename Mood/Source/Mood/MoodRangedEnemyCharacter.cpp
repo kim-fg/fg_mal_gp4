@@ -1,5 +1,4 @@
 #include "MoodRangedEnemyCharacter.h"
-#include "MoodRangedEnemyAIController.h"
 #include "MoodHealthComponent.h"
 
 
@@ -8,7 +7,6 @@ AMoodRangedEnemyCharacter::AMoodRangedEnemyCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-	AIControllerClass = AMoodRangedEnemyAIController::StaticClass();
 	healthComp = CreateDefaultSubobject<UMoodHealthComponent>(TEXT("healthComp"));
 
 }
