@@ -25,10 +25,10 @@ public:
 	UPROPERTY()
 	UMoodHealthComponent* HealthComponent;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodLostScreen* LostScreen;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodWinScreen* WinScreen;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
