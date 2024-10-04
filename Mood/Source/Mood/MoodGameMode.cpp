@@ -1,7 +1,6 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "MoodGameMode.h"
-#include "MoodCharacter.h"
 #include "UObject/ConstructorHelpers.h"
 
 AMoodGameMode::AMoodGameMode()

@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Components/SphereComponent.h"
-#include "MoodCharacter.h"
+#include "Player/MoodCharacter.h"
 #include "MoodPickUpComponent.generated.h"
 
 // Declaration of the delegate that will be called when someone picks this up
