@@ -1,6 +1,6 @@
 #include "MoodHUDWidget.h"
 #include "Kismet/GameplayStatics.h"
-#include "Player/MoodCharacter.h"
+#include "../Player/MoodCharacter.h"
 #include "../MoodHealthComponent.h"
 #include "MoodLostScreen.h"
 #include "MoodPlayerHealthbar.h"

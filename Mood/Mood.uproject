@@ -7,7 +7,10 @@
 		{
 			"Name": "Mood",
 			"Type": "Runtime",
-			"LoadingPhase": "Default"
+			"LoadingPhase": "Default",
+			"AdditionalDependencies": [
+				"GameplayCameras"
+			]
 		}
 	],
 	"Plugins": [
