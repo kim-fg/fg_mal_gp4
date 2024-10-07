@@ -33,7 +33,7 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 }
 
 bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection) {
-	if (CurrentAmmo < 1) {
+	if (!UnlimitedAmmo && CurrentAmmo < 1) {
 		return false;
 	}
 	
