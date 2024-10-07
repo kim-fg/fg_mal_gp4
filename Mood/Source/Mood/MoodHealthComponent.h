@@ -2,6 +2,8 @@
 
 #include "MoodHealthComponent.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHeal, int, Amount, int, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHurt, int, Amount, int, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
@@ -13,6 +15,10 @@ public:
 
 	UPROPERTY(BlueprintAssignable)
 	FOnDeath OnDeath;
+	UPROPERTY(BlueprintAssignable)
+	FOnHeal OnHeal;
+	UPROPERTY(BlueprintAssignable)
+	FOnHurt OnHurt;
 
 	UFUNCTION(BlueprintCallable)
 	void Hurt(int Amount);
