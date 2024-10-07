@@ -5,6 +5,7 @@
 #include "MoodHUDWidget.generated.h"
 
 
+class UMoodAmmoWidget;
 class UMoodMoodMeterWidget;
 class UMoodWinScreen;
 class UMoodLostScreen;
@@ -34,6 +35,9 @@ public:
 
 	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodMoodMeterWidget* MoodMeterWidget;
+
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
+	UMoodAmmoWidget* AmmoWidget;
 
 	//Spin radial variables
 	UPROPERTY()
