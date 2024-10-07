@@ -52,6 +52,7 @@ void AMoodCharacter::BeginPlay()
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
 
+	HealthComponent->OnDeath.AddUniqueDynamic(this, &AMoodCharacter::KillPlayer);
 	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
 }
 
@@ -86,7 +87,7 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Look);
 		
 		// Attacking
-		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::MeleeAttack);
+		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execution);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AMoodCharacter::ShootWeapon);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AMoodCharacter::StopShootWeapon);
 
@@ -131,7 +132,7 @@ void AMoodCharacter::CheckPlayerState()
 			CurrentState = Eps_Walking;
 		break;
 
-	case Eps_MeleeAttacking:
+	case Eps_Execution:
 		if (TimeSinceMeleeAttack > MeleeAttackCooldown)
 			CurrentState = Eps_Walking;
 		break;
@@ -146,11 +147,15 @@ void AMoodCharacter::CheckPlayerState()
 		break;
 
 	case Eps_NoControl:
-		if (FirstPersonCameraComponent->GetComponentRotation().Roll < 40.f)
+		if (bIsDead)
 		{
-			AddControllerRollInput(GetWorld()->DeltaTimeSeconds * DeathFallSpeed * 1.5f);
-			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
-			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+			UE_LOG(LogTemp, Warning, TEXT("Dead."));
+			if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f)
+			{
+				AddControllerRollInput(GetWorld()->DeltaTimeSeconds * DeathFallSpeed * 1.5f);
+				AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+				AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+			}
 		}
 		break;
 
@@ -253,7 +258,7 @@ void AMoodCharacter::StopSprinting()
 }
 
 // Commented out until Melee attack should be implemented  
-void AMoodCharacter::MeleeAttack()
+void AMoodCharacter::Execution()
 {
 	// if (TimeSinceMeleeAttack < MeleeAttackCooldown)
 	// 	return;
@@ -327,8 +332,14 @@ void AMoodCharacter::FindLedge()
 }
 
 // Call this if dead
-void AMoodCharacter::DeathMovement()
+void AMoodCharacter::KillPlayer()
 {
-	// bool isdead = true
-	CurrentState = Eps_NoControl;
+	// if (Health->HealthPercent() <= 0)
+	// {
+		UE_LOG(LogTemp, Warning, TEXT("Kill Player"));
+		
+		bIsDead = true;
+		CurrentState = Eps_NoControl;
+		
+	// }
 }
