@@ -59,12 +59,24 @@ void AMoodCharacter::BeginPlay()
 void AMoodCharacter::Tick(float const DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	bIsMidAir = GetCharacterMovement()->Velocity.Z != 0 ? 1 : 0;
 	
 	CheckPlayerState();
 	FindLedge();
 	
 	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
 		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
+}
+
+void AMoodCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	auto PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) { return; }
+
+	PlayerController->PlayerCameraManager->StartCameraShake(LandShake, 1.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -113,21 +125,24 @@ void AMoodCharacter::CheckPlayerState()
 	{
 	case Eps_Idle:
 		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV, AlphaFOV);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(IdleHeadBob, 1.f);
+		if (!bIsMidAir)
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(IdleHeadBob, 1.f);
 		if (GetCharacterMovement()->Velocity != FVector(0, 0,  0))
 			CurrentState = Eps_Walking;
 		break;
 		
 	case Eps_Walking:
 		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV, AlphaFOV);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
+		if (!bIsMidAir)
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
 		if (GetCharacterMovement()->Velocity == FVector(0, 0, 0))
 			CurrentState = Eps_Idle;
 		break;
 	
 	case Eps_Sprinting:
 		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, SprintingFOV, AlphaFOV);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(SprintHeadBob, 1.f);
+		if (!bIsMidAir)
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(SprintHeadBob, 1.f);
 		if (GetCharacterMovement()->Velocity.Length() == 0)
 			CurrentState = Eps_Walking;
 		break;
@@ -307,10 +322,9 @@ void AMoodCharacter::FindLedge()
 	const FVector TopTraceStart = GetActorLocation() + GetActorUpVector() * 60.f;
 	const FVector TopTraceEnd = GetActorLocation() + GetActorForwardVector() * 80.f + GetActorUpVector() * 60.f;
 	
-	auto MovingForward = GetCharacterMovement()->Velocity.Z != 0;
 	auto WallInFront = GetWorld()->LineTraceSingleByChannel(BottomHitResult, BottomTraceStart, BottomTraceEnd, ClimbableChannel, QueryParams, FCollisionResponseParams());
 	auto WallAbove = GetWorld()->LineTraceSingleByChannel(TopHitResult, TopTraceStart, TopTraceEnd, InterruptClimbingChannel, QueryParams, FCollisionResponseParams());
-	if (WallInFront && !WallAbove && MovingForward)
+	if (WallInFront && !WallAbove && bIsMidAir)
 	{
 		TimeSinceClimbStart = 0.f;
 		CurrentState = Eps_ClimbingLedge;
@@ -331,15 +345,8 @@ void AMoodCharacter::FindLedge()
 	}
 }
 
-// Call this if dead
 void AMoodCharacter::KillPlayer()
 {
-	// if (Health->HealthPercent() <= 0)
-	// {
-		UE_LOG(LogTemp, Warning, TEXT("Kill Player"));
-		
-		bIsDead = true;
-		CurrentState = Eps_NoControl;
-		
-	// }
+	bIsDead = true;
+	CurrentState = Eps_NoControl;
 }
