@@ -5,6 +5,7 @@
 #include "MoodHUDWidget.generated.h"
 
 
+class UMoodMoodMeterWidget;
 class UMoodWinScreen;
 class UMoodLostScreen;
 class UMoodPlayerHealthBar;
@@ -30,6 +31,20 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodWinScreen* WinScreen;
+
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
+	UMoodMoodMeterWidget* MoodMeterWidget;
+
+	//Spin radial variables
+	UPROPERTY()
+	float InnerCircleSpin = 0.3f;
+	UPROPERTY()
+	float MiddleCircleSpin = 0.2f;
+	UPROPERTY()
+	float OuterCircleSpin = 0.1f;
+	//text change variable
+	UPROPERTY()
+	float MoodMeterNumber = 0.f;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
