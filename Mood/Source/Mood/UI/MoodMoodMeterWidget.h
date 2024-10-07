@@ -27,6 +27,7 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UTextBlock* MoodMeterNumber;
-	
+
+	virtual void NativeConstruct() override;
 	
 };
