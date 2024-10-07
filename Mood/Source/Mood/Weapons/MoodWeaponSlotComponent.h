@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "MoodAmmoPickup.h"
 #include "MoodWeaponSlotComponent.generated.h"
 
 class AMoodWeaponPickup;
@@ -38,6 +39,10 @@ public:
 	void SetTriggerHeld(bool InTriggerHeld) {
 		TriggerHeld = InTriggerHeld;
 	}
+
+	UFUNCTION(BlueprintCallable)
+	void AddAmmo(TSubclassOf<AMoodWeaponPickup> WeaponClass, int Amount);
+
 private:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

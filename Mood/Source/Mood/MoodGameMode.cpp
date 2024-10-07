@@ -11,3 +11,8 @@ AMoodGameMode::AMoodGameMode()
 	DefaultPawnClass = PlayerPawnClassFinder.Class;
 
 }
+
+void AMoodGameMode::GameFinished()
+{
+	GameFinishedSig.Broadcast();
+}

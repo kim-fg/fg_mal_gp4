@@ -1,27 +1,23 @@
 ﻿#pragma once
-
+#include "Mood/MoodPickup.h"
 #include "MoodWeaponPickup.generated.h"
 
 class UMoodPickUpComponent;
 class UMoodWeaponComponent;
 
 UCLASS(Abstract)
-class AMoodWeaponPickup : public AActor {
+class AMoodWeaponPickup : public AMoodPickup {
 	GENERATED_BODY()
 public:
 	AMoodWeaponPickup();
 
 	UFUNCTION(BlueprintCallable)
 	UMoodWeaponComponent* GetWeapon() { return Weapon; }
-	UFUNCTION(BlueprintCallable)
-	UMoodPickUpComponent* GetPickup() { return Pickup; }
 	
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UMoodWeaponComponent> Weapon;
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UMoodPickUpComponent> Pickup;
 
 	UFUNCTION()
-	void PickedUp(ACharacter* Character);
+	virtual void PickedUp(ACharacter* Character) override;
 };

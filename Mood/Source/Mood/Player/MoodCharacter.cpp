@@ -9,11 +9,13 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "MoodCameraShake.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "../Weapons/MoodWeaponSlotComponent.h"
 #include "../MoodHealthComponent.h"
+#include "Mood/MoodPlayerController.h"
 #include "Mood/Weapons/MoodWeaponComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -50,18 +52,31 @@ void AMoodCharacter::BeginPlay()
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
 
+	HealthComponent->OnDeath.AddUniqueDynamic(this, &AMoodCharacter::KillPlayer);
 	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
 }
 
 void AMoodCharacter::Tick(float const DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	bIsMidAir = GetCharacterMovement()->Velocity.Z != 0 ? 1 : 0;
 	
 	CheckPlayerState();
 	FindLedge();
 	
 	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
 		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
+}
+
+void AMoodCharacter::Landed(const FHitResult& Hit)
+{
+	Super::Landed(Hit);
+
+	auto PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) { return; }
+
+	PlayerController->PlayerCameraManager->StartCameraShake(LandShake, 1.0f);
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
@@ -84,7 +99,7 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Look);
 		
 		// Attacking
-		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::MeleeAttack);
+		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execution);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AMoodCharacter::ShootWeapon);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AMoodCharacter::StopShootWeapon);
 
@@ -110,26 +125,29 @@ void AMoodCharacter::CheckPlayerState()
 	{
 	case Eps_Idle:
 		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV, AlphaFOV);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(IdleHeadBob, 1.f);
+		if (!bIsMidAir)
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(IdleHeadBob, 1.f);
 		if (GetCharacterMovement()->Velocity != FVector(0, 0,  0))
 			CurrentState = Eps_Walking;
 		break;
 		
 	case Eps_Walking:
 		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV, AlphaFOV);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
+		if (!bIsMidAir)
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
 		if (GetCharacterMovement()->Velocity == FVector(0, 0, 0))
 			CurrentState = Eps_Idle;
 		break;
 	
 	case Eps_Sprinting:
 		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, SprintingFOV, AlphaFOV);
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(SprintHeadBob, 1.f);
+		if (!bIsMidAir)
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(SprintHeadBob, 1.f);
 		if (GetCharacterMovement()->Velocity.Length() == 0)
 			CurrentState = Eps_Walking;
 		break;
 
-	case Eps_MeleeAttacking:
+	case Eps_Execution:
 		if (TimeSinceMeleeAttack > MeleeAttackCooldown)
 			CurrentState = Eps_Walking;
 		break;
@@ -144,11 +162,15 @@ void AMoodCharacter::CheckPlayerState()
 		break;
 
 	case Eps_NoControl:
-		if (FirstPersonCameraComponent->GetComponentRotation().Roll < 40.f)
+		if (bIsDead)
 		{
-			AddControllerRollInput(GetWorld()->DeltaTimeSeconds * DeathFallSpeed * 1.5f);
-			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
-			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+			UE_LOG(LogTemp, Warning, TEXT("Dead."));
+			if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f)
+			{
+				AddControllerRollInput(GetWorld()->DeltaTimeSeconds * DeathFallSpeed * 1.5f);
+				AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+				AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+			}
 		}
 		break;
 
@@ -224,11 +246,10 @@ void AMoodCharacter::SelectWeapon3()
 
 void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 {
-	// Weapon.
-	if (Weapon->PelletsPerShot >= 5)
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ShotgunCameraShake, 1.f);
-	else if (Weapon->PelletsPerShot >= 2)
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(GunCameraShake, 1.f);
+	auto PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) { return; }
+
+	PlayerController->PlayerCameraManager->StartCameraShake(Weapon->GetRecoilCameraShake(), 1.0f);
 }
 
 void AMoodCharacter::Interact()
@@ -252,7 +273,7 @@ void AMoodCharacter::StopSprinting()
 }
 
 // Commented out until Melee attack should be implemented  
-void AMoodCharacter::MeleeAttack()
+void AMoodCharacter::Execution()
 {
 	// if (TimeSinceMeleeAttack < MeleeAttackCooldown)
 	// 	return;
@@ -301,10 +322,9 @@ void AMoodCharacter::FindLedge()
 	const FVector TopTraceStart = GetActorLocation() + GetActorUpVector() * 60.f;
 	const FVector TopTraceEnd = GetActorLocation() + GetActorForwardVector() * 80.f + GetActorUpVector() * 60.f;
 	
-	auto MovingForward = GetCharacterMovement()->Velocity.Z != 0;
 	auto WallInFront = GetWorld()->LineTraceSingleByChannel(BottomHitResult, BottomTraceStart, BottomTraceEnd, ClimbableChannel, QueryParams, FCollisionResponseParams());
 	auto WallAbove = GetWorld()->LineTraceSingleByChannel(TopHitResult, TopTraceStart, TopTraceEnd, InterruptClimbingChannel, QueryParams, FCollisionResponseParams());
-	if (WallInFront && !WallAbove && MovingForward)
+	if (WallInFront && !WallAbove && bIsMidAir)
 	{
 		TimeSinceClimbStart = 0.f;
 		CurrentState = Eps_ClimbingLedge;
@@ -325,9 +345,8 @@ void AMoodCharacter::FindLedge()
 	}
 }
 
-// Call this if dead
-void AMoodCharacter::DeathMovement()
+void AMoodCharacter::KillPlayer()
 {
-	// bool isdead = true
+	bIsDead = true;
 	CurrentState = Eps_NoControl;
 }

@@ -4,13 +4,9 @@
 #include "MoodWeaponSlotComponent.h"
 #include "Mood/MoodPickUpComponent.h"
 
-AMoodWeaponPickup::AMoodWeaponPickup() {
+AMoodWeaponPickup::AMoodWeaponPickup(){
 	Weapon = CreateDefaultSubobject<UMoodWeaponComponent>("Weapon");
-	RootComponent = Weapon;
-
-	Pickup = CreateDefaultSubobject<UMoodPickUpComponent>("Pickup");
-	Pickup->SetupAttachment(Weapon);
-	Pickup->OnPickUp.AddDynamic(this, &AMoodWeaponPickup::PickedUp);
+	Weapon->SetupAttachment(RootComponent);
 }
 
 void AMoodWeaponPickup::PickedUp(ACharacter* Character) {

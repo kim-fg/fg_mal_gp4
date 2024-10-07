@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "MoodCharacter.generated.h"
 
+class UMoodShotgunCameraShake;
 class UMoodWeaponComponent;
 class UInputComponent;
 class USkeletalMeshComponent;
@@ -25,7 +26,7 @@ enum EPlayerState
 	Eps_Idle,
 	Eps_Walking,
 	Eps_Sprinting,
-	Eps_MeleeAttacking,
+	Eps_Execution,
 	Eps_ClimbingLedge,
 	Eps_NoControl
 };
@@ -95,6 +96,8 @@ protected:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void Landed(const FHitResult& Hit) override;
+
 public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -102,11 +105,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float SprintingSpeed = 600.f;
-
-	UPROPERTY(EditDefaultsOnly, Category=Camera)
-	TSubclassOf<UCameraShakeBase> GunCameraShake;
-	UPROPERTY(EditDefaultsOnly, Category=Camera)
-	TSubclassOf<UCameraShakeBase> ShotgunCameraShake;
+	
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	TSubclassOf<UCameraShakeBase> IdleHeadBob;
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
@@ -115,6 +114,8 @@ public:
 	TSubclassOf<UCameraShakeBase> SprintHeadBob;
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	TSubclassOf<UCameraShakeBase> ClimbHeadBob;
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	TSubclassOf<UCameraShakeBase> LandShake;
 	
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SprintingFOV = 110.f;
@@ -147,6 +148,9 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float DeathFallSpeed = 20.f;
 
+	bool bIsDead = false;
+	bool bIsMidAir = false;
+
 protected:
 	void CheckPlayerState();
 	
@@ -165,16 +169,19 @@ protected:
 	UFUNCTION()
 	void ShootCameraShake(UMoodWeaponComponent* Weapon);
 	
+	UFUNCTION()
+	void KillPlayer();
+	
 	void Sprint();
 	void StopSprinting();
 
-	void MeleeAttack();
+	void Execution();
 	void ShootWeapon();
 	void StopShootWeapon();
 
 	void FindLedge();
 
-	void DeathMovement();
+
 
 protected:
 	// APawn interface
