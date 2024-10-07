@@ -12,6 +12,7 @@ class UMoodWinScreen;
 class UMoodLostScreen;
 class UMoodPlayerHealthBar;
 class UMoodHealthComponent;
+class AMoodGameMode;
 struct FInputModeUIOnly;
 
 UCLASS()
@@ -29,6 +30,9 @@ public:
 	UMoodHealthComponent* HealthComponent;
 	UPROPERTY()
 	UMoodWeaponComponent* WeaponComponent;
+
+	UPROPERTY()
+	AMoodGameMode* GameMode;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodLostScreen* LostScreen;
@@ -59,6 +63,9 @@ public:
 
 	UFUNCTION(Blueprintable)
 	void DisplayLostScreen();
+
+	UFUNCTION(Blueprintable)
+	void DisplayWinScreen();
 
 	virtual void NativeConstruct() override;
 

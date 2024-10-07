@@ -1,4 +1,5 @@
 #include "MoodHUDWidget.h"
+#include "MoodHUDWidget.h"
 
 #include <string>
 
@@ -11,6 +12,7 @@
 #include "MoodWinScreen.h"
 #include "Components/RadialSlider.h"
 #include "Components/ProgressBar.h"
+#include "../MoodGameMode.h"
 #include "Components/TextBlock.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
@@ -22,8 +24,9 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		HealthBar->Healthbar->SetPercent(HealthComponent->HealthPercent());	
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("HealthComponent is nullptr in the HUD!"));
-
-
+	
+	
+	
 	//Spinning radial + counting text
 	InnerCircleSpin += InDeltaTime / 10;
 	MiddleCircleSpin += InDeltaTime / 10;
@@ -64,6 +67,14 @@ void UMoodHUDWidget::DisplayLostScreen()
 	
 }
 
+void UMoodHUDWidget::DisplayWinScreen()
+{
+	WinScreen->SetVisibility(ESlateVisibility::Visible);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
+	PlayerController->SetInputMode(FInputModeUIOnly());
+	PlayerController->SetShowMouseCursor(true);
+}
+
 
 void UMoodHUDWidget::NativeConstruct()
 {
@@ -78,6 +89,8 @@ void UMoodHUDWidget::NativeConstruct()
 	}
 	
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayLostScreen);
+	GameMode = Cast<AMoodGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	GameMode->GameFinishedSig.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayWinScreen);
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(InnerCircleSpin);
