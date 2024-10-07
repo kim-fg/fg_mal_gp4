@@ -25,7 +25,7 @@ enum EPlayerState
 	Eps_Idle,
 	Eps_Walking,
 	Eps_Sprinting,
-	Eps_MeleeAttacking,
+	Eps_Execution,
 	Eps_ClimbingLedge,
 	Eps_NoControl
 };
@@ -147,6 +147,8 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float DeathFallSpeed = 20.f;
 
+	bool bIsDead = false;
+
 protected:
 	void CheckPlayerState();
 	
@@ -165,16 +167,18 @@ protected:
 	UFUNCTION()
 	void ShootCameraShake(UMoodWeaponComponent* Weapon);
 	
+	UFUNCTION()
+	void KillPlayer();
+	
 	void Sprint();
 	void StopSprinting();
 
-	void MeleeAttack();
+	void Execution();
 	void ShootWeapon();
 	void StopShootWeapon();
 
 	void FindLedge();
 
-	void DeathMovement();
 
 protected:
 	// APawn interface
