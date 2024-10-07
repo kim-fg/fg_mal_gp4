@@ -96,6 +96,8 @@ protected:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void Landed(const FHitResult& Hit) override;
+
 public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -112,6 +114,8 @@ public:
 	TSubclassOf<UCameraShakeBase> SprintHeadBob;
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	TSubclassOf<UCameraShakeBase> ClimbHeadBob;
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	TSubclassOf<UCameraShakeBase> LandShake;
 	
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SprintingFOV = 110.f;
@@ -145,6 +149,7 @@ private:
 	float DeathFallSpeed = 20.f;
 
 	bool bIsDead = false;
+	bool bIsMidAir = false;
 
 protected:
 	void CheckPlayerState();
@@ -175,6 +180,7 @@ protected:
 	void StopShootWeapon();
 
 	void FindLedge();
+
 
 
 protected:
