@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "MoodCharacter.generated.h"
 
+class UMoodShotgunCameraShake;
 class UMoodWeaponComponent;
 class UInputComponent;
 class USkeletalMeshComponent;
@@ -102,11 +103,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float SprintingSpeed = 600.f;
-
-	UPROPERTY(EditDefaultsOnly, Category=Camera)
-	TSubclassOf<UCameraShakeBase> GunCameraShake;
-	UPROPERTY(EditDefaultsOnly, Category=Camera)
-	TSubclassOf<UCameraShakeBase> ShotgunCameraShake;
+	
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	TSubclassOf<UCameraShakeBase> IdleHeadBob;
 	UPROPERTY(EditDefaultsOnly, Category=Camera)

@@ -9,7 +9,10 @@ void UMoodHealthComponent::Hurt(int Amount) {
 		CurrentHealth = 0;
 		IsDead = true;
 		OnDeath.Broadcast();
+		return;
 	}
+
+	OnHurt.Broadcast(Amount, CurrentHealth);
 }
 
 void UMoodHealthComponent::Heal(int Amount) {
@@ -20,6 +23,9 @@ void UMoodHealthComponent::Heal(int Amount) {
 	if (CurrentHealth > MaxHealth) {
 		CurrentHealth = MaxHealth;
 	}
+
+	//todo! technically doesnt send the actual health gain if it gets clamped
+	OnHeal.Broadcast(Amount, CurrentHealth);
 }
 
 void UMoodHealthComponent::BeginPlay() {

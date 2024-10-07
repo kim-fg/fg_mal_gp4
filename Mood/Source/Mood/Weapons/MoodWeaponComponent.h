@@ -5,20 +5,14 @@
 #include "Components/SkeletalMeshComponent.h"
 #include "MoodWeaponComponent.generated.h"
 
+class ULegacyCameraShake;
 class AMoodCharacter;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class UMoodWeaponComponent : public USkeletalMeshComponent {
     GENERATED_BODY()
 
-public:
-    /** Sound to play each time we fire */
-    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Effects)
-    USoundBase* FireSound;
-
-    UPROPERTY(EditDefaultsOnly, Category=Gameplay)
-    float FireDelay = 0.25f;
-
+public:    
     /** Sets default values for this component's properties */
     UMoodWeaponComponent();
     
@@ -35,22 +29,40 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     FString GetAnimationID() { return AnimationID; }
 
-    UPROPERTY(EditDefaultsOnly)
-    int PelletsPerShot = 5;
+    TSubclassOf<UCameraShakeBase> GetRecoilCameraShake() { return RecoilCameraShake; }
 
 protected:
     virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection);
     
 private:
-    UPROPERTY(EditDefaultsOnly)
-    FString AnimationID;
-
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditAnywhere, Category=Debug)
+    bool DebugBullet = false;
+    
+    UPROPERTY(EditDefaultsOnly, Category=Effects)
+    USoundBase* FireSound = nullptr;
+    UPROPERTY(EditDefaultsOnly, Category=Effects)
+    FString AnimationID = "";
+    UPROPERTY(EditDefaultsOnly, Category=Effects)
+    TSubclassOf<UCameraShakeBase> RecoilCameraShake;
+    
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    float FireDelay = 0.25f;
+    float TimeSinceLastUse = 0;
+    
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
     float Range = 10000.0f;
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    int PelletsPerShot = 5;
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
     int DamagePerPellet = 5;
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
     FVector2f MaxSpread = {0, 0};
 
-    float TimeSinceLastUse;
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    bool UnlimitedAmmo = false;
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    int MaxAmmo = 100;
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    int StartAmmo = 25;
+    int CurrentAmmo = 0;
 };
