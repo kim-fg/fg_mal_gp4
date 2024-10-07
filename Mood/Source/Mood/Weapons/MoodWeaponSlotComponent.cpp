@@ -1,5 +1,4 @@
 ﻿#include "MoodWeaponSlotComponent.h"
-
 #include "MoodWeaponComponent.h"
 #include "MoodWeaponPickup.h"
 #include "GameFramework/Character.h"
@@ -76,6 +75,12 @@ void UMoodWeaponSlotComponent::SelectWeapon(const int Index) {
 	SelectedWeaponIndex = Index;
 	EnableSelectedWeapon();
 }
+
+UMoodWeaponComponent* UMoodWeaponSlotComponent::GetSelectedWeapon() {
+	if (Weapons.Num() < 1) { return nullptr; }
+	return Weapons[SelectedWeaponIndex];
+}
+
 
 void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 	// We dont have any weapons
