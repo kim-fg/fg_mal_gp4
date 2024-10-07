@@ -5,6 +5,7 @@
 #include "MoodHUDWidget.generated.h"
 
 
+class UMoodWeaponComponent;
 class UMoodAmmoWidget;
 class UMoodMoodMeterWidget;
 class UMoodWinScreen;
@@ -26,6 +27,8 @@ public:
 
 	UPROPERTY()
 	UMoodHealthComponent* HealthComponent;
+	UPROPERTY()
+	UMoodWeaponComponent* WeaponComponent;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodLostScreen* LostScreen;

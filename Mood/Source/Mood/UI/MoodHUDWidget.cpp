@@ -45,6 +45,8 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	
 	if (MoodMeterNumber >= 666)
 		MoodMeterNumber = 0;
+
+	
 		
 }
 
@@ -70,6 +72,11 @@ void UMoodHUDWidget::NativeConstruct()
 	{
 		GetHealthComponent();
 	}
+	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != nullptr)
+	{
+		
+	}
+	
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayLostScreen);
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
