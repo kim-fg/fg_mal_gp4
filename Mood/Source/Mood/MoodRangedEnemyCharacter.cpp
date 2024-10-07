@@ -1,4 +1,5 @@
 #include "MoodRangedEnemyCharacter.h"
+
 #include "MoodHealthComponent.h"
 
 
@@ -22,13 +23,6 @@ void AMoodRangedEnemyCharacter::BeginPlay()
 void AMoodRangedEnemyCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AMoodRangedEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
 
 }
 

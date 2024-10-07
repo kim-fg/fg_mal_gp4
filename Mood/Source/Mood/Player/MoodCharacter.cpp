@@ -9,11 +9,13 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "MoodCameraShake.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "../Weapons/MoodWeaponSlotComponent.h"
 #include "../MoodHealthComponent.h"
+#include "Mood/MoodPlayerController.h"
 #include "Mood/Weapons/MoodWeaponComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -38,9 +40,9 @@ AMoodCharacter::AMoodCharacter()
 	WeaponSlotComponent = CreateDefaultSubobject<UMoodWeaponSlotComponent>(TEXT("WeaponSlotComponent"));
 	WeaponSlotComponent->SetMuzzleRoot(FirstPersonCameraComponent);
 	
-	// Create melee attack box.
-	MeleeAttackBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeAttackBox"));
-	MeleeAttackBoxComponent->SetupAttachment(GetCapsuleComponent());
+	// // Create melee attack box.
+	// MeleeAttackBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeAttackBox"));
+	// MeleeAttackBoxComponent->SetupAttachment(GetCapsuleComponent());
 }
 
 void AMoodCharacter::BeginPlay()
@@ -50,6 +52,7 @@ void AMoodCharacter::BeginPlay()
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
 
+	HealthComponent->OnDeath.AddUniqueDynamic(this, &AMoodCharacter::KillPlayer);
 	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
 }
 
@@ -62,14 +65,12 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	
 	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
 		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
-
-	
 }
 
 //////////////////////////////////////////////////////////////////////////// Input
 
 void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{	
+{
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
@@ -86,7 +87,7 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Look);
 		
 		// Attacking
-		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::MeleeAttack);
+		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execution);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AMoodCharacter::ShootWeapon);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AMoodCharacter::StopShootWeapon);
 
@@ -131,7 +132,7 @@ void AMoodCharacter::CheckPlayerState()
 			CurrentState = Eps_Walking;
 		break;
 
-	case Eps_MeleeAttacking:
+	case Eps_Execution:
 		if (TimeSinceMeleeAttack > MeleeAttackCooldown)
 			CurrentState = Eps_Walking;
 		break;
@@ -143,6 +144,19 @@ void AMoodCharacter::CheckPlayerState()
 		TimeSinceClimbStart += GetWorld()->DeltaTimeSeconds;
 		if (TimeSinceClimbStart >= ClimbingTime)
 			CurrentState = Eps_Walking;
+		break;
+
+	case Eps_NoControl:
+		if (bIsDead)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Dead."));
+			if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f)
+			{
+				AddControllerRollInput(GetWorld()->DeltaTimeSeconds * DeathFallSpeed * 1.5f);
+				AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+				AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+			}
+		}
 		break;
 
 		default:
@@ -157,7 +171,7 @@ void AMoodCharacter::Move(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
 		// add movement 
 		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
@@ -170,7 +184,7 @@ void AMoodCharacter::Look(const FInputActionValue& Value)
 	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
-	if (Controller != nullptr)
+	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
 		// add yaw and pitch input to controller
 		AddControllerYawInput(LookAxisVector.X);
@@ -217,11 +231,10 @@ void AMoodCharacter::SelectWeapon3()
 
 void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 {
-	// Weapon.
-	if (Weapon->PelletsPerShot >= 5)
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ShotgunCameraShake, 1.f);
-	else if (Weapon->PelletsPerShot >= 2)
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(GunCameraShake, 1.f);
+	auto PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) { return; }
+
+	PlayerController->PlayerCameraManager->StartCameraShake(Weapon->GetRecoilCameraShake(), 1.0f);
 }
 
 void AMoodCharacter::Interact()
@@ -245,7 +258,7 @@ void AMoodCharacter::StopSprinting()
 }
 
 // Commented out until Melee attack should be implemented  
-void AMoodCharacter::MeleeAttack()
+void AMoodCharacter::Execution()
 {
 	// if (TimeSinceMeleeAttack < MeleeAttackCooldown)
 	// 	return;
@@ -277,8 +290,6 @@ void AMoodCharacter::StopShootWeapon()
 	WeaponSlotComponent->SetTriggerHeld(false);
 }
 
-// Could in the future add ECC_GameTraceChannel2 (LedgeClimb) to line traces
-// and have it default Block and set it to ignore on certain objects we don't want it applied to
 void AMoodCharacter::FindLedge()
 {
 	if (CurrentState == Eps_ClimbingLedge)
@@ -318,4 +329,17 @@ void AMoodCharacter::FindLedge()
 			EMoveComponentAction::Move,
 			LatentInfo);
 	}
+}
+
+// Call this if dead
+void AMoodCharacter::KillPlayer()
+{
+	// if (Health->HealthPercent() <= 0)
+	// {
+		UE_LOG(LogTemp, Warning, TEXT("Kill Player"));
+		
+		bIsDead = true;
+		CurrentState = Eps_NoControl;
+		
+	// }
 }

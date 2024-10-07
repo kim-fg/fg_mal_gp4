@@ -26,10 +26,3 @@ void AMoodMeleeEnemyCharacter::Tick(float DeltaTime)
 
 }
 
-// Called to bind functionality to input
-void AMoodMeleeEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
-}
-
