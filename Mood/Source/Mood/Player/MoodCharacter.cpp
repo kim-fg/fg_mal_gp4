@@ -9,11 +9,13 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "MoodCameraShake.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "../Weapons/MoodWeaponSlotComponent.h"
 #include "../MoodHealthComponent.h"
+#include "Mood/MoodPlayerController.h"
 #include "Mood/Weapons/MoodWeaponComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -224,11 +226,10 @@ void AMoodCharacter::SelectWeapon3()
 
 void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 {
-	// Weapon.
-	if (Weapon->PelletsPerShot >= 5)
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ShotgunCameraShake, 1.f);
-	else if (Weapon->PelletsPerShot >= 2)
-		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(GunCameraShake, 1.f);
+	auto PlayerController = Cast<APlayerController>(GetController());
+	if (!PlayerController) { return; }
+
+	PlayerController->PlayerCameraManager->StartCameraShake(Weapon->GetRecoilCameraShake(), 1.0f);
 }
 
 void AMoodCharacter::Interact()
