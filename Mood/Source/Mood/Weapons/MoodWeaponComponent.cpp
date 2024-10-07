@@ -9,6 +9,14 @@ UMoodWeaponComponent::UMoodWeaponComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
+void UMoodWeaponComponent::AddAmmo(int Amount) {
+	Amount = abs(Amount);
+	CurrentAmmo += Amount;
+	if (CurrentAmmo > MaxAmmo) {
+		CurrentAmmo = MaxAmmo;
+	}
+}
+
 void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection) {
 	auto LineTraceEnd = MuzzleOrigin + MuzzleDirection * Range;
 	FHitResult Hit {};
