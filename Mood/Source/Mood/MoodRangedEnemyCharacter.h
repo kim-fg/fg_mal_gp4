@@ -11,6 +11,12 @@ class MOOD_API AMoodRangedEnemyCharacter : public ACharacter
 
 	UPROPERTY(EditAnywhere)
 	class UMoodHealthComponent* healthComp;
+	
+	UPROPERTY(EditAnywhere)
+	class UMoodWeaponSlotComponent* WeaponSlotComponent;
+
+	UPROPERTY(EditAnywhere)
+	class UMoodWeaponComponent* WeaponComponent;
 
 public:
 	// Sets default values for this character's properties
