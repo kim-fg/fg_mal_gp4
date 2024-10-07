@@ -16,7 +16,9 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 	CollisionQueryParams.AddIgnoredActor(GetAttachmentRootActor());
 	World->LineTraceSingleByChannel(Hit, MuzzleOrigin, LineTraceEnd, ECC_Visibility, CollisionQueryParams);
 
-	DrawDebugLine(World, MuzzleOrigin, LineTraceEnd, FColor::Green, false, 0.25f, 0, 0.25f);
+	if (DebugBullet) {
+		DrawDebugLine(World, MuzzleOrigin, LineTraceEnd, FColor::Green, false, 0.25f, 0, 0.25f);
+	}
 	
 	if (Hit.IsValidBlockingHit()) {
 		auto HitActor = Hit.GetActor();

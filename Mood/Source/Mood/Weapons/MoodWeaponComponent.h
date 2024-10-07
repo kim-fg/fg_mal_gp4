@@ -35,6 +35,9 @@ protected:
     virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection);
     
 private:
+    UPROPERTY(EditAnywhere, Category=Debug)
+    bool DebugBullet = false;
+    
     UPROPERTY(EditDefaultsOnly, Category=Effects)
     USoundBase* FireSound = nullptr;
     UPROPERTY(EditDefaultsOnly, Category=Effects)
