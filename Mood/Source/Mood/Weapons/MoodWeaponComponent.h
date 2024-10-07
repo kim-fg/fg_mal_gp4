@@ -36,24 +36,30 @@ protected:
     
 private:
     UPROPERTY(EditDefaultsOnly, Category=Effects)
-    USoundBase* FireSound;
+    USoundBase* FireSound = nullptr;
     UPROPERTY(EditDefaultsOnly, Category=Effects)
-    float Recoil = 1.0f;
-    UPROPERTY(EditDefaultsOnly, Category=Effects)
-    FString AnimationID;
+    FString AnimationID = "";
     UPROPERTY(EditDefaultsOnly, Category=Effects)
     TSubclassOf<UCameraShakeBase> RecoilCameraShake;
     
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
     float FireDelay = 0.25f;
-    UPROPERTY(EditDefaultsOnly)
+    float TimeSinceLastUse = 0;
+    
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
     float Range = 10000.0f;
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
     int PelletsPerShot = 5;
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
     int DamagePerPellet = 5;
-    UPROPERTY(EditDefaultsOnly)
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
     FVector2f MaxSpread = {0, 0};
 
-    float TimeSinceLastUse;
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    bool UnlimitedAmmo = false;
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    int MaxAmmo = 100;
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    int StartAmmo = 25;
+    int CurrentAmmo = 0;
 };

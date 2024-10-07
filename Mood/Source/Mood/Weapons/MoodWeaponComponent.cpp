@@ -31,6 +31,10 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 }
 
 bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection) {
+	if (CurrentAmmo < 1) {
+		return false;
+	}
+	
 	if (TimeSinceLastUse < FireDelay) {
 		return false;
 	}
@@ -39,6 +43,12 @@ bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection) {
 	if (!parent) {
 		return false;
 	}
+
+	// Reset this now that we've fired the shot
+	TimeSinceLastUse = 0.0f;
+	// Use up ammo
+	CurrentAmmo--;
+	
 	UWorld* const World = GetWorld();
 	if (World != nullptr) {
 		for (auto i = 0; i < PelletsPerShot; i++) {
@@ -50,9 +60,6 @@ bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection) {
 
 			TraceHit(World, MuzzleOrigin, MuzzleDirection + Spread);
 		}
-
-		// Reset this now that we've fired the shot
-        TimeSinceLastUse = 0.0f;
 	}
 
 	// Try and play the sound if specified
@@ -67,6 +74,7 @@ void UMoodWeaponComponent::BeginPlay() {
 	Super::BeginPlay();
 
 	TimeSinceLastUse = FireDelay;
+	CurrentAmmo = StartAmmo;
 }
 
 void UMoodWeaponComponent::TickComponent(float DeltaTime, ELevelTick TickType,
