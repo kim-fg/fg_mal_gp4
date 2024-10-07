@@ -98,6 +98,16 @@ void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 	}
 }
 
+void UMoodWeaponSlotComponent::AddAmmo(TSubclassOf<AMoodWeaponPickup> WeaponClass, int Amount) {
+	auto TargetWeapon = *Weapons.FindByPredicate([&](const UMoodWeaponComponent* Weapon) {
+		return Weapon->GetClass() == WeaponClass;
+	});
+	
+	if (!TargetWeapon) { return; }
+
+	TargetWeapon->AddAmmo(Amount);
+}
+
 void UMoodWeaponSlotComponent::BeginPlay() {
 	Super::BeginPlay();
 
