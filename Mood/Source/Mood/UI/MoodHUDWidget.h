@@ -13,6 +13,7 @@ class UMoodLostScreen;
 class UMoodPlayerHealthBar;
 class UMoodHealthComponent;
 class AMoodGameMode;
+class UMoodWeaponSlotComponent;
 struct FInputModeUIOnly;
 
 UCLASS()
@@ -23,19 +24,13 @@ class UMoodHUDWidget : public UUserWidget
 
 public:
 	
+#pragma region Widgets
+
 	UPROPERTY(meta = (BindWidget))
 	UMoodPlayerHealthBar* HealthBarRight;
 
 	UPROPERTY(meta = (BindWidget))
 	UMoodPlayerHealthBar* HealthBarLeft;
-
-	UPROPERTY()
-	UMoodHealthComponent* HealthComponent;
-	UPROPERTY()
-	UMoodWeaponComponent* WeaponComponent;
-
-	UPROPERTY()
-	AMoodGameMode* GameMode;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodLostScreen* LostScreen;
@@ -43,11 +38,30 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodWinScreen* WinScreen;
 
-	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodMoodMeterWidget* MoodMeterWidget;
 
-	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodAmmoWidget* AmmoWidget;
+
+#pragma endregion
+
+
+#pragma region Component Variables
+
+	UPROPERTY()
+	UMoodHealthComponent* HealthComponent;
+	UPROPERTY()
+	UMoodWeaponSlotComponent* WeaponSlotComponent;
+	UPROPERTY()
+	UMoodWeaponComponent* Weapon;
+
+#pragma endregion
+
+	//Manager Variables
+	UPROPERTY()
+	AMoodGameMode* GameMode;
+
 
 	//Spin radial variables
 	UPROPERTY()
@@ -62,7 +76,14 @@ public:
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
-	void GetHealthComponent();
+#pragma region Component Functions
+
+	void GetHealthComponent(ACharacter* Player);
+	void GetWeaponSlotComponent(ACharacter* Player);
+	void UpdateAmmo();
+
+#pragma endregion
+
 
 	UFUNCTION(Blueprintable)
 	void DisplayLostScreen();

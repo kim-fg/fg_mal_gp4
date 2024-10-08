@@ -7,6 +7,7 @@
 
 class ULegacyCameraShake;
 class AMoodCharacter;
+class UTexture2D;
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class UMoodWeaponComponent : public USkeletalMeshComponent {
@@ -27,6 +28,8 @@ public:
     float GetRange() { return Range; }
 
     int GetCurrentAmmo() { return CurrentAmmo; }
+
+    UTexture2D* GetAmmoIcon() { return AmmoIcon; }
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
     FString GetAnimationID() { return AnimationID; }
@@ -68,4 +71,7 @@ private:
     UPROPERTY(EditDefaultsOnly, Category=Weapon)
     int StartAmmo = 25;
     int CurrentAmmo = 0;
+
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    UTexture2D* AmmoIcon;
 };
