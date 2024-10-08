@@ -11,6 +11,8 @@ class AMoodAmmoPickup : public AMoodPickup {
 	GENERATED_BODY()
 public:
 	AMoodAmmoPickup();
+protected:
+	virtual void PickedUp(ACharacter* Character) override;
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
@@ -19,6 +21,4 @@ private:
 	int Amount = 10;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AMoodWeaponPickup> WeaponType;
-
-	void PickedUp(ACharacter* Character) override;
 };
