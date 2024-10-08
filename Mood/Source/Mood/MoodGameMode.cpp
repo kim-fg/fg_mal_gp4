@@ -16,3 +16,10 @@ void AMoodGameMode::GameFinished()
 {
 	GameFinishedSig.Broadcast();
 }
+
+
+void AMoodGameMode::Respawn()
+{
+	PlayerRespawn.Broadcast();
+}
+
