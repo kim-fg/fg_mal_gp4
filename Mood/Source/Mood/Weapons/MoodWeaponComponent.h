@@ -30,6 +30,7 @@ public:
     FString GetAnimationID() { return AnimationID; }
 
     TSubclassOf<UCameraShakeBase> GetRecoilCameraShake() { return RecoilCameraShake; }
+    void AddAmmo(int Amount);
 
 protected:
     virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection);

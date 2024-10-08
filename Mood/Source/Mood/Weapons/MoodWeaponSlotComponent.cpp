@@ -1,5 +1,4 @@
 ﻿#include "MoodWeaponSlotComponent.h"
-
 #include "MoodWeaponComponent.h"
 #include "MoodWeaponPickup.h"
 #include "GameFramework/Character.h"
@@ -77,6 +76,12 @@ void UMoodWeaponSlotComponent::SelectWeapon(const int Index) {
 	EnableSelectedWeapon();
 }
 
+UMoodWeaponComponent* UMoodWeaponSlotComponent::GetSelectedWeapon() {
+	if (Weapons.Num() < 1) { return nullptr; }
+	return Weapons[SelectedWeaponIndex];
+}
+
+
 void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 	// We dont have any weapons
 	if (Weapons.Num() == 0) {
@@ -96,6 +101,16 @@ void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 	if (WeaponUsedSuccess) {
 		OnWeaponUsed.Broadcast(SelectedWeapon);
 	}
+}
+
+void UMoodWeaponSlotComponent::AddAmmo(TSubclassOf<AMoodWeaponPickup> WeaponClass, int Amount) {
+	auto TargetWeapon = *Weapons.FindByPredicate([&](const UMoodWeaponComponent* Weapon) {
+		return Weapon->GetClass() == WeaponClass;
+	});
+	
+	if (!TargetWeapon) { return; }
+
+	TargetWeapon->AddAmmo(Amount);
 }
 
 void UMoodWeaponSlotComponent::BeginPlay() {

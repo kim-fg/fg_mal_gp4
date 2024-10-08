@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "MoodAmmoPickup.h"
 #include "MoodWeaponSlotComponent.generated.h"
 
 class AMoodWeaponPickup;
@@ -23,11 +24,11 @@ public:
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool HasWeapon() { return Weapons.Num() > 0; }
-
-	void EnableSelectedWeapon();
 	void SelectNextWeapon();
 	void SelectPreviousWeapon();
 	void SelectWeapon(int Index);
+
+	UMoodWeaponComponent* GetSelectedWeapon();
 
 	UFUNCTION()
 	USceneComponent* GetMuzzleRoot() { return MuzzleRoot; }
@@ -38,13 +39,18 @@ public:
 	void SetTriggerHeld(bool InTriggerHeld) {
 		TriggerHeld = InTriggerHeld;
 	}
+
+	UFUNCTION(BlueprintCallable)
+	void AddAmmo(TSubclassOf<AMoodWeaponPickup> WeaponClass, int Amount);
+
 private:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<AMoodWeaponPickup>> DefaultWeapons = {};
-	
+
+	void EnableSelectedWeapon();
 	void UseSelectedWeapon();
 
 	TObjectPtr<ACharacter> Owner;
