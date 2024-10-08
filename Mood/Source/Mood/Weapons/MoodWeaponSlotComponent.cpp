@@ -4,7 +4,6 @@
 #include "GameFramework/Character.h"
 
 UMoodWeaponSlotComponent::UMoodWeaponSlotComponent() {
-	MuzzleOffset = FVector(100.0f, 0.0f, 10.0f);
 	Owner = Cast<ACharacter>(GetOwner());
 	PrimaryComponentTick.bCanEverTick = true;
 	UMoodWeaponSlotComponent::SetAutoActivate(true);
@@ -33,7 +32,7 @@ bool UMoodWeaponSlotComponent::AddWeapon(UMoodWeaponComponent* Weapon) {
 	}
 
 	// add the weapon as an instance component to the character
-	Owner->AddInstanceComponent(this);
+	Owner->AddInstanceComponent(Weapon);
 	
 	if (AutoSelectNewWeapon) {
 		SelectWeapon(Weapons.Num() - 1);
