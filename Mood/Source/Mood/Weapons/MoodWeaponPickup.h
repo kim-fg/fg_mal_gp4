@@ -17,7 +17,6 @@ public:
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UMoodWeaponComponent> Weapon;
-
-	UFUNCTION()
+	
 	virtual void PickedUp(ACharacter* Character) override;
 };

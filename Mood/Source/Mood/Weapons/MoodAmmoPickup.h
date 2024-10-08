@@ -13,10 +13,12 @@ public:
 	AMoodAmmoPickup();
 private:
 	UPROPERTY(EditDefaultsOnly)
+	TObjectPtr<UStaticMeshComponent> Mesh = nullptr;
+	
+	UPROPERTY(EditDefaultsOnly)
 	int Amount = 10;
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<AMoodWeaponPickup> WeaponType;
 
-	UFUNCTION()
-	virtual void PickedUp(ACharacter* Character) override;
+	void PickedUp(ACharacter* Character) override;
 };

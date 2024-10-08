@@ -254,7 +254,7 @@ void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 
 void AMoodCharacter::Interact()
 {
-	
+	UE_LOG(LogTemp, Warning, TEXT("Interacting"));
 }
 
 void AMoodCharacter::Sprint()
