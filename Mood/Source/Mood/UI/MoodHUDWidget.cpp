@@ -23,30 +23,10 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	//Setting Healthbar values
-	if (HealthComponent != nullptr)
-	{
-		HealthBarRight->Healthbar->SetPercent(HealthComponent->HealthPercent());
-		HealthBarLeft->Healthbar->SetPercent(HealthComponent->HealthPercent());
-	}
-	else
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("HealthComponent is nullptr in the HUD!"));
-	}
-	
-	//Ammo counter update
-	if (WeaponSlotComponent != nullptr)
-	{
-		Weapon = WeaponSlotComponent->GetSelectedWeapon();
-		if (Weapon != nullptr)
-		{
-			AmmoWidget->AmmoText->SetText(FText::FromString(FString::FromInt(Weapon->GetCurrentAmmo())));
-			AmmoWidget->AmmoIcon->SetBrushFromTexture(Weapon->GetAmmoIcon());
-		}
-	}
+	//Updating Widget Elements
+	UpdateHealthbarWidget();
+	UpdateAmmoWidget();
 
-	
-	
 	//Spinning radial + counting text
 	InnerCircleSpin += InDeltaTime / 10;
 	MiddleCircleSpin += InDeltaTime / 10;
@@ -65,12 +45,9 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		OuterCircleSpin = 0.f;
 	FString FormattedInt = FString::FormatAsNumber(MoodMeterNumber);
 	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FormattedInt));
-	
+
 	if (MoodMeterNumber >= 666)
 		MoodMeterNumber = 0;
-
-	
-		
 }
 
 void UMoodHUDWidget::GetHealthComponent(ACharacter* Player)
@@ -83,9 +60,44 @@ void UMoodHUDWidget::GetWeaponSlotComponent(ACharacter* Player)
 	WeaponSlotComponent = Player->FindComponentByClass<UMoodWeaponSlotComponent>();
 }
 
-void UMoodHUDWidget::UpdateAmmo()
+void UMoodHUDWidget::UpdateHealthbarWidget()
+{
+	if (HealthComponent != nullptr)
+	{
+		HealthBarRight->Healthbar->SetPercent(HealthComponent->HealthPercent());
+		HealthBarLeft->Healthbar->SetPercent(HealthComponent->HealthPercent());
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("HealthComponent is nullptr in the HUD!"));
+	}
+}
+
+void UMoodHUDWidget::UpdateAmmoWidget()
+{
+	if (WeaponSlotComponent != nullptr)
+	{
+		Weapon = WeaponSlotComponent->GetSelectedWeapon();
+		if (Weapon != nullptr)
+		{
+			AmmoWidget->AmmoText->SetText(FText::FromString(FString::FromInt(Weapon->GetCurrentAmmo())));
+			AmmoWidget->AmmoIcon->SetBrushFromTexture(Weapon->GetAmmoIcon());
+		}
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("WeaponComponent is nullptr in the HUD!"));
+	}
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("WeaponSlotComponent is nullptr in the HUD!"));
+}
+
+void UMoodHUDWidget::UpdateMoodMeterWidget(float InDeltaTime)
 {
 
+}
+
+void UMoodHUDWidget::UpdateCrosshair()
+{
+	//Update crosshair based on equipped weapon
 }
 
 void UMoodHUDWidget::DisplayLostScreen()
