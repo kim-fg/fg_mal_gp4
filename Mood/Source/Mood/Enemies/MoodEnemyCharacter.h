@@ -15,6 +15,9 @@ class AMoodEnemyCharacter : public ACharacter {
 public:
 	AMoodEnemyCharacter();
 
+	UFUNCTION(BlueprintCallable)
+	UMoodWeaponSlotComponent* GetWeaponSlot() { return WeaponSlot; }
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UBehaviorTree> BehaviorTree = nullptr;
