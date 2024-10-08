@@ -9,13 +9,23 @@ void UMoodPlayerHealthBar::SetHealthbarPercentage(float NewPercentage)
 void UMoodPlayerHealthBar::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
-	/*
-	FilledPercentage += InDeltaTime * FillRateMultiplier;
-	Healthbar->SetPercent(FilledPercentage);
-	*/
 }
 
 void UMoodPlayerHealthBar::NativeConstruct()
 {
 	Super::NativeConstruct();
+	if (LeftToRight)
+	{
+		Healthbar->SetBarFillType(EProgressBarFillType::Type(EProgressBarFillType::LeftToRight));
+	}
+	else
+	{
+		Healthbar->SetBarFillType(EProgressBarFillType::Type(EProgressBarFillType::RightToLeft));
+	}
 }
+
+UMoodPlayerHealthBar::UMoodPlayerHealthBar(const FObjectInitializer& ObjectInitializer) : Super(ObjectInitializer)
+{
+
+}
+
