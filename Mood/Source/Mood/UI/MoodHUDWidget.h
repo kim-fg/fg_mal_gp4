@@ -24,7 +24,10 @@ class UMoodHUDWidget : public UUserWidget
 public:
 	
 	UPROPERTY(meta = (BindWidget))
-	UMoodPlayerHealthBar* HealthBar;
+	UMoodPlayerHealthBar* HealthBarRight;
+
+	UPROPERTY(meta = (BindWidget))
+	UMoodPlayerHealthBar* HealthBarLeft;
 
 	UPROPERTY()
 	UMoodHealthComponent* HealthComponent;

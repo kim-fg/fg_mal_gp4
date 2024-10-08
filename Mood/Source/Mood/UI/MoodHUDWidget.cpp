@@ -21,7 +21,10 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	//Setting Healthbar values
 	if (HealthComponent != nullptr)
-		HealthBar->Healthbar->SetPercent(HealthComponent->HealthPercent());	
+	{
+		HealthBarRight->Healthbar->SetPercent(HealthComponent->HealthPercent());
+		HealthBarLeft->Healthbar->SetPercent(HealthComponent->HealthPercent());
+	}
 	else
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("HealthComponent is nullptr in the HUD!"));
 	
