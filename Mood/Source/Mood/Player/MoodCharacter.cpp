@@ -110,7 +110,7 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(SelectWeapon3Action, ETriggerEvent::Triggered, this, &AMoodCharacter::SelectWeapon3);
 
 		// Interact 
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Interact);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ToggleInteraction);
 	}
 	
 	else
@@ -249,12 +249,11 @@ void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 	auto PlayerController = Cast<APlayerController>(GetController());
 	if (!PlayerController) { return; }
 
-	PlayerController->PlayerCameraManager->StartCameraShake(Weapon->GetRecoilCameraShake(), 1.0f);
+	PlayerController->PlayerCameraManager->StartCameraShake(Weapon->GetRecoilCameraShake(), 1.0f); 
 }
 
-void AMoodCharacter::Interact()
-{
-	UE_LOG(LogTemp, Warning, TEXT("Interacting"));
+void AMoodCharacter::ToggleInteraction()
+{	
 }
 
 void AMoodCharacter::Sprint()
