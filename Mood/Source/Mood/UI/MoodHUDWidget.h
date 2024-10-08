@@ -80,7 +80,15 @@ public:
 
 	void GetHealthComponent(ACharacter* Player);
 	void GetWeaponSlotComponent(ACharacter* Player);
-	void UpdateAmmo();
+
+#pragma endregion
+
+#pragma region Update Widgets
+
+	void UpdateHealthbarWidget();
+	void UpdateAmmoWidget();
+	void UpdateMoodMeterWidget(float InDeltaTime);
+	void UpdateCrosshair();
 
 #pragma endregion
 
