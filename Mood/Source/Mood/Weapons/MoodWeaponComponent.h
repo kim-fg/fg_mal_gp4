@@ -26,6 +26,8 @@ public:
 
     float GetRange() { return Range; }
 
+    int GetCurrentAmmo() { return CurrentAmmo; }
+
     UFUNCTION(BlueprintCallable, BlueprintPure)
     FString GetAnimationID() { return AnimationID; }
 
