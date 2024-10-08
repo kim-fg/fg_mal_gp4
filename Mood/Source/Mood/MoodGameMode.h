@@ -7,6 +7,7 @@
 #include "MoodGameMode.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGameFinished);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerRespawn);
 
 UCLASS(minimalapi)
 class AMoodGameMode : public AGameModeBase
@@ -18,6 +19,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void GameFinished();
+
+	UFUNCTION(BlueprintCallable)
+	void Respawn();
+
+
+	UPROPERTY(BlueprintAssignable)
+	FPlayerRespawn PlayerRespawn;
 
 	UPROPERTY()
 	FGameFinished GameFinishedSig;

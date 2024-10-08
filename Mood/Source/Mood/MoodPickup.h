@@ -10,10 +10,10 @@ public:
 
 	UMoodPickUpComponent* GetPickup() { return Pickup; } 
 protected:
-	// pure virtual
+	UFUNCTION()
 	virtual void PickedUp(ACharacter* Character) {};
 
 private:
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UMoodPickUpComponent> Pickup;
 };

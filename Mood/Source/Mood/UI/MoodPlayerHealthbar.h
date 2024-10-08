@@ -6,7 +6,6 @@
 
 class UProgressBar;
 
-
 UCLASS()
 class UMoodPlayerHealthBar : public UUserWidget
 {
@@ -19,8 +18,9 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UProgressBar* Healthbar;
 
-
-
+	UPROPERTY(EditAnywhere)
+	bool LeftToRight;
+	
 protected:
 
 	UPROPERTY(EditAnywhere, meta = (ClampMin = "0.0", ClampMax = "100.0"))
@@ -29,6 +29,8 @@ protected:
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 	virtual void NativeConstruct() override;
+
+	UMoodPlayerHealthBar(const FObjectInitializer& ObjectInitializer);
 
 private:
 	UPROPERTY(EditAnywhere)

@@ -25,6 +25,7 @@ void UMoodPickUpComponent::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedC
 		// Notify that the actor is being picked up
 		OnPickUp.Broadcast(Character);
 
+		//todo! change this to be the responsibility of others. Pickup cant know if it was successful
 		// Unregister from the Overlap Event so it is no longer triggered
 		OnComponentBeginOverlap.RemoveAll(this);
 	}

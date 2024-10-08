@@ -53,15 +53,17 @@ private:
 	void EnableSelectedWeapon();
 	void UseSelectedWeapon();
 
-	TObjectPtr<ACharacter> Owner;
-	TObjectPtr<USceneComponent> MuzzleRoot;
+	UPROPERTY()
+	TObjectPtr<ACharacter> Owner = nullptr;
+	UPROPERTY()
+	TObjectPtr<USceneComponent> MuzzleRoot = nullptr;
 	
 	int SelectedWeaponIndex = 0;
 	bool TriggerHeld = false;
 	
 	/** Gun muzzle's offset from the characters location */
 	UPROPERTY(EditDefaultsOnly, Category=Gameplay)
-	FVector MuzzleOffset;
+	FVector MuzzleOffset = {0.0f, 0.0f, 0.0f};
 	
 	UPROPERTY(EditDefaultsOnly)
 	bool AutoSelectNewWeapon = true;

@@ -6,27 +6,27 @@
 #include "Kismet/GameplayStatics.h"
 #include "../Player/MoodCharacter.h"
 #include "../MoodHealthComponent.h"
+#include "../Weapons/MoodWeaponSlotComponent.h"
+#include "../Weapons/MoodWeaponComponent.h"
 #include "MoodLostScreen.h"
 #include "MoodMoodMeterWidget.h"
 #include "MoodPlayerHealthbar.h"
+#include "MoodAmmoWidget.h"
 #include "MoodWinScreen.h"
 #include "Components/RadialSlider.h"
 #include "Components/ProgressBar.h"
 #include "../MoodGameMode.h"
 #include "Components/TextBlock.h"
+#include "Components/Image.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	//Setting Healthbar values
-	if (HealthComponent != nullptr)
-		HealthBar->Healthbar->SetPercent(HealthComponent->HealthPercent());	
-	else
-		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("HealthComponent is nullptr in the HUD!"));
-	
-	
-	
+	//Updating Widget Elements
+	UpdateHealthbarWidget();
+	UpdateAmmoWidget();
+
 	//Spinning radial + counting text
 	InnerCircleSpin += InDeltaTime / 10;
 	MiddleCircleSpin += InDeltaTime / 10;
@@ -45,17 +45,59 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 		OuterCircleSpin = 0.f;
 	FString FormattedInt = FString::FormatAsNumber(MoodMeterNumber);
 	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FormattedInt));
-	
+
 	if (MoodMeterNumber >= 666)
 		MoodMeterNumber = 0;
-
-	
-		
 }
 
-void UMoodHUDWidget::GetHealthComponent()
+void UMoodHUDWidget::GetHealthComponent(ACharacter* Player)
 {
-	HealthComponent = UGameplayStatics::GetPlayerCharacter(GetWorld(),0)->FindComponentByClass<UMoodHealthComponent>();
+	HealthComponent = Player->FindComponentByClass<UMoodHealthComponent>();
+}
+
+void UMoodHUDWidget::GetWeaponSlotComponent(ACharacter* Player)
+{
+	WeaponSlotComponent = Player->FindComponentByClass<UMoodWeaponSlotComponent>();
+}
+
+void UMoodHUDWidget::UpdateHealthbarWidget()
+{
+	if (HealthComponent != nullptr)
+	{
+		HealthBarRight->Healthbar->SetPercent(HealthComponent->HealthPercent());
+		HealthBarLeft->Healthbar->SetPercent(HealthComponent->HealthPercent());
+	}
+	else
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("HealthComponent is nullptr in the HUD!"));
+	}
+}
+
+void UMoodHUDWidget::UpdateAmmoWidget()
+{
+	if (WeaponSlotComponent != nullptr)
+	{
+		Weapon = WeaponSlotComponent->GetSelectedWeapon();
+		if (Weapon != nullptr)
+		{
+			AmmoWidget->AmmoText->SetText(FText::FromString(FString::FromInt(Weapon->GetCurrentAmmo())));
+			AmmoWidget->AmmoIcon->SetBrushFromTexture(Weapon->GetAmmoIcon());
+		}
+		else
+			GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("WeaponComponent is nullptr in the HUD!"));
+	}
+	else
+		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("WeaponSlotComponent is nullptr in the HUD!"));
+}
+
+void UMoodHUDWidget::UpdateMoodMeterWidget(float InDeltaTime)
+{
+
+}
+
+void UMoodHUDWidget::UpdateCrosshair()
+{
+	//Update crosshair based on equipped weapon
 }
 
 void UMoodHUDWidget::DisplayLostScreen()
@@ -79,13 +121,11 @@ void UMoodHUDWidget::DisplayWinScreen()
 void UMoodHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if (UGameplayStatics::GetPlayerCharacter(GetWorld(),0) != nullptr)
-	{
-		GetHealthComponent();
-	}
 	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != nullptr)
 	{
-		
+		ACharacter* Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
+		GetHealthComponent(Player);
+		GetWeaponSlotComponent(Player);
 	}
 	
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayLostScreen);
@@ -96,5 +136,6 @@ void UMoodHUDWidget::NativeConstruct()
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(InnerCircleSpin);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MiddleCircleSpin);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(OuterCircleSpin);
+
 }
 
