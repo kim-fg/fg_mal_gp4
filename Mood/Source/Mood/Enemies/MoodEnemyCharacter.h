@@ -14,15 +14,19 @@ class AMoodEnemyCharacter : public ACharacter {
 
 public:
 	AMoodEnemyCharacter();
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UMoodHealthComponent> Health = nullptr;
 
+	UFUNCTION(BlueprintCallable)
+	UMoodWeaponSlotComponent* GetWeaponSlot() { return WeaponSlot; }
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UBehaviorTree> BehaviorTree = nullptr;
 	
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UPawnSensingComponent> Sensing = nullptr;
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UMoodHealthComponent> Health = nullptr;
+	
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UMoodWeaponSlotComponent> WeaponSlot = nullptr;
 };
