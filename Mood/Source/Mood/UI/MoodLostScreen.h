@@ -31,4 +31,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	TSoftObjectPtr<UWorld> MainMenu;
+
+
+	UPROPERTY()
+	class AMoodGameMode* GameMode;
+	
 };
