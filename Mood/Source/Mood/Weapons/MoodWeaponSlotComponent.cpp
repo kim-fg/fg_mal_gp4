@@ -4,8 +4,6 @@
 #include "GameFramework/Character.h"
 
 UMoodWeaponSlotComponent::UMoodWeaponSlotComponent() {
-	MuzzleOffset = FVector(100.0f, 0.0f, 10.0f);
-	Owner = Cast<ACharacter>(GetOwner());
 	PrimaryComponentTick.bCanEverTick = true;
 	UMoodWeaponSlotComponent::SetAutoActivate(true);
 }
@@ -25,15 +23,21 @@ bool UMoodWeaponSlotComponent::AddWeapon(UMoodWeaponComponent* Weapon) {
 		EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget,
 		EAttachmentRule::KeepWorld, true
 	);
+	auto OwnerMesh = Owner->GetMesh();
+	if (!OwnerMesh) {
+		UE_LOG(LogTemp, Log, TEXT("Failed to get Owner Mesh"));
+	}
 	
 	auto AttachSuccess = Weapon->AttachToComponent(Owner->GetMesh(), AttachmentRules, FName(TEXT("GripPoint")));
 
 	if (!AttachSuccess) {
-		return false;
+		UE_LOG(LogTemp, Log, TEXT("%s failed to attach weapon (%s)"),
+			*Owner->GetActorNameOrLabel(), *Weapon->GetAnimationID()
+		);
 	}
 
 	// add the weapon as an instance component to the character
-	Owner->AddInstanceComponent(this);
+	Owner->AddInstanceComponent(Weapon);
 	
 	if (AutoSelectNewWeapon) {
 		SelectWeapon(Weapons.Num() - 1);
@@ -104,17 +108,19 @@ void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 }
 
 void UMoodWeaponSlotComponent::AddAmmo(TSubclassOf<AMoodWeaponPickup> WeaponClass, int Amount) {
-	auto TargetWeapon = *Weapons.FindByPredicate([&](const UMoodWeaponComponent* Weapon) {
+	auto TargetWeapon = Weapons.FindByPredicate([&](const UMoodWeaponComponent* Weapon) {
 		return Weapon->GetClass() == WeaponClass;
 	});
 	
 	if (!TargetWeapon) { return; }
-
-	TargetWeapon->AddAmmo(Amount);
+	
+	(*TargetWeapon)->AddAmmo(Amount);
 }
 
 void UMoodWeaponSlotComponent::BeginPlay() {
 	Super::BeginPlay();
+
+	Owner = Cast<ACharacter>(GetOwner());
 
 	for (auto i = 0; i < DefaultWeapons.Num(); i++) {
 		auto WeaponPickup = GetWorld()->SpawnActor<AMoodWeaponPickup>(DefaultWeapons[i]);

@@ -4,7 +4,7 @@
 #include "MoodWeaponSlotComponent.h"
 #include "Mood/MoodPickUpComponent.h"
 
-AMoodWeaponPickup::AMoodWeaponPickup(){
+AMoodWeaponPickup::AMoodWeaponPickup() {
 	Weapon = CreateDefaultSubobject<UMoodWeaponComponent>("Weapon");
 	Weapon->SetupAttachment(RootComponent);
 }

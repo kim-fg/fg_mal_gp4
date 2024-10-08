@@ -125,7 +125,7 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float MeleeAttackCooldown = 1.f;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
 	TEnumAsByte<ECollisionChannel> ClimbableChannel;
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
@@ -136,7 +136,7 @@ public:
 	FVector ClimbingLocation = FVector(50.f, 0.f, 150.f);
 
 	// UFUNCTION(Blueprintable)
-	void Interact();
+	void ToggleInteraction();
 
 	
 private:
