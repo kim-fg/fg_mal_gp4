@@ -14,6 +14,11 @@ class AMoodEnemyCharacter : public ACharacter {
 
 public:
 	AMoodEnemyCharacter();
+	
+	UFUNCTION(BlueprintCallable)
+	UMoodHealthComponent* GetHealth() { return Health; }
+	
+	//todo! make this protected
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UMoodHealthComponent> Health = nullptr;
 
