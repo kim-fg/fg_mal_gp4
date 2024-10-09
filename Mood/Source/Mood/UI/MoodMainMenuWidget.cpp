@@ -43,5 +43,5 @@ void UMoodMainMenuWidget::ShowOptionsMenu()
 void UMoodMainMenuWidget::ExitGame()
 {
 	//FGenericPlatformMisc::RequestExit(false);
-	UKismetSystemLibrary::QuitGame(GetWorld(),UGameplayStatics::GetPlayerController(GetWorld(), 0),EQuitPreference::Quit,true);
+	//UKismetSystemLibrary::QuitGame(GetWorld(),UGameplayStatics::GetPlayerController(GetWorld(), 0),EQuitPreference::Quit,true);
 }

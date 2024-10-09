@@ -16,16 +16,16 @@ class UMoodMainMenuWidget : public UUserWidget
 
 public:
 	
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
 	UButton* StartGameButton;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
 	UButton* LevelSelectButton;
 	
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
 	UButton* OptionsButton;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UButton* ExitGameButton;
 
 	UPROPERTY(meta =(BindWidget))
