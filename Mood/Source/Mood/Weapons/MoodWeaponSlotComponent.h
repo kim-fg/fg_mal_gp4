@@ -41,7 +41,7 @@ public:
 	}
 
 	UFUNCTION(BlueprintCallable)
-	void AddAmmo(TSubclassOf<AMoodWeaponPickup> WeaponClass, int Amount);
+	bool TryAddAmmo(int Amount);
 
 private:
 	virtual void BeginPlay() override;

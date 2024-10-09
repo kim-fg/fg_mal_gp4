@@ -19,6 +19,4 @@ private:
 	
 	UPROPERTY(EditDefaultsOnly)
 	int Amount = 10;
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<AMoodWeaponPickup> WeaponType;
 };

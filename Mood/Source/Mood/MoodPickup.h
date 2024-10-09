@@ -1,6 +1,7 @@
 ﻿#pragma once
-#include "MoodPickUpComponent.h"
 #include "MoodPickup.generated.h"
+
+class UMoodPickUpComponent;
 
 UCLASS(Abstract)
 class AMoodPickup : public AActor {
@@ -11,7 +12,7 @@ public:
 	UMoodPickUpComponent* GetPickup() { return Pickup; } 
 protected:
 	UFUNCTION()
-	virtual void PickedUp(ACharacter* Character) {};
+	virtual void PickedUp(ACharacter* Character);
 
 private:
 	UPROPERTY(EditDefaultsOnly)

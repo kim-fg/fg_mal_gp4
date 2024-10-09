@@ -2,7 +2,7 @@
 
 #include "MoodWeaponComponent.h"
 #include "MoodWeaponSlotComponent.h"
-#include "Mood/MoodPickUpComponent.h"
+#include "GameFramework/Character.h"
 
 AMoodWeaponPickup::AMoodWeaponPickup() {
 	Weapon = CreateDefaultSubobject<UMoodWeaponComponent>("Weapon");

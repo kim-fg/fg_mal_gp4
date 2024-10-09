@@ -5,16 +5,19 @@
 
 // Sets default values for this component's properties
 UMoodWeaponComponent::UMoodWeaponComponent() {
-	AnimationID = "Weapon";
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
-void UMoodWeaponComponent::AddAmmo(int Amount) {
+bool UMoodWeaponComponent::TryAddAmmo(int Amount) {
+	if (CurrentAmmo == MaxAmmo) { return false; }
+	
 	Amount = abs(Amount);
 	CurrentAmmo += Amount;
 	if (CurrentAmmo > MaxAmmo) {
 		CurrentAmmo = MaxAmmo;
 	}
+
+	return true;
 }
 
 void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection) {
@@ -49,15 +52,12 @@ bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection) {
 		return false;
 	}
 
-	auto parent = GetAttachParent();
-	if (!parent) {
-		return false;
-	}
-
 	// Reset this now that we've fired the shot
 	TimeSinceLastUse = 0.0f;
 	// Use up ammo
-	CurrentAmmo--;
+	if (!UnlimitedAmmo) {
+		CurrentAmmo--;
+	}
 	
 	UWorld* const World = GetWorld();
 	if (World != nullptr) {

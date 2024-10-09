@@ -2,6 +2,7 @@
 
 #include "MoodWeaponSlotComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "GameFramework/Character.h"
 
 AMoodAmmoPickup::AMoodAmmoPickup() {
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>("Mesh");
@@ -14,5 +15,8 @@ void AMoodAmmoPickup::PickedUp(ACharacter* Character) {
 	auto WeaponSlot = Character->GetComponentByClass<UMoodWeaponSlotComponent>();
 	if (!WeaponSlot) { return; }
 
-	WeaponSlot->AddAmmo(WeaponType, Amount);
+	auto AmmoAdded = WeaponSlot->TryAddAmmo(Amount);
+	if (!AmmoAdded) { return; }
+
+	Destroy();
 }

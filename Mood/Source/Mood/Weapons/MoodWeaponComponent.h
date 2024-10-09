@@ -18,36 +18,41 @@ public:
     UMoodWeaponComponent();
     
     /** Make the weapon Fire a Projectile */
-    UFUNCTION(BlueprintCallable, Category="Weapon")
+    UFUNCTION(BlueprintCallable)
     bool Use(FVector MuzzleOrigin, FVector MuzzleDirection);
-
-    virtual void BeginPlay() override;
-    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
-                               FActorComponentTickFunction* ThisTickFunction) override;
-
-    float GetRange() { return Range; }
-
-    int GetCurrentAmmo() { return CurrentAmmo; }
-
-    UTexture2D* GetAmmoIcon() { return AmmoIcon; }
+    UFUNCTION(BlueprintCallable)
+    bool TryAddAmmo(int Amount);
 
     UFUNCTION(BlueprintCallable, BlueprintPure)
+    float GetRange() { return Range; }
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    int GetCurrentAmmo() { return CurrentAmmo; }
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    UTexture2D* GetAmmoIcon() { return AmmoIcon; }
+    UFUNCTION(BlueprintCallable, BlueprintPure)
+    bool HasUnlimitedAmmo() { return UnlimitedAmmo; }
+    UFUNCTION(BlueprintCallable, BlueprintPure)
     FString GetAnimationID() { return AnimationID; }
-
+    UFUNCTION(BlueprintCallable, BlueprintPure)
     TSubclassOf<UCameraShakeBase> GetRecoilCameraShake() { return RecoilCameraShake; }
-    void AddAmmo(int Amount);
+
+    
 
 protected:
     virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection);
     
 private:
+    virtual void BeginPlay() override;
+    virtual void TickComponent(float DeltaTime, ELevelTick TickType,
+                               FActorComponentTickFunction* ThisTickFunction) override;
+    
     UPROPERTY(EditAnywhere, Category=Debug)
     bool DebugBullet = false;
     
     UPROPERTY(EditDefaultsOnly, Category=Effects)
     USoundBase* FireSound = nullptr;
     UPROPERTY(EditDefaultsOnly, Category=Effects)
-    FString AnimationID = "";
+    FString AnimationID = "Weapon";
     UPROPERTY(EditDefaultsOnly, Category=Effects)
     TSubclassOf<UCameraShakeBase> RecoilCameraShake;
     
@@ -73,5 +78,5 @@ private:
     int CurrentAmmo = 0;
 
     UPROPERTY(EditDefaultsOnly, Category=Weapon)
-    UTexture2D* AmmoIcon;
+    UTexture2D* AmmoIcon = nullptr;
 };
