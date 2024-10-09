@@ -17,5 +17,8 @@ public:
 	UTextBlock* AmmoText;
 
 	UPROPERTY(meta =(BindWidget))
+	UTextBlock* AmmoTextInfinite;
+
+	UPROPERTY(meta =(BindWidget))
 	UImage* AmmoIcon;
 };
