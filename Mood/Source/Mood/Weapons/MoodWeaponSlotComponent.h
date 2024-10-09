@@ -30,9 +30,9 @@ public:
 
 	UMoodWeaponComponent* GetSelectedWeapon();
 
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	USceneComponent* GetMuzzleRoot() { return MuzzleRoot; }
-	UFUNCTION()
+	UFUNCTION(BlueprintCallable)
 	void SetMuzzleRoot(USceneComponent* InMuzzleRoot) { MuzzleRoot = InMuzzleRoot; }
 	
 	UFUNCTION(BlueprintCallable)
@@ -55,7 +55,7 @@ private:
 
 	UPROPERTY()
 	TObjectPtr<ACharacter> Owner = nullptr;
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<USceneComponent> MuzzleRoot = nullptr;
 	
 	int SelectedWeaponIndex = 0;
