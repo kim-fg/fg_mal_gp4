@@ -10,7 +10,9 @@ void UMoodMainMenuWidget::NativeConstruct()
 	
 	MoodGameInstance = Cast<UMoodGameInstance>(GetGameInstance());
 	StartGameButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::StartGame);
-	LevelSelectButton->OnClicked.AddDynamic(this, &UMoodMainMenuWidget::LevelSelect);
+	LevelSelectButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowLevelSelectMenu);
+	OptionsButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowOptionsMenu);
+	ExitGameButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::ExitGame);
 	
 }
 
@@ -28,7 +30,18 @@ void UMoodMainMenuWidget::StartGame()
 	
 }
 
-void UMoodMainMenuWidget::LevelSelect()
+void UMoodMainMenuWidget::ShowLevelSelectMenu()
 {
-	//Extra button press stuff here
+	
+}
+
+void UMoodMainMenuWidget::ShowOptionsMenu()
+{
+	
+}
+
+void UMoodMainMenuWidget::ExitGame()
+{
+	//FGenericPlatformMisc::RequestExit(false);
+	UKismetSystemLibrary::QuitGame(GetWorld(),UGameplayStatics::GetPlayerController(GetWorld(), 0),EQuitPreference::Quit,true);
 }

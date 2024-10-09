@@ -103,7 +103,7 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 
 void UMoodHUDWidget::UpdateMoodMeterWidget(float InDeltaTime)
 {
-
+	
 }
 
 void UMoodHUDWidget::UpdateCrosshair()
@@ -128,6 +128,14 @@ void UMoodHUDWidget::DisplayWinScreen()
 	PlayerController->SetShowMouseCursor(true);
 }
 
+void UMoodHUDWidget::HideLostScreen()
+{
+	LostScreen->SetVisibility(ESlateVisibility::Hidden);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->SetInputMode(FInputModeGameOnly());
+	PlayerController->SetShowMouseCursor(false);
+}
+
 
 void UMoodHUDWidget::NativeConstruct()
 {
@@ -142,6 +150,7 @@ void UMoodHUDWidget::NativeConstruct()
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayLostScreen);
 	GameMode = Cast<AMoodGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	GameMode->GameFinishedSig.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayWinScreen);
+	GameMode->PlayerRespawn.AddUniqueDynamic(this, &UMoodHUDWidget::HideLostScreen);
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(InnerCircleSpin);

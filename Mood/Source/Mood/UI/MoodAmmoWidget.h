@@ -21,4 +21,7 @@ public:
 
 	UPROPERTY(meta =(BindWidget))
 	UImage* AmmoIcon;
+
+	UPROPERTY()
+	bool InfiniteAmmoWeapon;
 };
