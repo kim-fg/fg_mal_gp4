@@ -32,6 +32,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UPawnSensingComponent> Sensing = nullptr;
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UMoodWeaponSlotComponent> WeaponSlot = nullptr;
 };

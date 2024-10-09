@@ -14,6 +14,9 @@ class AMoodGameMode : public AGameModeBase
 {
 	GENERATED_BODY()
 
+protected:
+	virtual void Tick(float DeltaTime) override;
+
 public:
 	AMoodGameMode();
 
@@ -29,6 +32,15 @@ public:
 
 	UPROPERTY()
 	FGameFinished GameFinishedSig;
+
+	int GetMoodMeterValue() { return MoodMeterValue; }
+
+	void IncreaseMood(int Value);
+
+	void DecreaseMood(int Value);
+
+private:
+	int MoodMeterValue = 0.f;
 };
 
 
