@@ -49,9 +49,15 @@ void AMoodCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
+	if (GameMode == nullptr)
+		GameMode = GetWorld()->GetAuthGameMode();
+
+	// GameMode->
+
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
 
+	HealthComponent->OnHurt.AddUniqueDynamic(this, &AMoodCharacter::LoseHealth);
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &AMoodCharacter::KillPlayer);
 	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
 }
@@ -243,6 +249,11 @@ void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 	PlayerController->PlayerCameraManager->StartCameraShake(Weapon->GetRecoilCameraShake(), 1.0f); 
 }
 
+void AMoodCharacter::LoseHealth(int Amount, int NewHealth)
+{
+	UE_LOG(LogTemp, Warning, TEXT("Lose health."));
+}
+
 void AMoodCharacter::ToggleInteraction()
 {	
 }
@@ -321,7 +332,6 @@ void AMoodCharacter::FindLedge()
 	auto WallAbove = GetWorld()->LineTraceSingleByChannel(TopHitResult, TopTraceStart, TopTraceEnd, InterruptClimbingChannel, QueryParams, FCollisionResponseParams());
 	if (WallInFront && !WallAbove && bIsMidAir)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Found Ledge"));
 		TimeSinceClimbStart = 0.f;
 		CurrentState = Eps_ClimbingLedge;
 		
@@ -349,7 +359,7 @@ void AMoodCharacter::KillPlayer()
 
 void AMoodCharacter::RevivePlayer()
 {
-	HealthComponent->Heal(1000);
+	HealthComponent->Reset();
 }
 
 void AMoodCharacter::DeathCamMovement()
@@ -359,8 +369,8 @@ void AMoodCharacter::DeathCamMovement()
 		if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f && !bHasRespawned)
 		{
 			GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 31), 0.01));
-			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
-			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 2);
+			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 2);
 		}
 
 		if (bHasRespawned)

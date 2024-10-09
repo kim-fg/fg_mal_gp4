@@ -98,6 +98,8 @@ protected:
 
 	virtual void Landed(const FHitResult& Hit) override;
 
+	
+
 public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -171,12 +173,13 @@ protected:
 
 	UFUNCTION()
 	void ShootCameraShake(UMoodWeaponComponent* Weapon);
-	
+
+	UFUNCTION()
+	void LoseHealth(int Amount, int NewHealth);
 	UFUNCTION()
 	void KillPlayer();
 	UFUNCTION()
 	void RevivePlayer();
-
 	void DeathCamMovement();
 	
 	void Sprint();
@@ -193,6 +196,9 @@ protected:
 	// APawn interface
 	virtual void SetupPlayerInputComponent(UInputComponent* InputComponent) override;
 	// End of APawn interface
+
+	UPROPERTY()
+	AGameModeBase* GameMode = nullptr;
 
 public:
  	/** Returns FirstPersonCameraComponent subobject **/

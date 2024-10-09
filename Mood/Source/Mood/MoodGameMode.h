@@ -39,6 +39,8 @@ public:
 
 	void DecreaseMood(int Value);
 
+	void ChangeMoodValue(int Value);
+
 private:
 	int MoodMeterValue = 0.f;
 };

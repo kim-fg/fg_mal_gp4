@@ -38,5 +38,10 @@ void AMoodGameMode::DecreaseMood(int Value)
 	MoodMeterValue -= Value;
 }
 
+void AMoodGameMode::ChangeMoodValue(int Value)
+{
+	
+}
+
 
 
