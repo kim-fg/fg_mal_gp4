@@ -4,6 +4,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MoodMainMenuWidget.generated.h"
 
+class UMoodOptionsMenuWidget;
+class UMoodLevelSelectWidget;
 class UMoodGameInstance;
 class UButton;
 
@@ -13,6 +15,7 @@ class UMoodMainMenuWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	
 	UPROPERTY(meta = (BindWidget))
 	UButton* StartGameButton;
 
@@ -25,6 +28,13 @@ public:
 	UPROPERTY(meta = (BindWidget))
 	UButton* ExitGameButton;
 
+	UPROPERTY(meta =(BindWidget))
+	UMoodLevelSelectWidget* LevelSelectWidget;
+
+	UPROPERTY(meta =(BindWidget))
+	UMoodOptionsMenuWidget* OptionsMenuWidget;
+	
+
 	UPROPERTY()
 	UMoodGameInstance* MoodGameInstance = nullptr;
 
@@ -34,5 +44,11 @@ public:
 	void StartGame();
 
 	UFUNCTION(Blueprintable)
-	void LevelSelect();
+	void ShowLevelSelectMenu();
+
+	UFUNCTION(Blueprintable)
+	void ShowOptionsMenu();
+
+	UFUNCTION(Blueprintable)
+	void ExitGame();
 };

@@ -99,6 +99,9 @@ public:
 	UFUNCTION(Blueprintable)
 	void DisplayWinScreen();
 
+	UFUNCTION(Blueprintable)
+	void HideLostScreen();
+
 	virtual void NativeConstruct() override;
 
 	
