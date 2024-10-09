@@ -3,6 +3,7 @@
 #include "GameFramework/Character.h"
 #include "MoodEnemyCharacter.generated.h"
 
+class AMoodGameMode;
 class UBehaviorTree;
 class UPawnSensingComponent;
 class UMoodWeaponSlotComponent;
@@ -14,7 +15,11 @@ class AMoodEnemyCharacter : public ACharacter {
 
 public:
 	AMoodEnemyCharacter();
-	
+
+protected:
+	virtual void BeginPlay() override;
+
+public:
 	UFUNCTION(BlueprintCallable)
 	UMoodHealthComponent* GetHealth() { return Health; }
 	
@@ -34,4 +39,10 @@ protected:
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UMoodWeaponSlotComponent> WeaponSlot = nullptr;
+
+	UFUNCTION()
+	void LoseHealth(int Amount, int NewHealth);
+	
+	UPROPERTY()
+	AMoodGameMode* MoodGameMode = nullptr;
 };

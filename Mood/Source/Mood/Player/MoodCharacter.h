@@ -17,6 +17,7 @@ class UInputAction;
 class UInputMappingContext;
 class UMoodWeaponSlotComponent;
 class UMoodHealthComponent;
+class AMoodGameMode;
 struct FInputActionValue;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
@@ -198,7 +199,7 @@ protected:
 	// End of APawn interface
 
 	UPROPERTY()
-	AGameModeBase* GameMode = nullptr;
+	AMoodGameMode* MoodGameMode = nullptr;
 
 public:
  	/** Returns FirstPersonCameraComponent subobject **/
