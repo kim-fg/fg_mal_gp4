@@ -138,6 +138,8 @@ public:
 	// UFUNCTION(Blueprintable)
 	void ToggleInteraction();
 
+	UFUNCTION(BlueprintCallable)
+	void ResetPlayer();
 	
 private:
 	float WalkingSpeed;

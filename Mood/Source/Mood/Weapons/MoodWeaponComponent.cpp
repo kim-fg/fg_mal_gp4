@@ -37,7 +37,9 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 			auto Health = HitActor->GetComponentByClass<UMoodHealthComponent>();
 			if (Health) {
 				Health->Hurt(DamagePerPellet);
-				UE_LOG(LogTemp, Log, TEXT("Shot %ls"), *Hit.GetActor()->GetActorNameOrLabel());
+				if (DebugBullet) {
+					UE_LOG(LogTemp, Log, TEXT("Shot %ls"), *Hit.GetActor()->GetActorNameOrLabel());
+				}
 			}
 		}
 	}
