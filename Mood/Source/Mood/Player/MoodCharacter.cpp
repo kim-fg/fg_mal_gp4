@@ -302,7 +302,7 @@ void AMoodCharacter::StopShootWeapon()
 
 void AMoodCharacter::FindLedge()
 {
-	if (CurrentState == Eps_ClimbingLedge || CurrentState != Eps_NoControl)
+	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl)
 		return;
 	
 	FHitResult BottomHitResult;
@@ -321,6 +321,7 @@ void AMoodCharacter::FindLedge()
 	auto WallAbove = GetWorld()->LineTraceSingleByChannel(TopHitResult, TopTraceStart, TopTraceEnd, InterruptClimbingChannel, QueryParams, FCollisionResponseParams());
 	if (WallInFront && !WallAbove && bIsMidAir)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("Found Ledge"));
 		TimeSinceClimbStart = 0.f;
 		CurrentState = Eps_ClimbingLedge;
 		
@@ -346,13 +347,17 @@ void AMoodCharacter::KillPlayer()
 	CurrentState = Eps_NoControl;
 }
 
+void AMoodCharacter::RevivePlayer()
+{
+	HealthComponent->Heal(1000);
+}
+
 void AMoodCharacter::DeathCamMovement()
 {
 	if (bIsDead)
 	{
 		if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f && !bHasRespawned)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Rotating down."));
 			GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 31), 0.01));
 			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
 			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
@@ -360,20 +365,18 @@ void AMoodCharacter::DeathCamMovement()
 
 		if (bHasRespawned)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Has respawned. Rotation: %f"), FirstPersonCameraComponent->GetComponentRotation().Roll);
 			if (FirstPersonCameraComponent->GetComponentRotation().Roll > 0)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Rotating up."));
 				GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, -2), 0.01));
 			}
 				
 			else
 			{
 				GetController()->SetControlRotation(FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 0.00f));
-				UE_LOG(LogTemp, Warning, TEXT("Time to play. Rotation: %f"), FirstPersonCameraComponent->GetComponentRotation().Roll);
 				bIsDead = false;
 				bHasRespawned = false;
 				CurrentState = Eps_Idle;
+				RevivePlayer();
 			}
 		}
 	}

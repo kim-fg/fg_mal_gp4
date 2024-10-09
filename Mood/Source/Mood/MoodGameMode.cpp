@@ -12,6 +12,11 @@ AMoodGameMode::AMoodGameMode()
 
 }
 
+void AMoodGameMode::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+}
+
 void AMoodGameMode::GameFinished()
 {
 	GameFinishedSig.Broadcast();
@@ -22,4 +27,16 @@ void AMoodGameMode::Respawn()
 {
 	PlayerRespawn.Broadcast();
 }
+
+void AMoodGameMode::IncreaseMood(int Value)
+{
+	MoodMeterValue += Value;
+}
+
+void AMoodGameMode::DecreaseMood(int Value)
+{
+	MoodMeterValue -= Value;
+}
+
+
 
