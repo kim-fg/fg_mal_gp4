@@ -256,6 +256,13 @@ void AMoodCharacter::ToggleInteraction()
 {	
 }
 
+void AMoodCharacter::ResetPlayer()
+{
+	bIsDead = false;
+	FirstPersonCameraComponent->SetRelativeRotation(FRotator(0, 0, 0));
+	CurrentState = Eps_Idle;
+}
+
 void AMoodCharacter::Sprint()
 {
 	if (GetCharacterMovement()->Velocity.Length() == 0)

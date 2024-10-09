@@ -33,7 +33,7 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	OuterCircleSpin += InDeltaTime / 10;
 	MoodMeterNumber += InDeltaTime * 100;
 	FString FloatyString = FString::SanitizeFloat(InDeltaTime);
-	GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Yellow, *FloatyString);
+	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Yellow, *FloatyString);
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(InnerCircleSpin);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MiddleCircleSpin);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(OuterCircleSpin);
@@ -80,7 +80,18 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 		Weapon = WeaponSlotComponent->GetSelectedWeapon();
 		if (Weapon != nullptr)
 		{
-			AmmoWidget->AmmoText->SetText(FText::FromString(FString::FromInt(Weapon->GetCurrentAmmo())));
+			if (Weapon->HasUnlimitedAmmo())
+			{
+				//THIS SUCKS
+				AmmoWidget->AmmoTextInfinite->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+				AmmoWidget->AmmoText->SetText(FText::FromString(""));
+			}
+			else
+			{
+				//I HATE THIS
+				AmmoWidget->AmmoTextInfinite->SetVisibility(ESlateVisibility::Hidden);
+				AmmoWidget->AmmoText->SetText(FText::FromString(FString::FromInt(Weapon->GetCurrentAmmo())));
+			}
 			AmmoWidget->AmmoIcon->SetBrushFromTexture(Weapon->GetAmmoIcon());
 		}
 		else
