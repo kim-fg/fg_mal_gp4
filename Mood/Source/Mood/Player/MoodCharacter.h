@@ -174,6 +174,8 @@ protected:
 	
 	UFUNCTION()
 	void KillPlayer();
+	UFUNCTION()
+	void RevivePlayer();
 
 	void DeathCamMovement();
 	
