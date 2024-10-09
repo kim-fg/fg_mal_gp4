@@ -54,8 +54,6 @@ void AMoodCharacter::BeginPlay()
 
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &AMoodCharacter::KillPlayer);
 	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
-
-	auto GameMode = GetWorld()->GetAuthGameMode();
 }
 
 void AMoodCharacter::Tick(float const DeltaTime)
