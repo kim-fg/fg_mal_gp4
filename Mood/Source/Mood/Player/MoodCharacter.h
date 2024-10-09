@@ -152,6 +152,7 @@ private:
 
 	bool bIsDead = false;
 	bool bIsMidAir = false;
+	bool bHasRespawned = false;
 
 protected:
 	void CheckPlayerState();
@@ -173,6 +174,8 @@ protected:
 	
 	UFUNCTION()
 	void KillPlayer();
+
+	void DeathCamMovement();
 	
 	void Sprint();
 	void StopSprinting();
@@ -182,7 +185,6 @@ protected:
 	void StopShootWeapon();
 
 	void FindLedge();
-
 
 
 protected:

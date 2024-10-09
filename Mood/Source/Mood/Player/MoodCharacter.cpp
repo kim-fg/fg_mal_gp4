@@ -75,7 +75,7 @@ void AMoodCharacter::Landed(const FHitResult& Hit)
 
 	auto PlayerController = Cast<APlayerController>(GetController());
 	if (!PlayerController) { return; }
-
+	
 	PlayerController->PlayerCameraManager->StartCameraShake(LandShake, 1.0f);
 }
 
@@ -162,16 +162,7 @@ void AMoodCharacter::CheckPlayerState()
 		break;
 
 	case Eps_NoControl:
-		if (bIsDead)
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Dead."));
-			if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f)
-			{
-				AddControllerRollInput(GetWorld()->DeltaTimeSeconds * DeathFallSpeed * 1.5f);
-				AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
-				AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
-			}
-		}
+		DeathCamMovement();
 		break;
 
 		default:
@@ -258,9 +249,7 @@ void AMoodCharacter::ToggleInteraction()
 
 void AMoodCharacter::ResetPlayer()
 {
-	bIsDead = false;
-	FirstPersonCameraComponent->SetRelativeRotation(FRotator(0, 0, 0));
-	CurrentState = Eps_Idle;
+	bHasRespawned = true;
 }
 
 void AMoodCharacter::Sprint()
@@ -300,7 +289,7 @@ void AMoodCharacter::Execution()
 
 void AMoodCharacter::ShootWeapon()
 {
-	if (CurrentState != Eps_ClimbingLedge)
+	if (CurrentState != Eps_ClimbingLedge || CurrentState != Eps_NoControl)
 	{
 		WeaponSlotComponent->SetTriggerHeld(true);
 	}
@@ -313,7 +302,7 @@ void AMoodCharacter::StopShootWeapon()
 
 void AMoodCharacter::FindLedge()
 {
-	if (CurrentState == Eps_ClimbingLedge)
+	if (CurrentState == Eps_ClimbingLedge || CurrentState != Eps_NoControl)
 		return;
 	
 	FHitResult BottomHitResult;
@@ -355,4 +344,37 @@ void AMoodCharacter::KillPlayer()
 {
 	bIsDead = true;
 	CurrentState = Eps_NoControl;
+}
+
+void AMoodCharacter::DeathCamMovement()
+{
+	if (bIsDead)
+	{
+		if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f && !bHasRespawned)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Rotating down."));
+			GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 31), 0.01));
+			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed);
+		}
+
+		if (bHasRespawned)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Has respawned. Rotation: %f"), FirstPersonCameraComponent->GetComponentRotation().Roll);
+			if (FirstPersonCameraComponent->GetComponentRotation().Roll > 0)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Rotating up."));
+				GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, -2), 0.01));
+			}
+				
+			else
+			{
+				GetController()->SetControlRotation(FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 0.00f));
+				UE_LOG(LogTemp, Warning, TEXT("Time to play. Rotation: %f"), FirstPersonCameraComponent->GetComponentRotation().Roll);
+				bIsDead = false;
+				bHasRespawned = false;
+				CurrentState = Eps_Idle;
+			}
+		}
+	}
 }
