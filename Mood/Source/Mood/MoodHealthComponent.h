@@ -24,6 +24,8 @@ public:
 	void Hurt(int Amount);
 	UFUNCTION(BlueprintCallable)
 	void Heal(int Amount);
+	UFUNCTION(BlueprintCallable)
+	void Reset();
 protected:
 	virtual void BeginPlay() override;
 	

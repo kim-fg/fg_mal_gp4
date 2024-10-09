@@ -28,6 +28,11 @@ void UMoodHealthComponent::Heal(int Amount) {
 	OnHeal.Broadcast(Amount, CurrentHealth);
 }
 
+void UMoodHealthComponent::Reset() {
+	IsDead = false;
+	CurrentHealth = MaxHealth;
+}
+
 void UMoodHealthComponent::BeginPlay() {
 	Super::BeginPlay();
 	
