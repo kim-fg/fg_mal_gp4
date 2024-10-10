@@ -117,20 +117,25 @@ void UMoodHUDWidget::UpdateMoodMeterWidget(const FGeometry& MyGeometry, float In
 void UMoodHUDWidget::UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValue)
 {
 	
-	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Blue, FString::FromInt()
 	if (MoodMeterNumber >= 0 && MoodMeterNumber <= 222)
 	{
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0.f);
+		MoodMeterWidget->MoodMeterOuterCircle->SetValue(0.f);
 		MoodMeterNumber = UKismetMathLibrary::NormalizeToRange(MoodMeterNumber, 0, 222);
 		MoodMeterWidget->MoodMeterInnerCircle->SetValue(MoodMeterNumber);
 	}
 	else if (MoodMeterNumber >= 223 && MoodMeterNumber <= 444)
 	{
-		MoodMeterNumber = MoodMeterNumber / 222;
+		MoodMeterWidget->MoodMeterInnerCircle->SetValue(1.f);
+		MoodMeterWidget->MoodMeterOuterCircle->SetValue(0.f);
+		MoodMeterNumber = UKismetMathLibrary::NormalizeToRange(MoodMeterNumber, 223, 444);
 		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MoodMeterNumber);
 	}
-	else if (MoodMeterNumber > 445 && MoodMeterNumber <= 666)
+	else if (MoodMeterNumber >= 445 && MoodMeterNumber <= 666)
 	{
-		MoodMeterNumber = MoodMeterNumber / 222;
+		MoodMeterWidget->MoodMeterInnerCircle->SetValue(1.f);
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(1.f);
+		MoodMeterNumber = UKismetMathLibrary::NormalizeToRange(MoodMeterNumber, 445, 666);
 		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MoodMeterNumber);
 	}
 }

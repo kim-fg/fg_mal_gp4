@@ -72,7 +72,7 @@ public:
 	float OuterCircleSpin = 0.1f;
 	//text change variable
 	UPROPERTY()
-	int MoodMeterNumber;
+	float MoodMeterNumber;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
