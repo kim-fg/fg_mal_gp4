@@ -1,12 +1,14 @@
 ﻿#include "MoodEnemyCharacter.h"
 
+#include "Components/SphereComponent.h"
 #include "Mood/MoodGameMode.h"
 #include "Mood/MoodHealthComponent.h"
 #include "Mood/Weapons/MoodWeaponSlotComponent.h"
-#include "Perception/PawnSensingComponent.h"
 
 AMoodEnemyCharacter::AMoodEnemyCharacter() {
-	Sensing = CreateDefaultSubobject<UPawnSensingComponent>("Sensing");
+	ActivationSphere = CreateDefaultSubobject<USphereComponent>("Activation Sphere");
+	ActivationSphere->SetupAttachment(RootComponent);
+	
 	Health = CreateDefaultSubobject<UMoodHealthComponent>(TEXT("Health"));
 	WeaponSlot = CreateDefaultSubobject<UMoodWeaponSlotComponent>(TEXT("Weapon Slot"));
 }

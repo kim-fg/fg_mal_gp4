@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
 #include "MoodEnemyCharacter.generated.h"
 
@@ -33,12 +34,10 @@ public:
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UBehaviorTree> BehaviorTree = nullptr;
-	
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<UPawnSensingComponent> Sensing = nullptr;
-	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UMoodWeaponSlotComponent> WeaponSlot = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<USphereComponent> ActivationSphere = nullptr;
 
 	UFUNCTION()
 	void LoseHealth(int Amount, int NewHealth);
