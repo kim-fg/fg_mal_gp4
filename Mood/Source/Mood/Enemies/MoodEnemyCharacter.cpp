@@ -29,7 +29,6 @@ void AMoodEnemyCharacter::LoseHealth(int Amount, int NewHealth) {
 }
 
 void AMoodEnemyCharacter::ScanForPlayer() {
-	UE_LOG(LogTemp, Log, TEXT("Scanning"));
 	if (CanSeePlayer()) {
 		GetWorldTimerManager().ClearTimer(PlayerScanTimer);
 		ActivationSphere->OnComponentBeginOverlap.RemoveAll(this);
@@ -45,8 +44,6 @@ bool AMoodEnemyCharacter::CanSeePlayer() {
 
 	FCollisionQueryParams CollisionQueryParams{};
 	CollisionQueryParams.AddIgnoredActor(this);
-
-	DrawDebugLine(GetWorld(), SelfEyes, PlayerCenter, FColor::Yellow, false, 3.0f);
 	
 	FHitResult OutHit{};
 	GetWorld()->LineTraceSingleByChannel(
