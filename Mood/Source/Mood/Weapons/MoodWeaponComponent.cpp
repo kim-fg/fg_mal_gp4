@@ -4,7 +4,10 @@
 #include "Mood/MoodHealthComponent.h"
 
 // Sets default values for this component's properties
-UMoodWeaponComponent::UMoodWeaponComponent() {
+/**
+ * 
+ */
+UMoodWeaponComponent::UMoodWeaponComponent(): USkeletalMeshComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
 }
 
@@ -20,7 +23,7 @@ bool UMoodWeaponComponent::TryAddAmmo(int Amount) {
 	return true;
 }
 
-void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection) {
+void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection, float DamageMultiplier) {
 	auto LineTraceEnd = MuzzleOrigin + MuzzleDirection * Range;
 	FHitResult Hit {};
 	FCollisionQueryParams CollisionQueryParams{};
@@ -28,7 +31,10 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 	World->LineTraceSingleByChannel(Hit, MuzzleOrigin, LineTraceEnd, ECC_Visibility, CollisionQueryParams);
 
 	if (DebugBullet) {
-		DrawDebugLine(World, MuzzleOrigin, LineTraceEnd, FColor::Green, false, 0.25f, 0, 0.25f);
+		DrawDebugLine(
+			World, MuzzleOrigin, LineTraceEnd, FColor::Green,
+			false, 0.25f, 0, 0.25f
+		);
 	}
 	
 	if (Hit.IsValidBlockingHit()) {
@@ -36,7 +42,8 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 		if (HitActor) {
 			auto Health = HitActor->GetComponentByClass<UMoodHealthComponent>();
 			if (Health) {
-				Health->Hurt(DamagePerPellet);
+				auto ActualDamage = FMath::FloorToInt32(DamagePerPellet * DamageMultiplier);
+				Health->Hurt(ActualDamage);
 				if (DebugBullet) {
 					UE_LOG(LogTemp, Log, TEXT("Shot %ls"), *Hit.GetActor()->GetActorNameOrLabel());
 				}
@@ -49,7 +56,7 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 	}
 }
 
-bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection) {
+bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection, float DamageMultiplier) {
 	if (!UnlimitedAmmo && CurrentAmmo < 1) {
 		return false;
 	}
@@ -74,7 +81,7 @@ bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection) {
 				FMath::FRandRange(-MaxSpread.Y, MaxSpread.Y)
 			);
 
-			TraceHit(World, MuzzleOrigin, MuzzleDirection + Spread);
+			TraceHit(World, MuzzleOrigin, MuzzleDirection + Spread, DamageMultiplier);
 		}
 	}
 

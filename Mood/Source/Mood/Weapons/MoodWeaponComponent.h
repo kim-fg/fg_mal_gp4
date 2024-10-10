@@ -19,7 +19,7 @@ public:
     
     /** Make the weapon Fire a Projectile */
     UFUNCTION(BlueprintCallable)
-    bool Use(FVector MuzzleOrigin, FVector MuzzleDirection);
+    bool Use(FVector MuzzleOrigin, FVector MuzzleDirection, float DamageMultiplier);
     UFUNCTION(BlueprintCallable)
     bool TryAddAmmo(int Amount);
 
@@ -39,7 +39,7 @@ public:
     
 
 protected:
-    virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection);
+    virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection, float DamageMultiplier);
     
 private:
     virtual void BeginPlay() override;
