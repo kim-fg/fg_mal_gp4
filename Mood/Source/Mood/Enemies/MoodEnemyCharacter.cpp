@@ -26,6 +26,7 @@ void AMoodEnemyCharacter::BeginPlay() {
 
 void AMoodEnemyCharacter::LoseHealth(int Amount, int NewHealth) {
 	MoodGameMode->ChangeMoodValue(Amount);
+	MoodGameMode->ResetDamageTime();
 }
 
 void AMoodEnemyCharacter::ScanForPlayer() {
