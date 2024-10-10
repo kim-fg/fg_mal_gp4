@@ -22,26 +22,15 @@ void AMoodGameMode::GameFinished()
 	GameFinishedSig.Broadcast();
 }
 
-
 void AMoodGameMode::Respawn()
 {
 	PlayerRespawn.Broadcast();
 }
 
-void AMoodGameMode::IncreaseMood(int Value)
-{
-	MoodMeterValue += Value;
-}
-
-void AMoodGameMode::DecreaseMood(int Value)
-{
-	MoodMeterValue -= Value;
-}
-
 void AMoodGameMode::ChangeMoodValue(int Value)
 {
+	MoodMeterValue += Value;
+	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 	
+	UE_LOG(LogTemp, Log, TEXT("Add %i - New Value: %i"), Value, MoodMeterValue);
 }
-
-
-

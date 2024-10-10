@@ -48,13 +48,17 @@ private:
     
     UPROPERTY(EditAnywhere, Category=Debug)
     bool DebugBullet = false;
+
+    //todo! MOVE ALL THIS TO A DATA CLASS
     
     UPROPERTY(EditDefaultsOnly, Category=Effects)
     USoundBase* FireSound = nullptr;
     UPROPERTY(EditDefaultsOnly, Category=Effects)
     FString AnimationID = "Weapon";
     UPROPERTY(EditDefaultsOnly, Category=Effects)
-    TSubclassOf<UCameraShakeBase> RecoilCameraShake;
+    TSubclassOf<UCameraShakeBase> RecoilCameraShake = nullptr;
+    UPROPERTY(EditDefaultsOnly, Category=Effects)
+    TSubclassOf<AActor> HitEffect = nullptr;
     
     UPROPERTY(EditDefaultsOnly, Category=Weapon)
     float FireDelay = 0.25f;
@@ -77,6 +81,6 @@ private:
     int StartAmmo = 25;
     int CurrentAmmo = 0;
 
-    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    UPROPERTY(EditDefaultsOnly, Category=UI)
     UTexture2D* AmmoIcon = nullptr;
 };

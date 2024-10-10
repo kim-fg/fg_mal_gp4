@@ -15,6 +15,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "../Weapons/MoodWeaponSlotComponent.h"
 #include "../MoodHealthComponent.h"
+#include "Mood/MoodGameMode.h"
 #include "Mood/MoodPlayerController.h"
 #include "Mood/Weapons/MoodWeaponComponent.h"
 
@@ -49,10 +50,7 @@ void AMoodCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if (GameMode == nullptr)
-		GameMode = GetWorld()->GetAuthGameMode();
-
-	// GameMode->
+	MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
 
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
@@ -70,6 +68,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	
 	CheckPlayerState();
 	FindLedge();
+
 	
 	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
 		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
@@ -251,7 +250,7 @@ void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 
 void AMoodCharacter::LoseHealth(int Amount, int NewHealth)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Lose health."));
+	MoodGameMode->ChangeMoodValue(-Amount);
 }
 
 void AMoodCharacter::ToggleInteraction()
@@ -300,7 +299,7 @@ void AMoodCharacter::Execution()
 
 void AMoodCharacter::ShootWeapon()
 {
-	if (CurrentState != Eps_ClimbingLedge || CurrentState != Eps_NoControl)
+	if (CurrentState != Eps_ClimbingLedge && CurrentState != Eps_NoControl)
 	{
 		WeaponSlotComponent->SetTriggerHeld(true);
 	}

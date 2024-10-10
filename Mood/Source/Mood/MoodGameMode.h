@@ -35,15 +35,8 @@ public:
 
 	int GetMoodMeterValue() { return MoodMeterValue; }
 
-	void IncreaseMood(int Value);
-
-	void DecreaseMood(int Value);
-
 	void ChangeMoodValue(int Value);
 
 private:
 	int MoodMeterValue = 0.f;
 };
-
-
-
