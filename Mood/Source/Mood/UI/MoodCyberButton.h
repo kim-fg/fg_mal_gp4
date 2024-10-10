@@ -33,14 +33,17 @@ public:
 	UPROPERTY(EditAnywhere)
 	FColor TextColor;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Blueprintable, BlueprintCallable, BlueprintAssignable)
 	FButtonClicked ButtonClickedSig;
 	UFUNCTION(Blueprintable)
 	void OnButtonClicked();
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Blueprintable, BlueprintCallable, BlueprintAssignable)
 	FButtonHovered ButtonHoveredSig;
 	UFUNCTION(Blueprintable)
 	void OnButtonHovered();
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Blueprintable, BlueprintCallable, BlueprintAssignable)
 	FButtonUnhovered ButtonUnhoveredSig;
 	UFUNCTION(Blueprintable)
 	void OnButtonUnhovered();

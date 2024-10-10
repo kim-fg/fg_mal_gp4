@@ -88,7 +88,7 @@ public:
 	void UpdateHealthbarWidget();
 	void UpdateAmmoWidget();
 	void UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime);
-	void UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, int MoodMeterValue);
+	void UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValue);
 	void UpdateCrosshair();
 
 #pragma endregion

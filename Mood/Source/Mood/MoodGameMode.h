@@ -32,7 +32,7 @@ public:
 	UPROPERTY()
 	FGameFinished GameFinishedSig;
 
-	int GetMoodMeterValue() { return MoodMeterValue; }
+	float GetMoodMeterValue() { return MoodMeterValue; }
 
 	void ChangeMoodValue(int Value);
 	void ResetDamageTime();

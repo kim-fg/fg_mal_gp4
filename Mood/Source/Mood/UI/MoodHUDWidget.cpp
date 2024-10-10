@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "MathUtil.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Player/MoodCharacter.h"
 #include "../MoodHealthComponent.h"
@@ -18,6 +19,7 @@
 #include "../MoodGameMode.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -107,16 +109,18 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 void UMoodHUDWidget::UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	MoodMeterNumber = GameMode->GetMoodMeterValue();
-	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FString::FromInt(GameMode->GetMoodMeterValue())));
+	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FString::FromInt(FMath::FloorToInt32(GameMode->GetMoodMeterValue()))));
 
 	UpdateMoodMeterBars(MyGeometry, InDeltaTime, MoodMeterNumber);
 }
 
-void UMoodHUDWidget::UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, int MoodMeterValue)
+void UMoodHUDWidget::UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValue)
 {
-	if (MoodMeterNumber >= 1 && MoodMeterNumber <= 222)
+	
+	//GEngine->AddOnScreenDebugMessage(-1, 1.f, FColor::Blue, FString::FromInt()
+	if (MoodMeterNumber >= 0 && MoodMeterNumber <= 222)
 	{
-		MoodMeterNumber = MoodMeterNumber / 222;
+		MoodMeterNumber = UKismetMathLibrary::NormalizeToRange(MoodMeterNumber, 0, 222);
 		MoodMeterWidget->MoodMeterInnerCircle->SetValue(MoodMeterNumber);
 	}
 	else if (MoodMeterNumber >= 223 && MoodMeterNumber <= 444)
