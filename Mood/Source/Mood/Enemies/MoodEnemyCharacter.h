@@ -2,6 +2,7 @@
 
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
+#include "Mood/Player/MoodCharacter.h"
 #include "MoodEnemyCharacter.generated.h"
 
 class AMoodGameMode;
@@ -9,6 +10,8 @@ class UBehaviorTree;
 class UPawnSensingComponent;
 class UMoodWeaponSlotComponent;
 class UMoodHealthComponent;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerSeen, AMoodCharacter*, Player);
 
 UCLASS(Abstract)
 class AMoodEnemyCharacter : public ACharacter {
@@ -28,6 +31,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UMoodHealthComponent> Health = nullptr;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnPlayerSeen OnPlayerSeen;
+
 	UFUNCTION(BlueprintCallable)
 	UMoodWeaponSlotComponent* GetWeaponSlot() { return WeaponSlot; }
 	
@@ -41,7 +47,19 @@ protected:
 
 	UFUNCTION()
 	void LoseHealth(int Amount, int NewHealth);
-	
+
+private:
 	UPROPERTY()
 	AMoodGameMode* MoodGameMode = nullptr;
+	
+	UPROPERTY()
+	TObjectPtr<AMoodCharacter> Player;
+
+	bool CanSeePlayer();
+	
+	UFUNCTION()
+	void OnActivationOverlap(
+		UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
+		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult
+	);
 };
