@@ -31,7 +31,7 @@ void AMoodGameMode::Respawn()
 
 void AMoodGameMode::ChangeMoodValue(int Value)
 {
-	MoodMeterValue += Value;
+	MoodMeterValue += Value * 5;
 }
 
 void AMoodGameMode::ResetDamageTime()
@@ -47,8 +47,4 @@ void AMoodGameMode::DecreaseMoodOverTime()
 		MoodMeterValue -= GetWorld()->DeltaTimeSeconds;
 
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
-
-	UE_LOG(LogTemp, Log, TEXT("Since enemy hit: %f"), TimeSinceEnemyDamaged);
-	UE_LOG(LogTemp, Log, TEXT("Mood Meter Value: %f"), MoodMeterValue);
-	UE_LOG(LogTemp, Log, TEXT("Decrease Value: %f"), GetWorld()->DeltaTimeSeconds);
 }

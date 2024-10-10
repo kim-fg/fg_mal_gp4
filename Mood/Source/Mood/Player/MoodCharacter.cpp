@@ -175,25 +175,25 @@ void AMoodCharacter::CheckMoodMeter()
 {
 	if (!IsValid(MoodGameMode))
 		return;
-
+	
 	const int MoodValue = MoodGameMode->GetMoodMeterValue();
 	if (MoodValue >= 666)
 	{
 		MoodState = Ems_Mood666;
 		MoodSpeedPercent = 1.5f;
-		MoodDamagePercent = 1.5f;
+		MoodDamagePercent = 2.5f;
 	}
 	else if (MoodValue >= 444)
 	{
 		MoodState = Ems_Mood444;
-		MoodSpeedPercent = 1.3f;
-		MoodDamagePercent = 1.3f;
+		MoodSpeedPercent = 1.2f;
+		MoodDamagePercent = 1.8f;
 	}
 	else if (MoodValue >= 222)
 	{
 		MoodState = Ems_Mood222;
 		MoodSpeedPercent = 1.1f;
-		MoodDamagePercent = 1.1f;
+		MoodDamagePercent = 1.3f;
 	}
 	else
 	{
@@ -201,6 +201,9 @@ void AMoodCharacter::CheckMoodMeter()
 		MoodSpeedPercent = 1.f;
 		MoodDamagePercent = 1.f;
 	}
+
+	if (bIsTryingToFire)
+		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 }
 
 void AMoodCharacter::Move(const FInputActionValue& Value)
@@ -325,12 +328,14 @@ void AMoodCharacter::ShootWeapon()
 {
 	if (CurrentState != Eps_ClimbingLedge && CurrentState != Eps_NoControl)
 	{
+		bIsTryingToFire = true;
 		WeaponSlotComponent->SetTriggerHeld(true);
 	}
 }
 
 void AMoodCharacter::StopShootWeapon()
 {
+	bIsTryingToFire = false;
 	WeaponSlotComponent->SetTriggerHeld(false);
 }
 
