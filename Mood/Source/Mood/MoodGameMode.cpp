@@ -31,6 +31,9 @@ void AMoodGameMode::Respawn()
 
 void AMoodGameMode::ChangeMoodValue(int Value)
 {
+	if (Value < 0)
+		Value /= 2;
+	
 	MoodMeterValue += Value * 5;
 }
 
