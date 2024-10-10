@@ -22,6 +22,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool AddWeapon(UMoodWeaponComponent* Weapon);
 
+	UFUNCTION(BlueprintCallable)
+	void SetDamageMultiplier(float InDamageMultiplier) {
+		if (InDamageMultiplier < 1.0f) { InDamageMultiplier = 1.0f; }
+		DamageMultiplier = InDamageMultiplier;
+	}
+
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool HasWeapon() { return Weapons.Num() > 0; }
 	void SelectNextWeapon();
@@ -60,6 +66,7 @@ private:
 	
 	int SelectedWeaponIndex = 0;
 	bool TriggerHeld = false;
+	float DamageMultiplier = 1.0f;
 	
 	/** Gun muzzle's offset from the characters location */
 	UPROPERTY(EditDefaultsOnly, Category=Gameplay)

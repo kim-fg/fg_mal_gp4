@@ -100,7 +100,7 @@ void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 	auto SelectedWeapon = Weapons[SelectedWeaponIndex];
 	auto MuzzleOrigin = MuzzleRoot ? MuzzleRoot->GetComponentLocation() : Owner->GetActorLocation();
 	auto MuzzleDirection = MuzzleRoot ? MuzzleRoot->GetForwardVector() : Owner->GetActorForwardVector();
-	auto WeaponUsedSuccess = SelectedWeapon->Use(MuzzleOrigin + MuzzleOffset, MuzzleDirection);
+	auto WeaponUsedSuccess = SelectedWeapon->Use(MuzzleOrigin + MuzzleOffset, MuzzleDirection, DamageMultiplier);
 
 	if (WeaponUsedSuccess) {
 		OnWeaponUsed.Broadcast(SelectedWeapon);
