@@ -25,18 +25,21 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Respawn();
-
-
+	
 	UPROPERTY(BlueprintAssignable)
 	FPlayerRespawn PlayerRespawn;
 
 	UPROPERTY()
 	FGameFinished GameFinishedSig;
 
-	int GetMoodMeterValue() { return MoodMeterValue; }
+	float GetMoodMeterValue() { return MoodMeterValue; }
 
 	void ChangeMoodValue(int Value);
+	void ResetDamageTime();
 
 private:
-	int MoodMeterValue = 0.f;
+	float MoodMeterValue = 0.f;
+	float TimeSinceEnemyDamaged = 0.f;
+
+	void DecreaseMoodOverTime();
 };

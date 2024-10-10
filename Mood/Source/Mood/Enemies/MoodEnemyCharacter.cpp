@@ -9,22 +9,32 @@
 AMoodEnemyCharacter::AMoodEnemyCharacter() {
 	ActivationSphere = CreateDefaultSubobject<USphereComponent>("Activation Sphere");
 	ActivationSphere->SetupAttachment(RootComponent);
-	ActivationSphere->OnComponentBeginOverlap.AddDynamic(this, &AMoodEnemyCharacter::OnActivationOverlap);
+	
 
 	Health = CreateDefaultSubobject<UMoodHealthComponent>(TEXT("Health"));
-	Health->OnHurt.AddUniqueDynamic(this, &AMoodEnemyCharacter::LoseHealth);
 
 	WeaponSlot = CreateDefaultSubobject<UMoodWeaponSlotComponent>(TEXT("Weapon Slot"));
 }
 
 void AMoodEnemyCharacter::BeginPlay() {
 	Super::BeginPlay();
+	ActivationSphere->OnComponentBeginOverlap.AddUniqueDynamic(this, &AMoodEnemyCharacter::OnActivationOverlap);
+	Health->OnHurt.AddUniqueDynamic(this, &AMoodEnemyCharacter::LoseHealth);
 
 	MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
 }
 
 void AMoodEnemyCharacter::LoseHealth(int Amount, int NewHealth) {
 	MoodGameMode->ChangeMoodValue(Amount);
+	MoodGameMode->ResetDamageTime();
+}
+
+void AMoodEnemyCharacter::ScanForPlayer() {
+	if (CanSeePlayer()) {
+		GetWorldTimerManager().ClearTimer(PlayerScanTimer);
+		ActivationSphere->OnComponentBeginOverlap.RemoveAll(this);
+		OnPlayerSeen.Broadcast(Player);
+	}
 }
 
 bool AMoodEnemyCharacter::CanSeePlayer() {
@@ -35,8 +45,6 @@ bool AMoodEnemyCharacter::CanSeePlayer() {
 
 	FCollisionQueryParams CollisionQueryParams{};
 	CollisionQueryParams.AddIgnoredActor(this);
-
-	DrawDebugLine(GetWorld(), SelfEyes, PlayerCenter, FColor::Yellow, false, 3.0f);
 	
 	FHitResult OutHit{};
 	GetWorld()->LineTraceSingleByChannel(
@@ -54,15 +62,15 @@ bool AMoodEnemyCharacter::CanSeePlayer() {
 void AMoodEnemyCharacter::OnActivationOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep,
                                               const FHitResult& SweepResult) {
+	if (Player) { return; }
+	
 	auto OtherAsPlayer = Cast<AMoodCharacter>(OtherActor);
 	if (!OtherAsPlayer) { return; }
 
 	Player = OtherAsPlayer;
-	if (CanSeePlayer()) {
-		ActivationSphere->OnComponentBeginOverlap.RemoveAll(this);
-		OnPlayerSeen.Broadcast(Player);
-		return;
-	}
 
-	// TODO! Start looking for player line of sight every frame
+	GetWorldTimerManager().SetTimer(
+		PlayerScanTimer, this, &AMoodEnemyCharacter::ScanForPlayer,
+		0.1f, true, 0.0f
+	);
 }

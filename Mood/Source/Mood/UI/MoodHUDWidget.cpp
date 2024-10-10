@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "MathUtil.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Player/MoodCharacter.h"
 #include "../MoodHealthComponent.h"
@@ -18,6 +19,7 @@
 #include "../MoodGameMode.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -26,7 +28,9 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	//Updating Widget Elements
 	UpdateHealthbarWidget();
 	UpdateAmmoWidget();
+	UpdateMoodMeterWidget(MyGeometry, InDeltaTime);
 
+	/*
 	//Spinning radial + counting text
 	InnerCircleSpin += InDeltaTime / 10;
 	MiddleCircleSpin += InDeltaTime / 10;
@@ -48,6 +52,7 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if (MoodMeterNumber >= 666)
 		MoodMeterNumber = 0;
+		*/
 }
 
 void UMoodHUDWidget::GetHealthComponent(ACharacter* Player)
@@ -101,9 +106,38 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 		GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, TEXT("WeaponSlotComponent is nullptr in the HUD!"));
 }
 
-void UMoodHUDWidget::UpdateMoodMeterWidget(float InDeltaTime)
+void UMoodHUDWidget::UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	MoodMeterNumber = GameMode->GetMoodMeterValue();
+	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FString::FromInt(FMath::FloorToInt32(GameMode->GetMoodMeterValue()))));
+
+	UpdateMoodMeterBars(MyGeometry, InDeltaTime, MoodMeterNumber);
+}
+
+void UMoodHUDWidget::UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValue)
 {
 	
+	if (MoodMeterNumber >= 0 && MoodMeterNumber <= 222)
+	{
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0.f);
+		MoodMeterWidget->MoodMeterOuterCircle->SetValue(0.f);
+		MoodMeterNumber = UKismetMathLibrary::NormalizeToRange(MoodMeterNumber, 0, 222);
+		MoodMeterWidget->MoodMeterInnerCircle->SetValue(MoodMeterNumber);
+	}
+	else if (MoodMeterNumber >= 223 && MoodMeterNumber <= 444)
+	{
+		MoodMeterWidget->MoodMeterInnerCircle->SetValue(1.f);
+		MoodMeterWidget->MoodMeterOuterCircle->SetValue(0.f);
+		MoodMeterNumber = UKismetMathLibrary::NormalizeToRange(MoodMeterNumber, 223, 444);
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MoodMeterNumber);
+	}
+	else if (MoodMeterNumber >= 445 && MoodMeterNumber <= 666)
+	{
+		MoodMeterWidget->MoodMeterInnerCircle->SetValue(1.f);
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(1.f);
+		MoodMeterNumber = UKismetMathLibrary::NormalizeToRange(MoodMeterNumber, 445, 666);
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MoodMeterNumber);
+	}
 }
 
 void UMoodHUDWidget::UpdateCrosshair()
@@ -153,9 +187,9 @@ void UMoodHUDWidget::NativeConstruct()
 	GameMode->PlayerRespawn.AddUniqueDynamic(this, &UMoodHUDWidget::HideLostScreen);
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
-	MoodMeterWidget->MoodMeterInnerCircle->SetValue(InnerCircleSpin);
-	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MiddleCircleSpin);
-	MoodMeterWidget->MoodMeterOuterCircle->SetValue(OuterCircleSpin);
+	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
+	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
+	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
 
 }
 

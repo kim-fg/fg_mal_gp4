@@ -5,18 +5,15 @@
 #include "Camera/CameraComponent.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/SkeletalMeshComponent.h"
-#include "Components/BoxComponent.h"
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
-#include "MoodCameraShake.h"
 #include "Engine/LocalPlayer.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "../Weapons/MoodWeaponSlotComponent.h"
 #include "../MoodHealthComponent.h"
 #include "Mood/MoodGameMode.h"
-#include "Mood/MoodPlayerController.h"
 #include "Mood/Weapons/MoodWeaponComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -40,10 +37,6 @@ AMoodCharacter::AMoodCharacter()
 	HealthComponent = CreateDefaultSubobject<UMoodHealthComponent>(TEXT("HealthComponent"));
 	WeaponSlotComponent = CreateDefaultSubobject<UMoodWeaponSlotComponent>(TEXT("WeaponSlotComponent"));
 	WeaponSlotComponent->SetMuzzleRoot(FirstPersonCameraComponent);
-	
-	// // Create melee attack box.
-	// MeleeAttackBoxComponent = CreateDefaultSubobject<UBoxComponent>(TEXT("MeleeAttackBox"));
-	// MeleeAttackBoxComponent->SetupAttachment(GetCapsuleComponent());
 }
 
 void AMoodCharacter::BeginPlay()
@@ -180,32 +173,60 @@ void AMoodCharacter::CheckPlayerState()
 
 void AMoodCharacter::CheckMoodMeter()
 {
+	if (!IsValid(MoodGameMode))
+		return;
 	
+	const int MoodValue = MoodGameMode->GetMoodMeterValue();
+	if (MoodValue >= 666)
+	{
+		MoodState = Ems_Mood666;
+		MoodSpeedPercent = 1.5f;
+		MoodDamagePercent = 2.5f;
+	}
+	else if (MoodValue >= 444)
+	{
+		MoodState = Ems_Mood444;
+		MoodSpeedPercent = 1.2f;
+		MoodDamagePercent = 1.8f;
+	}
+	else if (MoodValue >= 222)
+	{
+		MoodState = Ems_Mood222;
+		MoodSpeedPercent = 1.1f;
+		MoodDamagePercent = 1.3f;
+	}
+	else
+	{
+		MoodState = Ems_NoMood;
+		MoodSpeedPercent = 1.f;
+		MoodDamagePercent = 1.f;
+	}
+
+	if (bIsTryingToFire)
+		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 }
 
 void AMoodCharacter::Move(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
-		// add movement 
-		AddMovementInput(GetActorForwardVector(), MovementVector.Y);
-		AddMovementInput(GetActorRightVector(), MovementVector.X);
+		const FVector2D MoodSpeed = MovementVector * MoodSpeedPercent;
+		AddMovementInput(GetActorForwardVector(), MoodSpeed.Y);
+		AddMovementInput(GetActorRightVector(), MoodSpeed.X);
 	}
 }
 
 void AMoodCharacter::Look(const FInputActionValue& Value)
 {
-	// input is a Vector2D
 	FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
-		// add yaw and pitch input to controller
-		AddControllerYawInput(LookAxisVector.X);
-		AddControllerPitchInput(LookAxisVector.Y);
+		const FVector2D TotalLookAxis = LookAxisVector * CameraSpeed;
+		AddControllerYawInput(TotalLookAxis.X);
+		AddControllerPitchInput(TotalLookAxis.Y);
 	}
 }
 
@@ -307,12 +328,14 @@ void AMoodCharacter::ShootWeapon()
 {
 	if (CurrentState != Eps_ClimbingLedge && CurrentState != Eps_NoControl)
 	{
+		bIsTryingToFire = true;
 		WeaponSlotComponent->SetTriggerHeld(true);
 	}
 }
 
 void AMoodCharacter::StopShootWeapon()
 {
+	bIsTryingToFire = false;
 	WeaponSlotComponent->SetTriggerHeld(false);
 }
 
