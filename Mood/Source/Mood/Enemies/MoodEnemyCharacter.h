@@ -19,11 +19,7 @@ class AMoodEnemyCharacter : public ACharacter {
 
 public:
 	AMoodEnemyCharacter();
-
-protected:
-	virtual void BeginPlay() override;
-
-public:
+	
 	UFUNCTION(BlueprintCallable)
 	UMoodHealthComponent* GetHealth() { return Health; }
 	
@@ -37,7 +33,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UMoodWeaponSlotComponent* GetWeaponSlot() { return WeaponSlot; }
 	
-protected:
+protected:	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UBehaviorTree> BehaviorTree = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -49,17 +45,22 @@ protected:
 	void LoseHealth(int Amount, int NewHealth);
 
 private:
-	UPROPERTY()
-	AMoodGameMode* MoodGameMode = nullptr;
-	
-	UPROPERTY()
-	TObjectPtr<AMoodCharacter> Player;
-
-	bool CanSeePlayer();
+	void BeginPlay() override;
 	
 	UFUNCTION()
 	void OnActivationOverlap(
 		UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp,
 		int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult
 	);
+	
+	UPROPERTY()
+	AMoodGameMode* MoodGameMode = nullptr;
+	
+	UPROPERTY()
+	TObjectPtr<AMoodCharacter> Player;
+
+	UFUNCTION(BlueprintCallable)
+	void ScanForPlayer();
+	bool CanSeePlayer();
+	FTimerHandle PlayerScanTimer;
 };
