@@ -18,7 +18,7 @@ AMoodEnemyCharacter::AMoodEnemyCharacter() {
 
 void AMoodEnemyCharacter::BeginPlay() {
 	Super::BeginPlay();
-	ActivationSphere->OnComponentBeginOverlap.AddDynamic(this, &AMoodEnemyCharacter::OnActivationOverlap);
+	ActivationSphere->OnComponentBeginOverlap.AddUniqueDynamic(this, &AMoodEnemyCharacter::OnActivationOverlap);
 	Health->OnHurt.AddUniqueDynamic(this, &AMoodEnemyCharacter::LoseHealth);
 
 	MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
