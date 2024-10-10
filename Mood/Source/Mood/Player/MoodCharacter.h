@@ -159,6 +159,7 @@ private:
 
 protected:
 	void CheckPlayerState();
+	void CheckMoodMeter();
 	
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

@@ -50,8 +50,9 @@ void AMoodCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
-
+	if (!IsValid(MoodGameMode))
+		MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
+	
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
 
@@ -67,8 +68,8 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	bIsMidAir = GetCharacterMovement()->Velocity.Z != 0 ? 1 : 0;
 	
 	CheckPlayerState();
+	CheckMoodMeter();
 	FindLedge();
-
 	
 	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
 		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
@@ -175,6 +176,11 @@ void AMoodCharacter::CheckPlayerState()
 			CurrentState = Eps_Idle;
 		break;
 	}
+}
+
+void AMoodCharacter::CheckMoodMeter()
+{
+	
 }
 
 void AMoodCharacter::Move(const FInputActionValue& Value)
@@ -367,7 +373,7 @@ void AMoodCharacter::DeathCamMovement()
 	{
 		if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f && !bHasRespawned)
 		{
-			GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 31), 0.01));
+			GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 40), 0.01));
 			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 2);
 			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 2);
 		}
