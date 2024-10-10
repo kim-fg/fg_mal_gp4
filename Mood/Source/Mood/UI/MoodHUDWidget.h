@@ -72,7 +72,7 @@ public:
 	float OuterCircleSpin = 0.1f;
 	//text change variable
 	UPROPERTY()
-	float MoodMeterNumber = 0.f;
+	int MoodMeterNumber;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
@@ -87,7 +87,8 @@ public:
 
 	void UpdateHealthbarWidget();
 	void UpdateAmmoWidget();
-	void UpdateMoodMeterWidget(float InDeltaTime);
+	void UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime);
+	void UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, int MoodMeterValue);
 	void UpdateCrosshair();
 
 #pragma endregion
