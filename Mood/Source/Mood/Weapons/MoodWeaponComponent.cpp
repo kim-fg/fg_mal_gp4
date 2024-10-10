@@ -42,6 +42,10 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 				}
 			}
 		}
+
+		if (HitEffect) {
+			GetWorld()->SpawnActor(HitEffect, &Hit.Location, &FRotator::ZeroRotator); 
+		}
 	}
 }
 
