@@ -103,8 +103,8 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		
 		// Attacking
 		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execution);
-		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AMoodCharacter::ShootWeapon);
-		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AMoodCharacter::StopShootWeapon);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ShootWeapon);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Canceled, this, &AMoodCharacter::StopShootWeapon);
 
 		// Weapon Selection
 		EnhancedInputComponent->BindAction(ScrollWeaponAction, ETriggerEvent::Triggered, this, &AMoodCharacter::WeaponScroll);
@@ -349,6 +349,8 @@ void AMoodCharacter::Execution()
 
 void AMoodCharacter::ShootWeapon()
 {
+	UE_LOG(LogTemp, Log, TEXT("ShootWeapon"));
+	
 	if (CurrentState != Eps_ClimbingLedge && CurrentState != Eps_NoControl)
 	{
 		bIsTryingToFire = true;
@@ -358,6 +360,7 @@ void AMoodCharacter::ShootWeapon()
 
 void AMoodCharacter::StopShootWeapon()
 {
+	UE_LOG(LogTemp, Log, TEXT("StopShootingWeapon"));
 	bIsTryingToFire = false;
 	WeaponSlotComponent->SetTriggerHeld(false);
 }
