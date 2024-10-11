@@ -103,8 +103,8 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		
 		// Attacking
 		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execution);
-		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Started, this, &AMoodCharacter::ShootWeapon);
-		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Completed, this, &AMoodCharacter::StopShootWeapon);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ShootWeapon);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Canceled, this, &AMoodCharacter::StopShootWeapon);
 
 		// Weapon Selection
 		EnhancedInputComponent->BindAction(ScrollWeaponAction, ETriggerEvent::Triggered, this, &AMoodCharacter::WeaponScroll);
@@ -163,6 +163,7 @@ void AMoodCharacter::CheckPlayerState()
 			CurrentState = Eps_Walking;
 		break;
 	case Eps_NoControl:
+		StopShootWeapon();
 		DeathCamMovement();
 		break;
 
@@ -184,40 +185,48 @@ void AMoodCharacter::CheckMoodMeter()
 		MoodState = Ems_Mood666;
 		MoodSpeedPercent = 1.5f;
 		MoodDamagePercent = 2.5f;
+		MoodHealthLoss = 0.5f;
 	}
 	else if (MoodValue >= 444)
 	{
 		MoodState = Ems_Mood444;
 		MoodSpeedPercent = 1.2f;
 		MoodDamagePercent = 1.8f;
+		MoodHealthLoss = 0.8f;
 	}
 	else if (MoodValue >= 222)
 	{
 		MoodState = Ems_Mood222;
 		MoodSpeedPercent = 1.1f;
 		MoodDamagePercent = 1.3f;
+		MoodHealthLoss = 0.9f;
 	}
 	else
 	{
 		MoodState = Ems_NoMood;
 		MoodSpeedPercent = 1.f;
 		MoodDamagePercent = 1.f;
+		MoodHealthLoss = 1.f;
 	}
 
 	if (bIsTryingToFire)
 		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
+
+	if (MoodHealthLoss != LastMoodHealthLoss)
+	{
+		LastMoodHealthLoss = MoodHealthLoss;
+		HealthComponent->AlterHealthLoss(MoodHealthLoss);
+	}
 }
 
 void AMoodCharacter::AttemptClimb()
 {
 	bCanClimb = true;
-	UE_LOG(LogTemp, Log, TEXT("Can climb"))
 }
 
 void AMoodCharacter::DontClimb()
 {
 	bCanClimb = false;
-	UE_LOG(LogTemp, Log, TEXT("Can NOT climb"))
 }
 
 void AMoodCharacter::Move(const FInputActionValue& Value)
@@ -340,6 +349,8 @@ void AMoodCharacter::Execution()
 
 void AMoodCharacter::ShootWeapon()
 {
+	UE_LOG(LogTemp, Log, TEXT("ShootWeapon"));
+	
 	if (CurrentState != Eps_ClimbingLedge && CurrentState != Eps_NoControl)
 	{
 		bIsTryingToFire = true;
@@ -349,6 +360,7 @@ void AMoodCharacter::ShootWeapon()
 
 void AMoodCharacter::StopShootWeapon()
 {
+	UE_LOG(LogTemp, Log, TEXT("StopShootingWeapon"));
 	bIsTryingToFire = false;
 	WeaponSlotComponent->SetTriggerHeld(false);
 }

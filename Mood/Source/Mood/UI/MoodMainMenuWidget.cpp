@@ -3,6 +3,9 @@
 #include "MoodGameInstance.h"
 #include "Components/Button.h"
 #include "MoodCyberButton.h"
+#include "MoodLevelSelectWidget.h"
+#include "MoodOptionsMenuWidget.h"
+#include "Animation/WidgetAnimation.h"
 #include "Kismet/GameplayStatics.h"
 
 void UMoodMainMenuWidget::NativeConstruct()
@@ -14,6 +17,9 @@ void UMoodMainMenuWidget::NativeConstruct()
 	LevelSelectButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowLevelSelectMenu);
 	OptionsButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowOptionsMenu);
 	ExitGameButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ExitGame);
+
+	//LevelSelectWidget->SetVisibility(ESlateVisibility::Hidden);
+	OptionsMenuWidget->SetVisibility(ESlateVisibility::Hidden);
 	
 }
 
@@ -33,7 +39,8 @@ void UMoodMainMenuWidget::StartGame()
 
 void UMoodMainMenuWidget::ShowLevelSelectMenu()
 {
-	
+	//LevelSelectWidget->SetVisibility(ESlateVisibility::Visible);
+	LevelSelectWidget->OpenWidget();
 }
 
 void UMoodMainMenuWidget::ShowOptionsMenu()

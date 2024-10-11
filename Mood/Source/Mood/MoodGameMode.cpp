@@ -27,6 +27,7 @@ void AMoodGameMode::GameFinished()
 void AMoodGameMode::Respawn()
 {
 	PlayerRespawn.Broadcast();
+	ResetMoodValue();
 }
 
 void AMoodGameMode::ChangeMoodValue(int Value)
