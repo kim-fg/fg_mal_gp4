@@ -156,6 +156,8 @@ private:
 	float MoodSpeedPercent = 1.f;
 	float MoodDamagePercent = 1.f;
 	float CurrentMoodDamagePercent = 1.f;
+	float MoodHealthLoss = 1.f;
+	float LastMoodHealthLoss = 1.f;
 	
 	UPROPERTY(EditDefaultsOnly)
 	float DeathFallSpeed = 20.f;

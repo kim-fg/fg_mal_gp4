@@ -185,28 +185,38 @@ void AMoodCharacter::CheckMoodMeter()
 		MoodState = Ems_Mood666;
 		MoodSpeedPercent = 1.5f;
 		MoodDamagePercent = 2.5f;
+		MoodHealthLoss = 0.5f;
 	}
 	else if (MoodValue >= 444)
 	{
 		MoodState = Ems_Mood444;
 		MoodSpeedPercent = 1.2f;
 		MoodDamagePercent = 1.8f;
+		MoodHealthLoss = 0.8f;
 	}
 	else if (MoodValue >= 222)
 	{
 		MoodState = Ems_Mood222;
 		MoodSpeedPercent = 1.1f;
 		MoodDamagePercent = 1.3f;
+		MoodHealthLoss = 0.9f;
 	}
 	else
 	{
 		MoodState = Ems_NoMood;
 		MoodSpeedPercent = 1.f;
 		MoodDamagePercent = 1.f;
+		MoodHealthLoss = 1.f;
 	}
 
 	if (bIsTryingToFire)
 		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
+
+	if (MoodHealthLoss != LastMoodHealthLoss)
+	{
+		LastMoodHealthLoss = MoodHealthLoss;
+		HealthComponent->AlterHealthLoss(MoodHealthLoss);
+	}
 }
 
 void AMoodCharacter::AttemptClimb()

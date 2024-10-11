@@ -26,6 +26,9 @@ public:
 	void Heal(int Amount);
 	UFUNCTION(BlueprintCallable)
 	void Reset();
+
+	void AlterHealthLoss(float Value);
+
 protected:
 	virtual void BeginPlay() override;
 	
@@ -33,5 +36,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	int MaxHealth = 100;
 	int CurrentHealth = 0;
+	float HealthLossPercent = 1.f;
 	bool IsDead = false;
 };
