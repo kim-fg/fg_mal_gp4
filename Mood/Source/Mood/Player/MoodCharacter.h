@@ -60,6 +60,9 @@ class AMoodCharacter : public ACharacter
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* JumpAction;
+		
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ClimbAction;
 
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
@@ -164,10 +167,14 @@ private:
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
 	bool bIsTryingToFire = false;
+	bool bCanClimb = false;
 
 protected:
 	void CheckPlayerState();
 	void CheckMoodMeter();
+
+	void AttemptClimb();
+	void DontClimb();
 	
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);

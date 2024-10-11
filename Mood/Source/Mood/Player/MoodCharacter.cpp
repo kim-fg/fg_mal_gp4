@@ -89,6 +89,10 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
+		// Climbing
+		EnhancedInputComponent->BindAction(ClimbAction, ETriggerEvent::Started, this, &AMoodCharacter::AttemptClimb);
+		EnhancedInputComponent->BindAction(ClimbAction, ETriggerEvent::Completed, this, &AMoodCharacter::DontClimb);
+		
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Move);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Sprint);
@@ -202,6 +206,18 @@ void AMoodCharacter::CheckMoodMeter()
 
 	if (bIsTryingToFire)
 		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
+}
+
+void AMoodCharacter::AttemptClimb()
+{
+	bCanClimb = true;
+	UE_LOG(LogTemp, Log, TEXT("Can climb"))
+}
+
+void AMoodCharacter::DontClimb()
+{
+	bCanClimb = false;
+	UE_LOG(LogTemp, Log, TEXT("Can NOT climb"))
 }
 
 void AMoodCharacter::Move(const FInputActionValue& Value)
@@ -339,7 +355,7 @@ void AMoodCharacter::StopShootWeapon()
 
 void AMoodCharacter::FindLedge()
 {
-	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl)
+	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl || !bCanClimb)
 		return;
 	
 	FHitResult BottomHitResult;
