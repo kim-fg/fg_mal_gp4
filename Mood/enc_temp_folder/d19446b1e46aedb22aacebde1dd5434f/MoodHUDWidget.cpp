@@ -116,7 +116,7 @@ void UMoodHUDWidget::UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDe
 		MoodMeterWidget->MoodMeterInnerCircle->SetValue(1.f);
 		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(1.f);
 		MoodMeterNumber = UKismetMathLibrary::NormalizeToRange(MoodMeterNumber, 445, 666);
-		MoodMeterWidget->MoodMeterOuterCircle->SetValue(MoodMeterNumber);
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MoodMeterNumber);
 	}
 }
 
