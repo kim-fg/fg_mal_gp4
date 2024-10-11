@@ -5,8 +5,8 @@
 
 class UMoodHealthComponent;
 class ACharacter;
-//Increases the players health by 10 when picked up
 
+//Increases the players health by a configurable amount when picked up
 UCLASS()
 class AMoodHealthPickup : public AMoodPickup {
     GENERATED_BODY()
@@ -16,4 +16,13 @@ public:
 
 protected:
     virtual void PickedUp(ACharacter* Character) override;
+
+private:
+    //Configurable health increase amount
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup|Health", meta = (AllowPrivateAccess = "true"))
+    int32 HealAmount;
+
+    //Static mesh for the pickup
+    UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Pickup|Mesh", meta = (AllowPrivateAccess = "true"))
+    TObjectPtr<UStaticMeshComponent> PickupMesh;
 };
