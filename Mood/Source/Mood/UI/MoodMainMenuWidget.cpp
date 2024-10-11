@@ -2,6 +2,7 @@
 
 #include "MoodGameInstance.h"
 #include "Components/Button.h"
+#include "MoodCyberButton.h"
 #include "Kismet/GameplayStatics.h"
 
 void UMoodMainMenuWidget::NativeConstruct()
@@ -9,10 +10,10 @@ void UMoodMainMenuWidget::NativeConstruct()
 	Super::NativeConstruct();
 	
 	MoodGameInstance = Cast<UMoodGameInstance>(GetGameInstance());
-	StartGameButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::StartGame);
-	LevelSelectButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowLevelSelectMenu);
-	OptionsButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowOptionsMenu);
-	ExitGameButton->OnClicked.AddUniqueDynamic(this, &UMoodMainMenuWidget::ExitGame);
+	StartGameButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::StartGame);
+	LevelSelectButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowLevelSelectMenu);
+	OptionsButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowOptionsMenu);
+	ExitGameButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ExitGame);
 	
 }
 

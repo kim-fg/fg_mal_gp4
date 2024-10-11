@@ -152,6 +152,7 @@ private:
 
 	float MoodSpeedPercent = 1.f;
 	float MoodDamagePercent = 1.f;
+	float CurrentMoodDamagePercent = 1.f;
 	
 	UPROPERTY(EditDefaultsOnly)
 	float DeathFallSpeed = 20.f;
@@ -162,6 +163,7 @@ private:
 	bool bIsDead = false;
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
+	bool bIsTryingToFire = false;
 
 protected:
 	void CheckPlayerState();
