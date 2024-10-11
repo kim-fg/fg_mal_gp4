@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "../Weapons/MoodWeaponComponent.h"
 #include "MoodHUDWidget.generated.h"
 
 
@@ -13,6 +14,7 @@ class UMoodLostScreen;
 class UMoodPlayerHealthBar;
 class UMoodHealthComponent;
 class AMoodGameMode;
+class UImage;
 class UMoodWeaponSlotComponent;
 struct FInputModeUIOnly;
 
@@ -43,6 +45,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodAmmoWidget* AmmoWidget;
+
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* CrossHair = nullptr;
 
 #pragma endregion
 
@@ -89,7 +94,7 @@ public:
 	void UpdateAmmoWidget();
 	void UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime);
 	void UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValue);
-	void UpdateCrosshair();
+	void UpdateCrosshair(UMoodWeaponComponent* WeaponToPass);
 
 #pragma endregion
 
