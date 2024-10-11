@@ -14,6 +14,7 @@
 #include "../Weapons/MoodWeaponSlotComponent.h"
 #include "../MoodHealthComponent.h"
 #include "Mood/MoodGameMode.h"
+#include "Mood/Enemies/MoodEnemyCharacter.h"
 #include "Mood/Weapons/MoodWeaponComponent.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -102,10 +103,11 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Look);
 		
 		// Attacking
-		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execution);
+		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execute);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ShootWeapon);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Canceled, this, &AMoodCharacter::StopShootWeapon);
-
+		EnhancedInputComponent->BindAction(ExecuteAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execute);
+		
 		// Weapon Selection
 		EnhancedInputComponent->BindAction(ScrollWeaponAction, ETriggerEvent::Triggered, this, &AMoodCharacter::WeaponScroll);
 		EnhancedInputComponent->BindAction(SelectWeapon1Action, ETriggerEvent::Triggered, this, &AMoodCharacter::SelectWeapon1);
@@ -150,7 +152,9 @@ void AMoodCharacter::CheckPlayerState()
 			StopSprinting();
 		break;
 	case Eps_Execution:
-		if (TimeSinceMeleeAttack > MeleeAttackCooldown)
+		GetCharacterMovement()->Velocity = FVector(0,0, 0);
+		TimeSinceExecutionStart += GetWorld()->DeltaTimeSeconds;
+		if (TimeSinceExecutionStart >= MoveToExecuteTime)
 			CurrentState = Eps_Walking;
 		break;
 	case Eps_ClimbingLedge:
@@ -328,29 +332,56 @@ void AMoodCharacter::StopSprinting()
 }
 
 // Commented out until Melee attack should be implemented  
-void AMoodCharacter::Execution()
+void AMoodCharacter::Execute()
 {
-	// if (TimeSinceMeleeAttack < MeleeAttackCooldown)
-	// 	return;
-	//
-	// // Activate melee attack box
-	// // attackbox->OnBeginOverlap
-	// // deal damage
-	//
-	// // if gibbing possible
-	// // move to target 
-	// 	
-	// // play animation
-	// UE_LOG(LogTemp,Log, TEXT("Melee Attack"));
-	//
-	// TimeSinceMeleeAttack = 0.f;
-	// CurrentState = Eps_MeleeAttacking;
+	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl)
+		return;
+	
+	FHitResult HitResult;
+	FCollisionQueryParams Parameters;
+	Parameters.AddIgnoredActor(this);
+
+	const FVector TraceStart = FirstPersonCameraComponent->GetComponentLocation();
+	const FVector TraceEnd = FirstPersonCameraComponent->GetComponentLocation()
+	+ FirstPersonCameraComponent->GetForwardVector() * ExecutionDistance;
+	
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters, FCollisionResponseParams()))
+	{
+		const AMoodEnemyCharacter* Enemy = Cast<AMoodEnemyCharacter>(HitResult.GetActor());
+		if (!Enemy)
+			return;
+		
+		UMoodHealthComponent* EnemyHealth = Cast<UMoodHealthComponent>(Enemy->FindComponentByClass<UMoodHealthComponent>());
+		if (!EnemyHealth)
+			return;
+		
+		if (EnemyHealth->HealthPercent() <= ExecutionThresholdEnemyHP)
+		{
+			TimeSinceExecutionStart = 0.f;
+			CurrentState = Eps_Execution;
+			
+			FLatentActionInfo LatentInfo;
+			LatentInfo.CallbackTarget = Owner;
+			
+			UKismetSystemLibrary::MoveComponentTo(
+				RootComponent,
+				Enemy->GetActorLocation(),
+				GetActorRotation(),
+				false,
+				false,
+				MoveToExecuteTime,
+				true,
+				EMoveComponentAction::Move,
+				LatentInfo
+				);
+			
+			EnemyHealth->Hurt(ExecutionDamage);
+		}
+	}
 }
 
 void AMoodCharacter::ShootWeapon()
 {
-	UE_LOG(LogTemp, Log, TEXT("ShootWeapon"));
-	
 	if (CurrentState != Eps_ClimbingLedge && CurrentState != Eps_NoControl)
 	{
 		bIsTryingToFire = true;
@@ -360,7 +391,6 @@ void AMoodCharacter::ShootWeapon()
 
 void AMoodCharacter::StopShootWeapon()
 {
-	UE_LOG(LogTemp, Log, TEXT("StopShootingWeapon"));
 	bIsTryingToFire = false;
 	WeaponSlotComponent->SetTriggerHeld(false);
 }

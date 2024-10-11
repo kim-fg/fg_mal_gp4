@@ -29,6 +29,8 @@ public:
 
 	void AlterHealthLoss(float Value);
 
+	bool bCanBeExecuted = false;
+
 protected:
 	virtual void BeginPlay() override;
 	
