@@ -36,8 +36,9 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 			false, 0.25f, 0, 0.25f
 		);
 	}
-	
-	if (Hit.IsValidBlockingHit()) {
+
+	auto ValidHit = Hit.IsValidBlockingHit();
+	if (ValidHit) {
 		auto HitActor = Hit.GetActor();
 		if (HitActor) {
 			auto Health = HitActor->GetComponentByClass<UMoodHealthComponent>();
@@ -54,6 +55,8 @@ void UMoodWeaponComponent::TraceHit(UWorld* World, FVector MuzzleOrigin, FVector
 			GetWorld()->SpawnActor(HitEffect, &Hit.Location, &FRotator::ZeroRotator); 
 		}
 	}
+	
+	OnTrace.Broadcast(MuzzleOrigin, LineTraceEnd);
 }
 
 bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection, float DamageMultiplier) {

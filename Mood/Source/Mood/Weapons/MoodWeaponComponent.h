@@ -9,6 +9,8 @@ class ULegacyCameraShake;
 class AMoodCharacter;
 class UTexture2D;
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnTrace, FVector, TraceStart, FVector, TraceEnd);
+
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class UMoodWeaponComponent : public USkeletalMeshComponent {
     GENERATED_BODY()
@@ -17,6 +19,9 @@ public:
     /** Sets default values for this component's properties */
     UMoodWeaponComponent();
     
+    UPROPERTY(BlueprintAssignable)
+    FOnTrace OnTrace;
+
     /** Make the weapon Fire a Projectile */
     UFUNCTION(BlueprintCallable)
     bool Use(FVector MuzzleOrigin, FVector MuzzleDirection, float DamageMultiplier);
