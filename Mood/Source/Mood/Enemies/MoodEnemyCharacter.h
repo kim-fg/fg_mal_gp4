@@ -19,23 +19,23 @@ class AMoodEnemyCharacter : public ACharacter {
 
 public:
 	AMoodEnemyCharacter();
-	
-	UFUNCTION(BlueprintCallable)
-	UMoodHealthComponent* GetHealth() { return Health; }
-	
-	//todo! make this protected
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-	TObjectPtr<UMoodHealthComponent> Health = nullptr;
 
 	UPROPERTY(BlueprintAssignable)
 	FOnPlayerSeen OnPlayerSeen;
 
 	UFUNCTION(BlueprintCallable)
+	UMoodHealthComponent* GetHealth() { return Health; }
+	UFUNCTION(BlueprintCallable)
 	UMoodWeaponSlotComponent* GetWeaponSlot() { return WeaponSlot; }
+
+	UFUNCTION(BlueprintCallable)
+	bool CanSeePlayer();
 	
-protected:	
+protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UBehaviorTree> BehaviorTree = nullptr;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+	TObjectPtr<UMoodHealthComponent> Health = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<UMoodWeaponSlotComponent> WeaponSlot = nullptr;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
@@ -61,6 +61,5 @@ private:
 
 	UFUNCTION(BlueprintCallable)
 	void ScanForPlayer();
-	bool CanSeePlayer();
 	FTimerHandle PlayerScanTimer;
 };

@@ -87,6 +87,7 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 	if (WeaponSlotComponent != nullptr)
 	{
 		Weapon = WeaponSlotComponent->GetSelectedWeapon();
+		UpdateCrosshair(Weapon);
 		if (Weapon != nullptr)
 		{
 			if (Weapon->HasUnlimitedAmmo())
@@ -144,9 +145,9 @@ void UMoodHUDWidget::UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDe
 	}
 }
 
-void UMoodHUDWidget::UpdateCrosshair()
+void UMoodHUDWidget::UpdateCrosshair(UMoodWeaponComponent* WeaponToPass)
 {
-	//Update crosshair based on equipped weapon
+	CrossHair->SetBrushFromTexture(Weapon->GetCrossHair(), false);
 }
 
 void UMoodHUDWidget::DisplayLostScreen()
