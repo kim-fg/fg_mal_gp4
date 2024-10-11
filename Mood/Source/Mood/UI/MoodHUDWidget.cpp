@@ -30,33 +30,6 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	UpdateAmmoWidget();
 	UpdateMoodMeterWidget(MyGeometry, InDeltaTime);
 
-
-
-	/*
-	//Spinning radial + counting text
-	InnerCircleSpin += InDeltaTime / 10;
-	MiddleCircleSpin += InDeltaTime / 10;
-	OuterCircleSpin += InDeltaTime / 10;
-	MoodMeterNumber += InDeltaTime * 100;
-	FString FloatyString = FString::SanitizeFloat(InDeltaTime);
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Yellow, *FloatyString);
-	MoodMeterWidget->MoodMeterInnerCircle->SetValue(InnerCircleSpin);
-	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MiddleCircleSpin);
-	MoodMeterWidget->MoodMeterOuterCircle->SetValue(OuterCircleSpin);
-	if (InnerCircleSpin >= 1.0f)
-		InnerCircleSpin = 0.f;
-	if (MiddleCircleSpin >= 1.0f)
-		MiddleCircleSpin = 0.f;
-	if (OuterCircleSpin >= 1.0f)
-		OuterCircleSpin = 0.f;
-	FString FormattedInt = FString::FormatAsNumber(MoodMeterNumber);
-	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FormattedInt));
-
-	if (MoodMeterNumber >= 666)
-		MoodMeterNumber = 0;
-	*/
-
-
 }
 
 void UMoodHUDWidget::GetHealthComponent(ACharacter* Player)
@@ -114,6 +87,8 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 void UMoodHUDWidget::UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime)
 {
 	MoodMeterNumber = GameMode->GetMoodMeterValue();
+	if (MoodMeterNumber <= 0) { MoodMeterNumber = 0.f; }
+	if (MoodMeterNumber >= 666) { MoodMeterNumber = 666.f; }
 	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FString::FromInt(FMath::FloorToInt32(GameMode->GetMoodMeterValue()))));
 
 	UpdateMoodMeterBars(MyGeometry, InDeltaTime, MoodMeterNumber);
