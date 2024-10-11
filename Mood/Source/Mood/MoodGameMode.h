@@ -35,6 +35,7 @@ public:
 	float GetMoodMeterValue() { return MoodMeterValue; }
 
 	void ChangeMoodValue(int Value);
+	void ResetMoodValue();
 	void ResetDamageTime();
 
 private:

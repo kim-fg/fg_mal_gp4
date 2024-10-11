@@ -38,6 +38,11 @@ void AMoodGameMode::ChangeMoodValue(int Value)
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 }
 
+void AMoodGameMode::ResetMoodValue()
+{
+	MoodMeterValue = 0;
+}
+
 void AMoodGameMode::ResetDamageTime()
 {
 	TimeSinceEnemyDamaged = 0;

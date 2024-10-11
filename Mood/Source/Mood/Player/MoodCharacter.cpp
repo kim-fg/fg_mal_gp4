@@ -380,7 +380,7 @@ void AMoodCharacter::FindLedge()
 void AMoodCharacter::KillPlayer()
 {
 	bIsDead = true;
-	MoodGameMode->ChangeMoodValue(-2000);
+	MoodGameMode->ResetMoodValue();
 	CurrentState = Eps_NoControl;
 }
 
