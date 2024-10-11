@@ -212,13 +212,11 @@ void AMoodCharacter::CheckMoodMeter()
 void AMoodCharacter::AttemptClimb()
 {
 	bCanClimb = true;
-	UE_LOG(LogTemp, Log, TEXT("Can climb"))
 }
 
 void AMoodCharacter::DontClimb()
 {
 	bCanClimb = false;
-	UE_LOG(LogTemp, Log, TEXT("Can NOT climb"))
 }
 
 void AMoodCharacter::Move(const FInputActionValue& Value)
