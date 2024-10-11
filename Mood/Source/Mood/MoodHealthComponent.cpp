@@ -5,14 +5,15 @@ void UMoodHealthComponent::Hurt(int Amount) {
 	
 	Amount = abs(Amount);
 	CurrentHealth -= Amount;
+	
+	OnHurt.Broadcast(Amount, CurrentHealth);
+	
 	if (CurrentHealth <= 0) {
 		CurrentHealth = 0;
 		IsDead = true;
 		OnDeath.Broadcast();
 		return;
 	}
-
-	OnHurt.Broadcast(Amount, CurrentHealth);
 }
 
 void UMoodHealthComponent::Heal(int Amount) {
