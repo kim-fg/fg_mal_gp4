@@ -30,6 +30,8 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     UTexture2D* GetAmmoIcon() { return AmmoIcon; }
     UFUNCTION(BlueprintCallable, BlueprintPure)
+    UTexture2D* GetCrossHair() { return CrossHair; }
+    UFUNCTION(BlueprintCallable, BlueprintPure)
     bool HasUnlimitedAmmo() { return UnlimitedAmmo; }
     UFUNCTION(BlueprintCallable, BlueprintPure)
     FString GetAnimationID() { return AnimationID; }
@@ -83,4 +85,6 @@ private:
 
     UPROPERTY(EditDefaultsOnly, Category=UI)
     UTexture2D* AmmoIcon = nullptr;
+    UPROPERTY(EditDefaultsOnly, Category=UI)
+    UTexture2D* CrossHair = nullptr;
 };
