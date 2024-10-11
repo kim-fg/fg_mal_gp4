@@ -91,7 +91,7 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Move);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Started, this, &AMoodCharacter::Sprint);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Sprint);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMoodCharacter::StopSprinting);
 
 		// Looking
@@ -129,37 +129,35 @@ void AMoodCharacter::CheckPlayerState()
 		if (GetCharacterMovement()->Velocity != FVector(0, 0,  0))
 			CurrentState = Eps_Walking;
 		break;
-		
 	case Eps_Walking:
 		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV, AlphaFOV);
+		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 		if (!bIsMidAir)
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
-		if (GetCharacterMovement()->Velocity == FVector(0, 0, 0))
+		if (GetCharacterMovement()->Velocity.Length() < 10.f)
 			CurrentState = Eps_Idle;
 		break;
-	
 	case Eps_Sprinting:
+		GetCharacterMovement()->MaxWalkSpeed = SprintingSpeed;
 		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, SprintingFOV, AlphaFOV);
 		if (!bIsMidAir)
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(SprintHeadBob, 1.f);
-		if (GetCharacterMovement()->Velocity.Length() == 0)
-			CurrentState = Eps_Walking;
+		if (GetCharacterMovement()->Velocity.Length() < 10.f)
+			StopSprinting();
 		break;
-
 	case Eps_Execution:
 		if (TimeSinceMeleeAttack > MeleeAttackCooldown)
 			CurrentState = Eps_Walking;
 		break;
-
 	case Eps_ClimbingLedge:
 		GetCharacterMovement()->Velocity = FVector(0,0, 0);
+		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
 		StopShootWeapon();
 		TimeSinceClimbStart += GetWorld()->DeltaTimeSeconds;
 		if (TimeSinceClimbStart >= ClimbingTime)
 			CurrentState = Eps_Walking;
 		break;
-
 	case Eps_NoControl:
 		DeathCamMovement();
 		break;
@@ -291,17 +289,17 @@ void AMoodCharacter::ResetPlayer()
 
 void AMoodCharacter::Sprint()
 {
-	if (GetCharacterMovement()->Velocity.Length() == 0)
-		return;
-	
-	CurrentState = Eps_Sprinting;
-	GetCharacterMovement()->MaxWalkSpeed = SprintingSpeed;
+	if (GetCharacterMovement()->Velocity.Length() > 10.f
+		&& CurrentState != Eps_ClimbingLedge
+		&& CurrentState != Eps_NoControl)
+	{
+		CurrentState = Eps_Sprinting;
+	}
 }
 
 void AMoodCharacter::StopSprinting()
 {
 	CurrentState = Eps_Walking;
-	GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 }
 
 // Commented out until Melee attack should be implemented  
