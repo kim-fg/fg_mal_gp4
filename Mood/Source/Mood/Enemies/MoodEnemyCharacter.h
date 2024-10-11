@@ -31,6 +31,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool CanSeePlayer();
 	
+	UFUNCTION()
+	void LoseHealth(int Amount, int NewHealth);
+	
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UBehaviorTree> BehaviorTree = nullptr;
@@ -41,8 +44,6 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> ActivationSphere = nullptr;
 
-	UFUNCTION()
-	void LoseHealth(int Amount, int NewHealth);
 
 private:
 	void BeginPlay() override;

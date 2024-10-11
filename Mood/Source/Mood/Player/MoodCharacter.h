@@ -60,39 +60,31 @@ class AMoodCharacter : public ACharacter
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* JumpAction;
-		
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ClimbAction;
-
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MeleeAttackAction;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ShootAction;
-
 	/** Weapon selected by scrolling wheel */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ScrollWeaponAction;
-
 	/** Weapon selected by buttons 1-3 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SelectWeapon1Action;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SelectWeapon2Action;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SelectWeapon3Action;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ExecuteAction;
 
 public:
 	AMoodCharacter();
@@ -125,12 +117,20 @@ public:
 	
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SprintingFOV = 110.f;
-
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float AlphaFOV = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float MeleeAttackCooldown = 1.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ExecutionThresholdEnemyHP = 0.3f;
+	UPROPERTY(EditDefaultsOnly)
+	int ExecutionDamage = 5.f;
+	UPROPERTY(EditDefaultsOnly)
+	float ExecutionDistance = 600.f;
+	UPROPERTY(EditDefaultsOnly)
+	float MoveToExecuteTime = 0.1f;
 	
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
 	TEnumAsByte<ECollisionChannel> ClimbableChannel;
@@ -152,6 +152,7 @@ private:
 	float WalkingFOV;
 	float TimeSinceMeleeAttack = 1.f;
 	float TimeSinceClimbStart = 0.f;
+	float TimeSinceExecutionStart = 0.f;
 
 	float MoodSpeedPercent = 1.f;
 	float MoodDamagePercent = 1.f;
@@ -204,7 +205,7 @@ protected:
 	void Sprint();
 	void StopSprinting();
 
-	void Execution();
+	void Execute();
 	void ShootWeapon();
 	void StopShootWeapon();
 

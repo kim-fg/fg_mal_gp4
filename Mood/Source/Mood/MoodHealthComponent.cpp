@@ -7,6 +7,10 @@ void UMoodHealthComponent::Hurt(int Amount) {
 	CurrentHealth -= Amount;
 	
 	OnHurt.Broadcast(Amount, CurrentHealth);
+
+	if (CurrentHealth < MaxHealth / 4) {
+		bCanBeExecuted = true;
+	}
 	
 	if (CurrentHealth <= 0) {
 		CurrentHealth = 0;
