@@ -35,6 +35,7 @@ void AMoodGameMode::ChangeMoodValue(int Value)
 		Value /= 2;
 	
 	MoodMeterValue += Value * 5;
+	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 }
 
 void AMoodGameMode::ResetDamageTime()
