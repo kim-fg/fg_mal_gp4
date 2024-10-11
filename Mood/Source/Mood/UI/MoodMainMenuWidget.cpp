@@ -18,7 +18,7 @@ void UMoodMainMenuWidget::NativeConstruct()
 	OptionsButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowOptionsMenu);
 	ExitGameButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ExitGame);
 
-	LevelSelectWidget->SetVisibility(ESlateVisibility::Hidden);
+	//LevelSelectWidget->SetVisibility(ESlateVisibility::Hidden);
 	OptionsMenuWidget->SetVisibility(ESlateVisibility::Hidden);
 	
 }

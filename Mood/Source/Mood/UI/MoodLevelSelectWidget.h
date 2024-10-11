@@ -14,10 +14,10 @@ class UMoodLevelSelectWidget : public UUserWidget
 
 public:
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UMoodCyberButton* LevelSelectButtonLevel1;
 
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UMoodCyberButton* LevelSelectButtonLevel2;
 
 	UPROPERTY(meta = (BindWidget))
@@ -33,7 +33,9 @@ public:
 	void ShowWidget();
 	void HideWidget();
 
+	UFUNCTION()
 	void LoadLevelOne();
+	UFUNCTION()
 	void LoadLevelTwo();
 
 
