@@ -163,6 +163,7 @@ void AMoodCharacter::CheckPlayerState()
 			CurrentState = Eps_Walking;
 		break;
 	case Eps_NoControl:
+		StopShootWeapon();
 		DeathCamMovement();
 		break;
 
