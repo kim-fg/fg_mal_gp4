@@ -30,6 +30,8 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	UpdateAmmoWidget();
 	UpdateMoodMeterWidget(MyGeometry, InDeltaTime);
 
+
+
 	/*
 	//Spinning radial + counting text
 	InnerCircleSpin += InDeltaTime / 10;
@@ -52,7 +54,9 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 
 	if (MoodMeterNumber >= 666)
 		MoodMeterNumber = 0;
-		*/
+	*/
+
+
 }
 
 void UMoodHUDWidget::GetHealthComponent(ACharacter* Player)
