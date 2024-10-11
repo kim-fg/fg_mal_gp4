@@ -89,7 +89,7 @@ void UMoodHUDWidget::UpdateMoodMeterWidget(const FGeometry& MyGeometry, float In
 	MoodMeterNumber = GameMode->GetMoodMeterValue();
 	if (MoodMeterNumber <= 0) { MoodMeterNumber = 0.f; }
 	if (MoodMeterNumber >= 666) { MoodMeterNumber = 666.f; }
-	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FString::FromInt(FMath::FloorToInt32(GameMode->GetMoodMeterValue()))));
+	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FString::FromInt(FMath::FloorToInt32(MoodMeterNumber))));
 
 	UpdateMoodMeterBars(MyGeometry, InDeltaTime, MoodMeterNumber);
 }

@@ -8,6 +8,7 @@ class UMoodCyberButton;
 class UMoodOptionsMenuWidget;
 class UMoodLevelSelectWidget;
 class UMoodGameInstance;
+class UWidgetAnimation;
 class UButton;
 
 UCLASS()
@@ -29,10 +30,10 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UMoodCyberButton* ExitGameButton;
 
-	UPROPERTY(meta =(BindWidget))
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite)
 	UMoodLevelSelectWidget* LevelSelectWidget;
 
-	UPROPERTY(meta =(BindWidget))
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite)
 	UMoodOptionsMenuWidget* OptionsMenuWidget;
 	
 
