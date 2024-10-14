@@ -7,6 +7,7 @@
 class UTextBlock;
 class USlider;
 class UMoodCyberButton;
+class UMoodEnhancedInputUserSettings;
 
 UCLASS()
 
@@ -36,26 +37,39 @@ protected:
 	UTextBlock* MasterVolumeSliderValue;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	USlider* MasterVolumeSlider;
+	UPROPERTY()
+	float MasterVolumeSavedValue = 1.f;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UTextBlock* MusicVolumeSliderValue;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	USlider* MusicVolumeSlider;
+	UPROPERTY()
+	float MusicVolumeSavedValue = 1.f;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UTextBlock* SFXVolumeSliderValue;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	USlider* SFXVolumeSlider;
+	UPROPERTY()
+	float SFXVolumeSavedValue = 1.f;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UTextBlock* MouseSensitivitySliderValue;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	USlider* MouseSensitivitySlider;
+	UPROPERTY()
+	float MouseSensitivitySavedValue = 1.f;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UTextBlock* BrightnessSliderValue;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	USlider* BrightnessSlider;
+	UPROPERTY()
+	float BrightnessSavedValue = 0.5f;
+
+	UPROPERTY()
+	UMoodEnhancedInputUserSettings* Settings;
 
 private:
 	virtual void NativeConstruct() override;
