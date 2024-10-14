@@ -47,7 +47,19 @@ public:
 	UMoodAmmoWidget* AmmoWidget;
 
 	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
-	UImage* CrossHair = nullptr;
+	UImage* CrossHair;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* BottomRightCorner;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* BottomLeftCorner;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* TopLeftCorner;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* TopRightCorner;
 
 #pragma endregion
 
@@ -67,17 +79,18 @@ public:
 	UPROPERTY()
 	AMoodGameMode* GameMode;
 
+	UPROPERTY(EditDefaultsOnly)
+	FColor TintColorStage0;
+	UPROPERTY(EditDefaultsOnly)
+	FColor TintColorStage1;
+	UPROPERTY(EditDefaultsOnly)
+	FColor TintColorStage2;
+	UPROPERTY(EditDefaultsOnly)
+	FColor TintColorStage3;
 
-	//Spin radial variables
-	UPROPERTY()
-	float InnerCircleSpin = 0.3f;
-	UPROPERTY()
-	float MiddleCircleSpin = 0.2f;
-	UPROPERTY()
-	float OuterCircleSpin = 0.1f;
 	//text change variable
 	UPROPERTY()
-	float MoodMeterNumber;
+	float MoodMeterValue;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
@@ -95,6 +108,7 @@ public:
 	void UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime);
 	void UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValue);
 	void UpdateCrosshair(UMoodWeaponComponent* WeaponToPass);
+	void UpdateHUDTint();
 
 #pragma endregion
 
