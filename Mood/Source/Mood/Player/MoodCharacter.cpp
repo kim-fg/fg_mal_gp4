@@ -13,6 +13,7 @@
 #include "Kismet/KismetSystemLibrary.h"
 #include "../Weapons/MoodWeaponSlotComponent.h"
 #include "../MoodHealthComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Mood/MoodGameMode.h"
 #include "Mood/Enemies/MoodEnemyCharacter.h"
 #include "Mood/Weapons/MoodWeaponComponent.h"
@@ -64,9 +65,6 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	CheckPlayerState();
 	CheckMoodMeter();
 	FindLedge();
-	
-	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
-		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
 }
 
 void AMoodCharacter::Landed(const FHitResult& Hit)
@@ -103,7 +101,6 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Look);
 		
 		// Attacking
-		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execute);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ShootWeapon);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Canceled, this, &AMoodCharacter::StopShootWeapon);
 		EnhancedInputComponent->BindAction(ExecuteAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execute);
@@ -151,12 +148,6 @@ void AMoodCharacter::CheckPlayerState()
 		if (GetCharacterMovement()->Velocity.Length() < 10.f)
 			StopSprinting();
 		break;
-	case Eps_Execution:
-		GetCharacterMovement()->Velocity = FVector(0,0, 0);
-		TimeSinceExecutionStart += GetWorld()->DeltaTimeSeconds;
-		if (TimeSinceExecutionStart >= MoveToExecuteTime)
-			CurrentState = Eps_Walking;
-		break;
 	case Eps_ClimbingLedge:
 		GetCharacterMovement()->Velocity = FVector(0,0, 0);
 		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
@@ -169,6 +160,7 @@ void AMoodCharacter::CheckPlayerState()
 	case Eps_NoControl:
 		StopShootWeapon();
 		DeathCamMovement();
+		ExecuteFoundEnemy();
 		break;
 
 		default:
@@ -212,14 +204,16 @@ void AMoodCharacter::CheckMoodMeter()
 		MoodDamagePercent = 1.f;
 		MoodHealthLoss = 1.f;
 	}
-
-	if (bIsTryingToFire)
-		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
-
-	if (MoodHealthLoss != LastMoodHealthLoss)
+	
+	if (MoodState != LastMoodState)
 	{
-		LastMoodHealthLoss = MoodHealthLoss;
+		LastMoodState = MoodState;
+		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 		HealthComponent->AlterHealthLoss(MoodHealthLoss);
+		OnMoodChanged.Broadcast(MoodState);
+
+		// continue here tomorrow 
+		MoodChanged();
 	}
 }
 
@@ -235,7 +229,7 @@ void AMoodCharacter::DontClimb()
 
 void AMoodCharacter::Move(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
@@ -247,7 +241,7 @@ void AMoodCharacter::Move(const FInputActionValue& Value)
 
 void AMoodCharacter::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
@@ -331,7 +325,6 @@ void AMoodCharacter::StopSprinting()
 	CurrentState = Eps_Walking;
 }
 
-// Commented out until Melee attack should be implemented  
 void AMoodCharacter::Execute()
 {
 	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl)
@@ -347,25 +340,24 @@ void AMoodCharacter::Execute()
 	
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters, FCollisionResponseParams()))
 	{
-		const AMoodEnemyCharacter* Enemy = Cast<AMoodEnemyCharacter>(HitResult.GetActor());
-		if (!Enemy)
+		Executee = Cast<AMoodEnemyCharacter>(HitResult.GetActor());
+		if (!IsValid(Executee))
 			return;
 		
-		UMoodHealthComponent* EnemyHealth = Cast<UMoodHealthComponent>(Enemy->FindComponentByClass<UMoodHealthComponent>());
-		if (!EnemyHealth)
+		ExecuteeHealth = Cast<UMoodHealthComponent>(Executee->FindComponentByClass<UMoodHealthComponent>());
+		if (!IsValid(ExecuteeHealth))
 			return;
 		
-		if (EnemyHealth->HealthPercent() <= ExecutionThresholdEnemyHP)
+		if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP)
 		{
-			TimeSinceExecutionStart = 0.f;
-			CurrentState = Eps_Execution;
-			
+			bIsExecuting = true;
+			CurrentState = Eps_NoControl;
 			FLatentActionInfo LatentInfo;
 			LatentInfo.CallbackTarget = Owner;
 			
 			UKismetSystemLibrary::MoveComponentTo(
 				RootComponent,
-				Enemy->GetActorLocation(),
+				Executee->GetActorLocation(),
 				GetActorRotation(),
 				false,
 				false,
@@ -374,9 +366,36 @@ void AMoodCharacter::Execute()
 				EMoveComponentAction::Move,
 				LatentInfo
 				);
-			
-			EnemyHealth->Hurt(ExecutionDamage);
 		}
+	}
+}
+
+void AMoodCharacter::ExecuteFoundEnemy()
+{
+	if (!bIsExecuting)
+		return;
+	
+	if (IsValid(Executee) && IsValid(ExecuteeHealth))
+	{
+		GetCharacterMovement()->Velocity = FVector(0,0, 0);
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), ExecutionTimeDilation);
+	
+		if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 100.f)
+		{
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ExecuteShake, 1.f);
+			ExecuteeHealth->Hurt(ExecutionDamage);
+			Executee = nullptr;
+			ExecuteeHealth = nullptr;
+			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+			bIsExecuting = false;
+			CurrentState = Eps_Walking;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter: Executee or ExecuteeHealth are invalid."))
+		bIsExecuting = false;
+		CurrentState = Eps_Walking;
 	}
 }
 
@@ -384,14 +403,12 @@ void AMoodCharacter::ShootWeapon()
 {
 	if (CurrentState != Eps_ClimbingLedge && CurrentState != Eps_NoControl)
 	{
-		bIsTryingToFire = true;
 		WeaponSlotComponent->SetTriggerHeld(true);
 	}
 }
 
 void AMoodCharacter::StopShootWeapon()
 {
-	bIsTryingToFire = false;
 	WeaponSlotComponent->SetTriggerHeld(false);
 }
 
@@ -433,6 +450,11 @@ void AMoodCharacter::FindLedge()
 			EMoveComponentAction::Move,
 			LatentInfo);
 	}
+}
+
+void AMoodCharacter::MoodChanged()
+{
+	// continue here tomorrow
 }
 
 void AMoodCharacter::KillPlayer()
