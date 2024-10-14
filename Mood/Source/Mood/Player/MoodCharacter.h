@@ -32,6 +32,7 @@ enum EPlayerState
 	Eps_NoControl
 };
 
+UENUM(BlueprintType)
 enum EMoodState
 {
 	Ems_Mood666,
@@ -39,6 +40,8 @@ enum EMoodState
 	Ems_Mood222,
 	Ems_NoMood
 };
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMoodChanged, EMoodState, NewState);
 
 UCLASS(config=Game)
 class AMoodCharacter : public ACharacter
@@ -67,8 +70,6 @@ class AMoodCharacter : public ACharacter
 	UInputAction* MoveAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* MeleeAttackAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ShootAction;
 	/** Weapon selected by scrolling wheel */
@@ -114,14 +115,13 @@ public:
 	TSubclassOf<UCameraShakeBase> ClimbHeadBob;
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	TSubclassOf<UCameraShakeBase> LandShake;
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	TSubclassOf<UCameraShakeBase> ExecuteShake;
 	
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SprintingFOV = 110.f;
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float AlphaFOV = 0.1f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float MeleeAttackCooldown = 1.f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float ExecutionThresholdEnemyHP = 0.3f;
@@ -145,6 +145,8 @@ public:
 	void ToggleInteraction();
 
 	TEnumAsByte<EMoodState> MoodState;
+	UPROPERTY(BlueprintAssignable)
+	FOnMoodChanged OnMoodChanged;
 	
 	UFUNCTION(BlueprintCallable)
 	void ResetPlayer();
@@ -152,7 +154,6 @@ public:
 private:
 	float WalkingSpeed;
 	float WalkingFOV;
-	float TimeSinceMeleeAttack = 1.f;
 	float TimeSinceClimbStart = 0.f;
 	UPROPERTY(EditDefaultsOnly)
 	float ExecutionTimeDilation = 0.5f;
@@ -161,7 +162,6 @@ private:
 	float MoodDamagePercent = 1.f;
 	float CurrentMoodDamagePercent = 1.f;
 	float MoodHealthLoss = 1.f;
-	float LastMoodHealthLoss = 1.f;
 	
 	UPROPERTY(EditDefaultsOnly)
 	float DeathFallSpeed = 20.f;
@@ -172,7 +172,6 @@ private:
 	bool bIsDead = false;
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
-	bool bIsTryingToFire = false;
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
 
@@ -216,7 +215,10 @@ protected:
 
 	void FindLedge();
 
+	void MoodChanged();
+
 	TEnumAsByte<EPlayerState> CurrentState;
+	TEnumAsByte<EMoodState> LastMoodState;
 
 protected:
 	// APawn interface

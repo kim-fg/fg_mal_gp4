@@ -65,9 +65,6 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	CheckPlayerState();
 	CheckMoodMeter();
 	FindLedge();
-	
-	if(TimeSinceMeleeAttack <= MeleeAttackCooldown)
-		TimeSinceMeleeAttack += GetWorld()->DeltaTimeSeconds;
 }
 
 void AMoodCharacter::Landed(const FHitResult& Hit)
@@ -104,7 +101,6 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Look);
 		
 		// Attacking
-		EnhancedInputComponent->BindAction(MeleeAttackAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execute);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ShootWeapon);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Canceled, this, &AMoodCharacter::StopShootWeapon);
 		EnhancedInputComponent->BindAction(ExecuteAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execute);
@@ -208,14 +204,16 @@ void AMoodCharacter::CheckMoodMeter()
 		MoodDamagePercent = 1.f;
 		MoodHealthLoss = 1.f;
 	}
-
-	if (bIsTryingToFire)
-		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
-
-	if (MoodHealthLoss != LastMoodHealthLoss)
+	
+	if (MoodState != LastMoodState)
 	{
-		LastMoodHealthLoss = MoodHealthLoss;
+		LastMoodState = MoodState;
+		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 		HealthComponent->AlterHealthLoss(MoodHealthLoss);
+		OnMoodChanged.Broadcast(MoodState);
+
+		// continue here tomorrow 
+		MoodChanged();
 	}
 }
 
@@ -231,7 +229,7 @@ void AMoodCharacter::DontClimb()
 
 void AMoodCharacter::Move(const FInputActionValue& Value)
 {
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
@@ -243,7 +241,7 @@ void AMoodCharacter::Move(const FInputActionValue& Value)
 
 void AMoodCharacter::Look(const FInputActionValue& Value)
 {
-	FVector2D LookAxisVector = Value.Get<FVector2D>();
+	const FVector2D LookAxisVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
@@ -327,7 +325,6 @@ void AMoodCharacter::StopSprinting()
 	CurrentState = Eps_Walking;
 }
 
-// Commented out until Melee attack should be implemented  
 void AMoodCharacter::Execute()
 {
 	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl)
@@ -385,6 +382,7 @@ void AMoodCharacter::ExecuteFoundEnemy()
 	
 		if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 100.f)
 		{
+			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ExecuteShake, 1.f);
 			ExecuteeHealth->Hurt(ExecutionDamage);
 			Executee = nullptr;
 			ExecuteeHealth = nullptr;
@@ -405,14 +403,12 @@ void AMoodCharacter::ShootWeapon()
 {
 	if (CurrentState != Eps_ClimbingLedge && CurrentState != Eps_NoControl)
 	{
-		bIsTryingToFire = true;
 		WeaponSlotComponent->SetTriggerHeld(true);
 	}
 }
 
 void AMoodCharacter::StopShootWeapon()
 {
-	bIsTryingToFire = false;
 	WeaponSlotComponent->SetTriggerHeld(false);
 }
 
@@ -454,6 +450,11 @@ void AMoodCharacter::FindLedge()
 			EMoveComponentAction::Move,
 			LatentInfo);
 	}
+}
+
+void AMoodCharacter::MoodChanged()
+{
+	// continue here tomorrow
 }
 
 void AMoodCharacter::KillPlayer()
