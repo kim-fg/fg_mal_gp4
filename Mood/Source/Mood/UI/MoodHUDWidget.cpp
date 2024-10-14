@@ -33,14 +33,14 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	UpdateHUDTint();
 }
 
-void UMoodHUDWidget::GetHealthComponent(ACharacter* Player)
+void UMoodHUDWidget::GetHealthComponent(ACharacter* PlayerPass)
 {
-	HealthComponent = Player->FindComponentByClass<UMoodHealthComponent>();
+	HealthComponent = PlayerPass->FindComponentByClass<UMoodHealthComponent>();
 }
 
-void UMoodHUDWidget::GetWeaponSlotComponent(ACharacter* Player)
+void UMoodHUDWidget::GetWeaponSlotComponent(ACharacter* PlayerPass)
 {
-	WeaponSlotComponent = Player->FindComponentByClass<UMoodWeaponSlotComponent>();
+	WeaponSlotComponent = PlayerPass->FindComponentByClass<UMoodWeaponSlotComponent>();
 }
 
 void UMoodHUDWidget::UpdateHealthbarWidget()
@@ -126,7 +126,37 @@ void UMoodHUDWidget::UpdateCrosshair(UMoodWeaponComponent* WeaponToPass)
 
 void UMoodHUDWidget::UpdateHUDTint()
 {
+	switch (Player->MoodState)
+	{
+	case EMoodState::Ems_NoMood:
+		SetTint(TintColorStage0, TintColorStage0);
+		break;
+	case EMoodState::Ems_Mood222:
+		SetTint(TintColorStage1, TintColorStage1);
+		break;
+	case EMoodState::Ems_Mood444:
+		SetTint(TintColorStage2, TintColorStage1);
+		break;
+	case EMoodState::Ems_Mood666:
+		SetTint(TintColorStage3, TintColorStage3);
+		break;
+	default:
+		break;
+	}
+}
 
+void UMoodHUDWidget::SetTint(FLinearColor Color, FLinearColor FaceColor)
+{
+	MoodMeterWidget->MoodMeterInnerCircle->SetSliderProgressColor(Color);
+	MoodMeterWidget->MoodMeterMiddleCircle->SetSliderProgressColor(Color);
+	MoodMeterWidget->MoodMeterOuterCircle->SetSliderProgressColor(Color);
+	MoodMeterWidget->MoodMeterNumber->SetColorAndOpacity(Color);
+	MoodMeterWidget->Face->SetColorAndOpacity(FaceColor);
+	AmmoWidget->SetColorAndOpacity(Color);
+	BottomRightCorner->SetColorAndOpacity(Color);
+	BottomLeftCorner->SetColorAndOpacity(Color);
+	TopLeftCorner->SetColorAndOpacity(Color);
+	TopRightCorner->SetColorAndOpacity(Color);
 }
 
 void UMoodHUDWidget::DisplayLostScreen()
@@ -158,9 +188,9 @@ void UMoodHUDWidget::HideLostScreen()
 void UMoodHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != nullptr)
+	Player = Cast<AMoodCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player != nullptr)
 	{
-		ACharacter* Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 		GetHealthComponent(Player);
 		GetWeaponSlotComponent(Player);
 	}

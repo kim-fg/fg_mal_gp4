@@ -8,6 +8,7 @@
 class UTextBlock;
 class USlider;
 class URadialSlider;
+class UImage;
 
 UCLASS()
 class UMoodMoodMeterWidget : public UUserWidget
@@ -27,6 +28,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UTextBlock* MoodMeterNumber;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* Face;
 
 	virtual void NativeConstruct() override;
 	

@@ -80,13 +80,17 @@ public:
 	AMoodGameMode* GameMode;
 
 	UPROPERTY(EditDefaultsOnly)
-	FColor TintColorStage0;
+	FLinearColor TintColorStage0;
 	UPROPERTY(EditDefaultsOnly)
-	FColor TintColorStage1;
+	FLinearColor TintColorStage1;
 	UPROPERTY(EditDefaultsOnly)
-	FColor TintColorStage2;
+	FLinearColor TintColorStage2;
 	UPROPERTY(EditDefaultsOnly)
-	FColor TintColorStage3;
+	FLinearColor TintColorStage3;
+
+
+	UPROPERTY()
+	AMoodCharacter* Player = nullptr;
 
 	//text change variable
 	UPROPERTY()
@@ -109,6 +113,7 @@ public:
 	void UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValue);
 	void UpdateCrosshair(UMoodWeaponComponent* WeaponToPass);
 	void UpdateHUDTint();
+	void SetTint(FLinearColor Color, FLinearColor FaceColor);
 
 #pragma endregion
 
