@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "MoodCharacter.generated.h"
 
+class AMoodEnemyCharacter;
 class UMoodShotgunCameraShake;
 class UMoodWeaponComponent;
 class UInputComponent;
@@ -27,7 +28,6 @@ enum EPlayerState
 	Eps_Idle,
 	Eps_Walking,
 	Eps_Sprinting,
-	Eps_Execution,
 	Eps_ClimbingLedge,
 	Eps_NoControl
 };
@@ -144,6 +144,8 @@ public:
 	// UFUNCTION(Blueprintable)
 	void ToggleInteraction();
 
+	TEnumAsByte<EMoodState> MoodState;
+	
 	UFUNCTION(BlueprintCallable)
 	void ResetPlayer();
 	
@@ -152,7 +154,8 @@ private:
 	float WalkingFOV;
 	float TimeSinceMeleeAttack = 1.f;
 	float TimeSinceClimbStart = 0.f;
-	float TimeSinceExecutionStart = 0.f;
+	UPROPERTY(EditDefaultsOnly)
+	float ExecutionTimeDilation = 0.5f;
 
 	float MoodSpeedPercent = 1.f;
 	float MoodDamagePercent = 1.f;
@@ -171,6 +174,7 @@ private:
 	bool bHasRespawned = false;
 	bool bIsTryingToFire = false;
 	bool bCanClimb = false;
+	bool bIsExecuting = false;
 
 protected:
 	void CheckPlayerState();
@@ -206,13 +210,13 @@ protected:
 	void StopSprinting();
 
 	void Execute();
+	void ExecuteFoundEnemy();
 	void ShootWeapon();
 	void StopShootWeapon();
 
 	void FindLedge();
 
 	TEnumAsByte<EPlayerState> CurrentState;
-	TEnumAsByte<EMoodState> MoodState;
 
 protected:
 	// APawn interface
@@ -221,6 +225,11 @@ protected:
 
 	UPROPERTY()
 	AMoodGameMode* MoodGameMode = nullptr;
+
+	UPROPERTY()
+	AMoodEnemyCharacter* Executee = nullptr;
+	UPROPERTY()
+	UMoodHealthComponent* ExecuteeHealth = nullptr;
 
 public:
  	/** Returns FirstPersonCameraComponent subobject **/
