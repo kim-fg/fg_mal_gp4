@@ -21,6 +21,7 @@
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "MoodPauseMenu.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -182,6 +183,15 @@ void UMoodHUDWidget::HideLostScreen()
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerController->SetInputMode(FInputModeGameOnly());
 	PlayerController->SetShowMouseCursor(false);
+}
+
+void UMoodHUDWidget::DisplayPauseMenu()
+{
+	PauseMenu->SetVisibility(ESlateVisibility::Visible);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->SetInputMode(FInputModeUIOnly());
+	PlayerController->SetShowMouseCursor(true);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
 }
 
 

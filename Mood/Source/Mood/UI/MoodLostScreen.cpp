@@ -4,6 +4,7 @@
 #include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Mood/MoodGameMode.h"
+#include "MoodCyberButton.h"
 
 void UMoodLostScreen::RestartLevel()
 {
@@ -32,6 +33,6 @@ void UMoodLostScreen::NativeConstruct()
 	GameMode = Cast<AMoodGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	
 	MoodGameInstance = Cast<UMoodGameInstance>(GetGameInstance());
-	RestartButton->OnClicked.AddUniqueDynamic(this, &UMoodLostScreen::RestartLevel);
-	MainMenuButton->OnClicked.AddUniqueDynamic(this, &UMoodLostScreen::ToMainMenu);
+	RestartButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodLostScreen::RestartLevel);
+	MainMenuButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodLostScreen::ToMainMenu);
 }

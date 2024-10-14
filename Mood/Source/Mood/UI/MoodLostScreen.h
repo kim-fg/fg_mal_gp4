@@ -5,6 +5,7 @@
 #include "MoodLostScreen.generated.h"
 
 class UButton;
+class UMoodCyberButton;
 
 UCLASS()
 class UMoodLostScreen : public UUserWidget
@@ -13,10 +14,10 @@ class UMoodLostScreen : public UUserWidget
 
 public:
 	UPROPERTY(meta = (BindWidget))
-	UButton* RestartButton;
+	UMoodCyberButton* RestartButton;
 
 	UPROPERTY(meta = (BindWidget))
-	UButton* MainMenuButton;
+	UMoodCyberButton* MainMenuButton;
 
 	UFUNCTION(Blueprintable)
 	void RestartLevel();

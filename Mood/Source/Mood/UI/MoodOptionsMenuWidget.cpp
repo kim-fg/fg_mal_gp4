@@ -17,10 +17,18 @@
 void UMoodOptionsMenuWidget::ApplySettings_Implementation()
 {
 	Settings->SetAimSensitivity(MouseSensitivitySlider->Value, MouseSensitivitySlider->Value);
+	MouseSensitivitySavedValue = Settings->GetAimSensVector().X;
+
+
 }
 void UMoodOptionsMenuWidget::OpenWidget_Implementation()
 {
 	this->SetVisibility(ESlateVisibility::HitTestInvisible);
+	MasterVolumeSlider->SetValue(MasterVolumeSavedValue);
+	MusicVolumeSlider->SetValue(MusicVolumeSavedValue);
+	SFXVolumeSlider->SetValue(SFXVolumeSavedValue);
+	MouseSensitivitySlider->SetValue(MouseSensitivitySavedValue);
+	BrightnessSlider->SetValue(BrightnessSavedValue);
 }
 void UMoodOptionsMenuWidget::CloseWidget_Implementation()
 {
