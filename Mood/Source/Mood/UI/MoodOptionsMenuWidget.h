@@ -7,6 +7,7 @@
 class UTextBlock;
 class USlider;
 class UMoodCyberButton;
+class UMoodEnhancedInputUserSettings;
 
 UCLASS()
 
@@ -56,6 +57,9 @@ protected:
 	UTextBlock* BrightnessSliderValue;
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	USlider* BrightnessSlider;
+
+	UPROPERTY()
+	UMoodEnhancedInputUserSettings* Settings;
 
 private:
 	virtual void NativeConstruct() override;
