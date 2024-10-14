@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "MoodCharacter.generated.h"
 
+class AMoodEnemyCharacter;
 class UMoodShotgunCameraShake;
 class UMoodWeaponComponent;
 class UInputComponent;
@@ -27,10 +28,20 @@ enum EPlayerState
 	Eps_Idle,
 	Eps_Walking,
 	Eps_Sprinting,
-	Eps_Execution,
 	Eps_ClimbingLedge,
 	Eps_NoControl
 };
+
+UENUM(BlueprintType)
+enum EMoodState
+{
+	Ems_Mood666,
+	Ems_Mood444,
+	Ems_Mood222,
+	Ems_NoMood
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMoodChanged, EMoodState, NewState);
 
 UCLASS(config=Game)
 class AMoodCharacter : public ACharacter
@@ -48,49 +59,36 @@ class AMoodCharacter : public ACharacter
 	/** Weapon Slot Component */
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
 	UMoodWeaponSlotComponent* WeaponSlotComponent;
-	
-	// /** Melee attack box */
-	// UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	// UBoxComponent* MeleeAttackBoxComponent;
 
 	/** Jump Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* JumpAction;
-
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ClimbAction;
 	/** Move Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* MoveAction;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SprintAction;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
-	UInputAction* MeleeAttackAction;
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ShootAction;
-
 	/** Weapon selected by scrolling wheel */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ScrollWeaponAction;
-
 	/** Weapon selected by buttons 1-3 */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SelectWeapon1Action;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SelectWeapon2Action;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* SelectWeapon3Action;
-
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* InteractAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* ExecuteAction;
 
 public:
 	AMoodCharacter();
-
-	TEnumAsByte<EPlayerState> CurrentState;
 
 protected:
 	virtual void BeginPlay();
@@ -98,8 +96,6 @@ protected:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Landed(const FHitResult& Hit) override;
-
-	
 
 public:
 	/** Look Input Action */
@@ -119,15 +115,22 @@ public:
 	TSubclassOf<UCameraShakeBase> ClimbHeadBob;
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	TSubclassOf<UCameraShakeBase> LandShake;
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	TSubclassOf<UCameraShakeBase> ExecuteShake;
 	
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SprintingFOV = 110.f;
-
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float AlphaFOV = 0.1f;
 
 	UPROPERTY(EditDefaultsOnly)
-	float MeleeAttackCooldown = 1.f;
+	float ExecutionThresholdEnemyHP = 0.3f;
+	UPROPERTY(EditDefaultsOnly)
+	int ExecutionDamage = 5.f;
+	UPROPERTY(EditDefaultsOnly)
+	float ExecutionDistance = 600.f;
+	UPROPERTY(EditDefaultsOnly)
+	float MoveToExecuteTime = 0.1f;
 	
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
 	TEnumAsByte<ECollisionChannel> ClimbableChannel;
@@ -141,25 +144,43 @@ public:
 	// UFUNCTION(Blueprintable)
 	void ToggleInteraction();
 
+	TEnumAsByte<EMoodState> MoodState;
+	UPROPERTY(BlueprintAssignable)
+	FOnMoodChanged OnMoodChanged;
+	
 	UFUNCTION(BlueprintCallable)
 	void ResetPlayer();
 	
 private:
 	float WalkingSpeed;
 	float WalkingFOV;
-	float TimeSinceMeleeAttack = 1.f;
 	float TimeSinceClimbStart = 0.f;
+	UPROPERTY(EditDefaultsOnly)
+	float ExecutionTimeDilation = 0.5f;
+
+	float MoodSpeedPercent = 1.f;
+	float MoodDamagePercent = 1.f;
+	float CurrentMoodDamagePercent = 1.f;
+	float MoodHealthLoss = 1.f;
 	
 	UPROPERTY(EditDefaultsOnly)
 	float DeathFallSpeed = 20.f;
 
+	UPROPERTY(EditDefaultsOnly)
+	float CameraSpeed = 1.f;
+
 	bool bIsDead = false;
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
+	bool bCanClimb = false;
+	bool bIsExecuting = false;
 
 protected:
 	void CheckPlayerState();
 	void CheckMoodMeter();
+
+	void AttemptClimb();
+	void DontClimb();
 	
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
@@ -187,12 +208,17 @@ protected:
 	void Sprint();
 	void StopSprinting();
 
-	void Execution();
+	void Execute();
+	void ExecuteFoundEnemy();
 	void ShootWeapon();
 	void StopShootWeapon();
 
 	void FindLedge();
 
+	void MoodChanged();
+
+	TEnumAsByte<EPlayerState> CurrentState;
+	TEnumAsByte<EMoodState> LastMoodState;
 
 protected:
 	// APawn interface
@@ -201,6 +227,11 @@ protected:
 
 	UPROPERTY()
 	AMoodGameMode* MoodGameMode = nullptr;
+
+	UPROPERTY()
+	AMoodEnemyCharacter* Executee = nullptr;
+	UPROPERTY()
+	UMoodHealthComponent* ExecuteeHealth = nullptr;
 
 public:
  	/** Returns FirstPersonCameraComponent subobject **/

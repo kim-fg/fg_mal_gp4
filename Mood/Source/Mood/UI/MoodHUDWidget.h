@@ -2,6 +2,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "../Weapons/MoodWeaponComponent.h"
 #include "MoodHUDWidget.generated.h"
 
 
@@ -13,6 +14,7 @@ class UMoodLostScreen;
 class UMoodPlayerHealthBar;
 class UMoodHealthComponent;
 class AMoodGameMode;
+class UImage;
 class UMoodWeaponSlotComponent;
 struct FInputModeUIOnly;
 
@@ -44,6 +46,21 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodAmmoWidget* AmmoWidget;
 
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* CrossHair;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* BottomRightCorner;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* BottomLeftCorner;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* TopLeftCorner;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UImage* TopRightCorner;
+
 #pragma endregion
 
 
@@ -62,17 +79,22 @@ public:
 	UPROPERTY()
 	AMoodGameMode* GameMode;
 
+	UPROPERTY(EditDefaultsOnly)
+	FLinearColor TintColorStage0;
+	UPROPERTY(EditDefaultsOnly)
+	FLinearColor TintColorStage1;
+	UPROPERTY(EditDefaultsOnly)
+	FLinearColor TintColorStage2;
+	UPROPERTY(EditDefaultsOnly)
+	FLinearColor TintColorStage3;
 
-	//Spin radial variables
+
 	UPROPERTY()
-	float InnerCircleSpin = 0.3f;
-	UPROPERTY()
-	float MiddleCircleSpin = 0.2f;
-	UPROPERTY()
-	float OuterCircleSpin = 0.1f;
+	AMoodCharacter* Player = nullptr;
+
 	//text change variable
 	UPROPERTY()
-	int MoodMeterNumber;
+	float MoodMeterValue;
 
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
@@ -88,8 +110,10 @@ public:
 	void UpdateHealthbarWidget();
 	void UpdateAmmoWidget();
 	void UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime);
-	void UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, int MoodMeterValue);
-	void UpdateCrosshair();
+	void UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValue);
+	void UpdateCrosshair(UMoodWeaponComponent* WeaponToPass);
+	void UpdateHUDTint();
+	void SetTint(FLinearColor Color, FLinearColor FaceColor);
 
 #pragma endregion
 

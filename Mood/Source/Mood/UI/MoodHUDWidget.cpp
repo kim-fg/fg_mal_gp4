@@ -3,6 +3,7 @@
 
 #include <string>
 
+#include "MathUtil.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Player/MoodCharacter.h"
 #include "../MoodHealthComponent.h"
@@ -13,11 +14,13 @@
 #include "MoodPlayerHealthbar.h"
 #include "MoodAmmoWidget.h"
 #include "MoodWinScreen.h"
+#include "../Player/MoodCharacter.h"
 #include "Components/RadialSlider.h"
 #include "Components/ProgressBar.h"
 #include "../MoodGameMode.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -27,40 +30,17 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	UpdateHealthbarWidget();
 	UpdateAmmoWidget();
 	UpdateMoodMeterWidget(MyGeometry, InDeltaTime);
-
-	/*
-	//Spinning radial + counting text
-	InnerCircleSpin += InDeltaTime / 10;
-	MiddleCircleSpin += InDeltaTime / 10;
-	OuterCircleSpin += InDeltaTime / 10;
-	MoodMeterNumber += InDeltaTime * 100;
-	FString FloatyString = FString::SanitizeFloat(InDeltaTime);
-	//GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Yellow, *FloatyString);
-	MoodMeterWidget->MoodMeterInnerCircle->SetValue(InnerCircleSpin);
-	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MiddleCircleSpin);
-	MoodMeterWidget->MoodMeterOuterCircle->SetValue(OuterCircleSpin);
-	if (InnerCircleSpin >= 1.0f)
-		InnerCircleSpin = 0.f;
-	if (MiddleCircleSpin >= 1.0f)
-		MiddleCircleSpin = 0.f;
-	if (OuterCircleSpin >= 1.0f)
-		OuterCircleSpin = 0.f;
-	FString FormattedInt = FString::FormatAsNumber(MoodMeterNumber);
-	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FormattedInt));
-
-	if (MoodMeterNumber >= 666)
-		MoodMeterNumber = 0;
-		*/
+	UpdateHUDTint();
 }
 
-void UMoodHUDWidget::GetHealthComponent(ACharacter* Player)
+void UMoodHUDWidget::GetHealthComponent(ACharacter* PlayerPass)
 {
-	HealthComponent = Player->FindComponentByClass<UMoodHealthComponent>();
+	HealthComponent = PlayerPass->FindComponentByClass<UMoodHealthComponent>();
 }
 
-void UMoodHUDWidget::GetWeaponSlotComponent(ACharacter* Player)
+void UMoodHUDWidget::GetWeaponSlotComponent(ACharacter* PlayerPass)
 {
-	WeaponSlotComponent = Player->FindComponentByClass<UMoodWeaponSlotComponent>();
+	WeaponSlotComponent = PlayerPass->FindComponentByClass<UMoodWeaponSlotComponent>();
 }
 
 void UMoodHUDWidget::UpdateHealthbarWidget()
@@ -81,6 +61,7 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 	if (WeaponSlotComponent != nullptr)
 	{
 		Weapon = WeaponSlotComponent->GetSelectedWeapon();
+		UpdateCrosshair(Weapon);
 		if (Weapon != nullptr)
 		{
 			if (Weapon->HasUnlimitedAmmo())
@@ -106,34 +87,76 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 
 void UMoodHUDWidget::UpdateMoodMeterWidget(const FGeometry& MyGeometry, float InDeltaTime)
 {
-	MoodMeterNumber = GameMode->GetMoodMeterValue();
-	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FString::FromInt(GameMode->GetMoodMeterValue())));
+	MoodMeterValue = GameMode->GetMoodMeterValue();
+	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0.f, 666.f);
+	MoodMeterWidget->MoodMeterNumber->SetText(FText::FromString(FString::FromInt(FMath::FloorToInt32(MoodMeterValue))));
 
-	UpdateMoodMeterBars(MyGeometry, InDeltaTime, MoodMeterNumber);
+	UpdateMoodMeterBars(MyGeometry, InDeltaTime, MoodMeterValue);
 }
 
-void UMoodHUDWidget::UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, int MoodMeterValue)
+void UMoodHUDWidget::UpdateMoodMeterBars(const FGeometry& MyGeometry, float InDeltaTime, float MoodMeterValueToText)
 {
-	if (MoodMeterNumber >= 1 && MoodMeterNumber <= 222)
+	if (MoodMeterValueToText >= 0 && MoodMeterValueToText <= 222)
 	{
-		MoodMeterNumber = MoodMeterNumber / 222;
-		MoodMeterWidget->MoodMeterInnerCircle->SetValue(MoodMeterNumber);
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0.f);
+		MoodMeterWidget->MoodMeterOuterCircle->SetValue(0.f);
+		MoodMeterValueToText = UKismetMathLibrary::NormalizeToRange(MoodMeterValueToText, 0, 222);
+		MoodMeterWidget->MoodMeterInnerCircle->SetValue(MoodMeterValueToText);
 	}
-	else if (MoodMeterNumber >= 223 && MoodMeterNumber <= 444)
+	else if (MoodMeterValueToText >= 223 && MoodMeterValueToText <= 444)
 	{
-		MoodMeterNumber = MoodMeterNumber / 222;
-		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MoodMeterNumber);
+		MoodMeterWidget->MoodMeterInnerCircle->SetValue(1.f);
+		MoodMeterWidget->MoodMeterOuterCircle->SetValue(0.f);
+		MoodMeterValueToText = UKismetMathLibrary::NormalizeToRange(MoodMeterValueToText, 223, 444);
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MoodMeterValueToText);
 	}
-	else if (MoodMeterNumber > 445 && MoodMeterNumber <= 666)
+	else if (MoodMeterValueToText >= 445 && MoodMeterValueToText <= 666)
 	{
-		MoodMeterNumber = MoodMeterNumber / 222;
-		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(MoodMeterNumber);
+		MoodMeterWidget->MoodMeterInnerCircle->SetValue(1.f);
+		MoodMeterWidget->MoodMeterMiddleCircle->SetValue(1.f);
+		MoodMeterValueToText = UKismetMathLibrary::NormalizeToRange(MoodMeterValueToText, 445, 666);
+		MoodMeterWidget->MoodMeterOuterCircle->SetValue(MoodMeterValueToText);
 	}
 }
 
-void UMoodHUDWidget::UpdateCrosshair()
+void UMoodHUDWidget::UpdateCrosshair(UMoodWeaponComponent* WeaponToPass)
 {
-	//Update crosshair based on equipped weapon
+	CrossHair->SetBrushFromTexture(Weapon->GetCrossHair(), false);
+}
+
+void UMoodHUDWidget::UpdateHUDTint()
+{
+	switch (Player->MoodState)
+	{
+	case EMoodState::Ems_NoMood:
+		SetTint(TintColorStage0, TintColorStage0);
+		break;
+	case EMoodState::Ems_Mood222:
+		SetTint(TintColorStage1, TintColorStage1);
+		break;
+	case EMoodState::Ems_Mood444:
+		SetTint(TintColorStage2, TintColorStage1);
+		break;
+	case EMoodState::Ems_Mood666:
+		SetTint(TintColorStage3, TintColorStage3);
+		break;
+	default:
+		break;
+	}
+}
+
+void UMoodHUDWidget::SetTint(FLinearColor Color, FLinearColor FaceColor)
+{
+	MoodMeterWidget->MoodMeterInnerCircle->SetSliderProgressColor(Color);
+	MoodMeterWidget->MoodMeterMiddleCircle->SetSliderProgressColor(Color);
+	MoodMeterWidget->MoodMeterOuterCircle->SetSliderProgressColor(Color);
+	MoodMeterWidget->MoodMeterNumber->SetColorAndOpacity(Color);
+	MoodMeterWidget->Face->SetColorAndOpacity(FaceColor);
+	AmmoWidget->SetColorAndOpacity(Color);
+	BottomRightCorner->SetColorAndOpacity(Color);
+	BottomLeftCorner->SetColorAndOpacity(Color);
+	TopLeftCorner->SetColorAndOpacity(Color);
+	TopRightCorner->SetColorAndOpacity(Color);
 }
 
 void UMoodHUDWidget::DisplayLostScreen()
@@ -142,7 +165,7 @@ void UMoodHUDWidget::DisplayLostScreen()
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerController->SetInputMode(FInputModeUIOnly());
 	PlayerController->SetShowMouseCursor(true);
-	
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
 }
 
 void UMoodHUDWidget::DisplayWinScreen()
@@ -165,9 +188,9 @@ void UMoodHUDWidget::HideLostScreen()
 void UMoodHUDWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
-	if (UGameplayStatics::GetPlayerCharacter(GetWorld(), 0) != nullptr)
+	Player = Cast<AMoodCharacter>(UGameplayStatics::GetPlayerCharacter(GetWorld(), 0));
+	if (Player != nullptr)
 	{
-		ACharacter* Player = UGameplayStatics::GetPlayerCharacter(GetWorld(), 0);
 		GetHealthComponent(Player);
 		GetWeaponSlotComponent(Player);
 	}

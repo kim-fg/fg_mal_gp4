@@ -7,8 +7,9 @@
 
 void UMoodLostScreen::RestartLevel()
 {
-	// UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), this, false);
 	GameMode->Respawn();
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), this, false);
+
 	
 }
 

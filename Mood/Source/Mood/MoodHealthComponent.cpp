@@ -3,16 +3,21 @@
 void UMoodHealthComponent::Hurt(int Amount) {
 	if (IsDead) { return; }
 	
-	Amount = abs(Amount);
+	Amount = abs(Amount) * HealthLossPercent;
 	CurrentHealth -= Amount;
+	
+	OnHurt.Broadcast(Amount, CurrentHealth);
+
+	if (CurrentHealth < MaxHealth / 4) {
+		bCanBeExecuted = true;
+	}
+	
 	if (CurrentHealth <= 0) {
 		CurrentHealth = 0;
 		IsDead = true;
 		OnDeath.Broadcast();
 		return;
 	}
-
-	OnHurt.Broadcast(Amount, CurrentHealth);
 }
 
 void UMoodHealthComponent::Heal(int Amount) {
@@ -31,6 +36,10 @@ void UMoodHealthComponent::Heal(int Amount) {
 void UMoodHealthComponent::Reset() {
 	IsDead = false;
 	CurrentHealth = MaxHealth;
+}
+
+void UMoodHealthComponent::AlterHealthLoss(float Value) {
+	HealthLossPercent = Value;
 }
 
 void UMoodHealthComponent::BeginPlay() {

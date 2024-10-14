@@ -4,9 +4,11 @@
 #include "Blueprint/UserWidget.h"
 #include "MoodMainMenuWidget.generated.h"
 
+class UMoodCyberButton;
 class UMoodOptionsMenuWidget;
 class UMoodLevelSelectWidget;
 class UMoodGameInstance;
+class UWidgetAnimation;
 class UButton;
 
 UCLASS()
@@ -15,23 +17,23 @@ class UMoodMainMenuWidget : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	
-	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
-	UButton* StartGameButton;
-
-	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
-	UButton* LevelSelectButton;
-	
-	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
-	UButton* OptionsButton;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
-	UButton* ExitGameButton;
+	UMoodCyberButton* StartGameButton;
 
-	UPROPERTY(meta =(BindWidget))
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	UMoodCyberButton* LevelSelectButton;
+	
+	UPROPERTY(meta = (BindWidget),BlueprintReadWrite)
+	UMoodCyberButton* OptionsButton;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	UMoodCyberButton* ExitGameButton;
+
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite)
 	UMoodLevelSelectWidget* LevelSelectWidget;
 
-	UPROPERTY(meta =(BindWidget))
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite)
 	UMoodOptionsMenuWidget* OptionsMenuWidget;
 	
 
