@@ -7,8 +7,8 @@ AMoodHealthPickup::AMoodHealthPickup() {
     //Default value for HealAmount, can be configured in the editor
     HealAmount = 400;
 
-    //Create and attach the static mesh to represent the pickup
-    PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("PickupMesh"));
+    //Create static mesh to represent the HealthPickup
+    PickupMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("HealthPickup"));
     PickupMesh->SetupAttachment(RootComponent);
 }
 
