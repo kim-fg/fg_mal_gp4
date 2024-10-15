@@ -1,7 +1,6 @@
 #include "MoodLostScreen.h"
 
 #include "MoodGameInstance.h"
-#include "Components/Button.h"
 #include "Kismet/GameplayStatics.h"
 #include "Mood/MoodGameMode.h"
 #include "MoodCyberButton.h"
@@ -9,9 +8,9 @@
 void UMoodLostScreen::RestartLevel()
 {
 	GameMode->Respawn();
-	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), this, false);
+	UGameplayStatics::OpenLevel(GetWorld(), FName(GetWorld()->GetName()), false);
 
-	
+
 }
 
 void UMoodLostScreen::ToMainMenu()

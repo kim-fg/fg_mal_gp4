@@ -1,9 +1,5 @@
 #include "MoodHUDWidget.h"
-#include "MoodHUDWidget.h"
 
-#include <string>
-
-#include "MathUtil.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Player/MoodCharacter.h"
 #include "../MoodHealthComponent.h"
@@ -14,7 +10,6 @@
 #include "MoodPlayerHealthbar.h"
 #include "MoodAmmoWidget.h"
 #include "MoodWinScreen.h"
-#include "../Player/MoodCharacter.h"
 #include "Components/RadialSlider.h"
 #include "Components/ProgressBar.h"
 #include "../MoodGameMode.h"
@@ -127,7 +122,7 @@ void UMoodHUDWidget::UpdateCrosshair(UMoodWeaponComponent* WeaponToPass)
 
 void UMoodHUDWidget::UpdateHUDTint()
 {
-	switch (Player->MoodState)
+	switch (GameMode->GetMoodState())
 	{
 	case EMoodState::Ems_NoMood:
 		SetTint(TintColorStage0, TintColorStage0);
@@ -187,11 +182,15 @@ void UMoodHUDWidget::HideLostScreen()
 
 void UMoodHUDWidget::DisplayPauseMenu()
 {
-	PauseMenu->SetVisibility(ESlateVisibility::Visible);
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	PlayerController->SetInputMode(FInputModeUIOnly());
-	PlayerController->SetShowMouseCursor(true);
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+	if (!UGameplayStatics::IsGamePaused(GetWorld()))
+	{
+		PauseMenu->SetVisibility(ESlateVisibility::Visible);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PlayerController->SetInputMode(FInputModeUIOnly());
+		PlayerController->SetShowMouseCursor(true);
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+	}
 }
 
 
@@ -215,6 +214,6 @@ void UMoodHUDWidget::NativeConstruct()
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
-
+	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
 }
 
