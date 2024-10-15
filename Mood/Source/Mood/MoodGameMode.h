@@ -64,5 +64,23 @@ private:
 	float MoodMeterValue = 0.f;
 	float TimeSinceEnemyDamaged = 0.f;
 
+	// Slow motion
+	UPROPERTY(EditDefaultsOnly)
+	float TimerSlowMotionReset = 30.f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
+	float MoodChangeTimeDilation = 0.05f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
+	float MoodChangeAlpha = 0.01f;
+
+	float TimeLeftMood666 = 0.f;
+	float TimeLeftMood444 = 0.f;
+	float TimeLeftMood222 = 0.f;
+	bool bIsChangingMood = false;
+	bool bHasReachedTimeDilationBottom = false;
+	float CurrentTimeDilation = 1.f;
+
 	void DecreaseMoodOverTime();
+
+	void CheckSlowMotionValidity(EMoodState PreviousState, EMoodState NewMoodState);
+	void SetSlowMotion();
 };

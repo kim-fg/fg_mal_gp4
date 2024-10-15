@@ -35,6 +35,7 @@ enum EPlayerState
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPaused);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlowMotionTriggered, EMoodState, MoodState);
 
 UCLASS(config=Game)
 class AMoodCharacter : public ACharacter
@@ -140,6 +141,8 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnPaused OnPaused;
+	UPROPERTY(BlueprintAssignable)
+	FOnSlowMotionTriggered OnSlowMotionTriggered;
 	
 	UFUNCTION(BlueprintCallable)
 	void ResetPlayer();
@@ -150,12 +153,6 @@ private:
 	float TimeSinceClimbStart = 0.f;
 	UPROPERTY(EditDefaultsOnly)
 	float ExecutionTimeDilation = 0.5f;
-	float TimeLeftMood666;
-	float TimeLeftMood444;
-	float TimeLeftMood222;
-	UPROPERTY(EditDefaultsOnly)
-	float TimerSlowMotionReset = 30.f;
-	EMoodState LastMoodState = Ems_NoMood;
 	
 	float MoodSpeedPercent = 1.f;
 	float MoodDamagePercent = 1.f;
@@ -167,20 +164,12 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float CameraSpeed = 1.f;
-	
-	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
-	float MoodChangeTimeDilation = 0.05f;
-	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
-	float MoodChangeAlpha = 0.01f;
-	float CurrentTimeDilation = 1.f;
-	bool bHasReachedTimeDilationBottom = false;
 
 	bool bIsDead = false;
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
-	bool bIsChangingMood = false;
 
 protected:
 	void CheckPlayerState();
@@ -225,9 +214,7 @@ protected:
 	void StopShootWeapon();
 
 	void FindLedge();
-
-	void MoodChanged();
-
+	
 	TEnumAsByte<EPlayerState> CurrentState;
 
 protected:
