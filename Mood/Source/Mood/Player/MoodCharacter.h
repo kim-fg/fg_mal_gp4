@@ -175,9 +175,9 @@ private:
 	float CameraSpeed = 1.f;
 
 	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
-	float MoodChangeTimeDilation = 0.2f;
+	float MoodChangeTimeDilation = 0.05f;
 	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
-	float MoodChangeAlpha = 0.4f;
+	float MoodChangeAlpha = 0.01f;
 	float CurrentTimeDilation = 1.f;
 	bool bHasReachedTimeDilationBottom = false;
 
@@ -187,6 +187,7 @@ private:
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
 	bool bIsChangingMood = false;
+	bool bIsFirstTime = true;
 
 protected:
 	void CheckPlayerState();

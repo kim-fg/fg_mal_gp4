@@ -54,6 +54,8 @@ void AMoodCharacter::BeginPlay()
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &AMoodCharacter::LoseHealth);
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &AMoodCharacter::KillPlayer);
 	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
+
+	bIsFirstTime = true;
 }
 
 void AMoodCharacter::Tick(float const DeltaTime)
@@ -215,9 +217,6 @@ void AMoodCharacter::CheckMoodMeter()
 		WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 		HealthComponent->AlterHealthLoss(MoodHealthLoss);
 		OnMoodChanged.Broadcast(MoodState);
-
-		// continue here tomorrow 
-		// MoodChanged();
 		bIsChangingMood = true;
 	}
 }
@@ -467,10 +466,16 @@ void AMoodCharacter::MoodChanged()
 	if (!bIsChangingMood)
 		return;
 
+	if (bIsFirstTime)
+	{
+		bIsFirstTime = false;
+		bIsChangingMood = false;
+	}
+	
 	if (!bHasReachedTimeDilationBottom)
 	{
 		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha);
-		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.1f)
+		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.05f)
 			bHasReachedTimeDilationBottom = true;
 	}
 	else
@@ -483,7 +488,7 @@ void AMoodCharacter::MoodChanged()
 			bIsChangingMood = false;
 		}
 	}
-	
+
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), CurrentTimeDilation);
 }
 
