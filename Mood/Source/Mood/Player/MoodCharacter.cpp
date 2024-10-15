@@ -65,6 +65,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	CheckPlayerState();
 	CheckMoodMeter();
 	FindLedge();
+	MoodChanged();
 }
 
 void AMoodCharacter::Landed(const FHitResult& Hit)
@@ -113,6 +114,9 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Interact 
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ToggleInteraction);
+
+		// Pausing
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &AMoodCharacter::PauseGame);
 	}
 	
 	else
@@ -213,7 +217,8 @@ void AMoodCharacter::CheckMoodMeter()
 		OnMoodChanged.Broadcast(MoodState);
 
 		// continue here tomorrow 
-		MoodChanged();
+		// MoodChanged();
+		bIsChangingMood = true;
 	}
 }
 
@@ -286,6 +291,11 @@ void AMoodCharacter::SelectWeapon3()
 		return;
 
 	WeaponSlotComponent->SelectWeapon(2);
+}
+
+void AMoodCharacter::PauseGame()
+{
+	OnPaused.Broadcast();
 }
 
 void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
@@ -454,7 +464,27 @@ void AMoodCharacter::FindLedge()
 
 void AMoodCharacter::MoodChanged()
 {
-	// continue here tomorrow
+	if (!bIsChangingMood)
+		return;
+
+	if (!bHasReachedTimeDilationBottom)
+	{
+		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha);
+		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.1f)
+			bHasReachedTimeDilationBottom = true;
+	}
+	else
+	{
+		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, 1.1f, MoodChangeAlpha);
+		if (CurrentTimeDilation >= 1.f)
+		{
+			CurrentTimeDilation = 1.f;
+			bHasReachedTimeDilationBottom = false;
+			bIsChangingMood = false;
+		}
+	}
+	
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), CurrentTimeDilation);
 }
 
 void AMoodCharacter::KillPlayer()
