@@ -179,21 +179,33 @@ void AMoodCharacter::CheckPlayerState()
 void AMoodCharacter::OnMoodChanged(EMoodState NewState) {
 	switch (NewState) {
 	case Ems_Mood666:
+		if (TimeLeftMood666 <= 0.f)
+			bIsChangingMood = true;
+		TimeLeftMood666 = TimerSlowMotionReset;
 		MoodSpeedPercent = 1.5f;
 		MoodDamagePercent = 2.5f;
 		MoodHealthLoss = 0.5f;
 		break;
 	case Ems_Mood444:
+		if (LastMoodState > NewState && TimeLeftMood444 <= 0.f)
+			bIsChangingMood = true;
+		TimeLeftMood444 = TimerSlowMotionReset;
 		MoodSpeedPercent = 1.2f;
 		MoodDamagePercent = 1.8f;
 		MoodHealthLoss = 0.8f;
 		break;
 	case Ems_Mood222:
+		if (LastMoodState > NewState && TimeLeftMood222 <= 0.f)
+			bIsChangingMood = true;
+		TimeLeftMood222 = TimerSlowMotionReset;
+		TimeLeftMood666 = 0.f;
 		MoodSpeedPercent = 1.1f;
 		MoodDamagePercent = 1.3f;
 		MoodHealthLoss = 0.9f;
 		break;
 	case Ems_NoMood:
+		TimeLeftMood666 = 0.f;
+		TimeLeftMood444 = 0.f;
 		MoodSpeedPercent = 1.f;
 		MoodDamagePercent = 1.f;
 		MoodHealthLoss = 1.f;
@@ -201,10 +213,13 @@ void AMoodCharacter::OnMoodChanged(EMoodState NewState) {
 	default:
 		return;
 	}
-	
+
+	UE_LOG(LogTemp, Log, TEXT("Old: %d. New: %d."), LastMoodState, NewState)
+	LastMoodState = NewState;
 	WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 	HealthComponent->AlterHealthLoss(MoodHealthLoss);
-	bIsChangingMood = true;
+	// bIsChangingMood = true;
+	
 }
 
 void AMoodCharacter::AttemptClimb()
@@ -449,6 +464,14 @@ void AMoodCharacter::FindLedge()
 
 void AMoodCharacter::MoodChanged()
 {
+	const auto DeltaTime = GetWorld()->DeltaTimeSeconds;
+	if (TimeLeftMood222 >= 0.f)
+		TimeLeftMood222 -= DeltaTime;
+	if (TimeLeftMood444 >= 0.f)
+		TimeLeftMood444 -= DeltaTime;
+	if (TimeLeftMood666 >= 0.f)
+		TimeLeftMood666 -= DeltaTime;
+	
 	if (!bIsChangingMood)
 		return;
 
