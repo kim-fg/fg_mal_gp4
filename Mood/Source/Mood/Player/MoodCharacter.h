@@ -175,7 +175,6 @@ private:
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
 	bool bIsChangingMood = false;
-	bool bIsFirstTime = true;
 
 protected:
 	void CheckPlayerState();

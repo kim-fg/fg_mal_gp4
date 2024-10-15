@@ -57,8 +57,6 @@ void AMoodCharacter::BeginPlay()
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &AMoodCharacter::LoseHealth);
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &AMoodCharacter::KillPlayer);
 	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
-
-	bIsFirstTime = true;
 }
 
 void AMoodCharacter::Tick(float const DeltaTime)
@@ -454,12 +452,6 @@ void AMoodCharacter::MoodChanged()
 	if (!bIsChangingMood)
 		return;
 
-	if (bIsFirstTime)
-	{
-		bIsFirstTime = false;
-		bIsChangingMood = false;
-	}
-	
 	if (!bHasReachedTimeDilationBottom)
 	{
 		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha);
