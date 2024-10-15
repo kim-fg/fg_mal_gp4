@@ -150,7 +150,13 @@ private:
 	float TimeSinceClimbStart = 0.f;
 	UPROPERTY(EditDefaultsOnly)
 	float ExecutionTimeDilation = 0.5f;
-
+	float TimeLeftMood666;
+	float TimeLeftMood444;
+	float TimeLeftMood222;
+	UPROPERTY(EditDefaultsOnly)
+	float TimerSlowMotionReset = 30.f;
+	EMoodState LastMoodState = Ems_NoMood;
+	
 	float MoodSpeedPercent = 1.f;
 	float MoodDamagePercent = 1.f;
 	float CurrentMoodDamagePercent = 1.f;
@@ -161,7 +167,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	float CameraSpeed = 1.f;
-
+	
 	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
 	float MoodChangeTimeDilation = 0.05f;
 	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
@@ -175,7 +181,6 @@ private:
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
 	bool bIsChangingMood = false;
-	bool bIsFirstTime = true;
 
 protected:
 	void CheckPlayerState();
