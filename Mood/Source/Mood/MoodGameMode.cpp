@@ -156,7 +156,7 @@ void AMoodGameMode::SetSlowMotion()
 
 	if (!bIsChangingMood)
 		return;
-
+	
 	if (!bHasReachedTimeDilationBottom)
 	{
 		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha);

@@ -91,7 +91,7 @@ private:
 	bool bIsChangingMood = false;
 	bool bHasReachedTimeDilationBottom = false;
 	float CurrentTimeDilation = 1.f;
-
+	
 	void DecreaseMoodOverTime();
 
 	void CheckSlowMotionValidity(EMoodState PreviousState, EMoodState NewMoodState);
