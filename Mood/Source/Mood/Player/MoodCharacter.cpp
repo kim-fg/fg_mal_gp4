@@ -27,7 +27,7 @@ AMoodCharacter::AMoodCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(55.f, 96.0f);
-		
+
 	// Create a CameraComponent	
 	FirstPersonCameraComponent = CreateDefaultSubobject<UCameraComponent>(TEXT("FirstPersonCamera"));
 	FirstPersonCameraComponent->SetupAttachment(GetCapsuleComponent());
@@ -48,9 +48,9 @@ void AMoodCharacter::BeginPlay()
 	if (!IsValid(MoodGameMode))
 	{
 		MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
-		MoodGameMode->OnMoodChanged.AddUniqueDynamic(this, &AMoodCharacter::OnMoodChanged);		
+		MoodGameMode->OnMoodChanged.AddUniqueDynamic(this, &AMoodCharacter::OnMoodChanged);
 	}
-	
+
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
 
@@ -64,10 +64,10 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	Super::Tick(DeltaTime);
 
 	bIsMidAir = GetCharacterMovement()->Velocity.Z != 0 ? 1 : 0;
-	
+
 	CheckPlayerState();
 	FindLedge();
-	MoodChanged();
+	// MoodChanged();
 }
 
 void AMoodCharacter::Landed(const FHitResult& Hit)
@@ -76,7 +76,7 @@ void AMoodCharacter::Landed(const FHitResult& Hit)
 
 	auto PlayerController = Cast<APlayerController>(GetController());
 	if (!PlayerController) { return; }
-	
+
 	PlayerController->PlayerCameraManager->StartCameraShake(LandShake, 1.0f);
 }
 
@@ -94,36 +94,46 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		// Climbing
 		EnhancedInputComponent->BindAction(ClimbAction, ETriggerEvent::Started, this, &AMoodCharacter::AttemptClimb);
 		EnhancedInputComponent->BindAction(ClimbAction, ETriggerEvent::Completed, this, &AMoodCharacter::DontClimb);
-		
+
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Move);
 		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Sprint);
-		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this, &AMoodCharacter::StopSprinting);
+		EnhancedInputComponent->BindAction(SprintAction, ETriggerEvent::Completed, this,
+		                                   &AMoodCharacter::StopSprinting);
 
 		// Looking
 		EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Look);
-		
+
 		// Attacking
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ShootWeapon);
-		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Canceled, this, &AMoodCharacter::StopShootWeapon);
+		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Canceled, this,
+		                                   &AMoodCharacter::StopShootWeapon);
 		EnhancedInputComponent->BindAction(ExecuteAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execute);
-		
+
 		// Weapon Selection
-		EnhancedInputComponent->BindAction(ScrollWeaponAction, ETriggerEvent::Triggered, this, &AMoodCharacter::WeaponScroll);
-		EnhancedInputComponent->BindAction(SelectWeapon1Action, ETriggerEvent::Triggered, this, &AMoodCharacter::SelectWeapon1);
-		EnhancedInputComponent->BindAction(SelectWeapon2Action, ETriggerEvent::Triggered, this, &AMoodCharacter::SelectWeapon2);
-		EnhancedInputComponent->BindAction(SelectWeapon3Action, ETriggerEvent::Triggered, this, &AMoodCharacter::SelectWeapon3);
+		EnhancedInputComponent->BindAction(ScrollWeaponAction, ETriggerEvent::Triggered, this,
+		                                   &AMoodCharacter::WeaponScroll);
+		EnhancedInputComponent->BindAction(SelectWeapon1Action, ETriggerEvent::Triggered, this,
+		                                   &AMoodCharacter::SelectWeapon1);
+		EnhancedInputComponent->BindAction(SelectWeapon2Action, ETriggerEvent::Triggered, this,
+		                                   &AMoodCharacter::SelectWeapon2);
+		EnhancedInputComponent->BindAction(SelectWeapon3Action, ETriggerEvent::Triggered, this,
+		                                   &AMoodCharacter::SelectWeapon3);
 
 		// Interact 
-		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ToggleInteraction);
+		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this,
+		                                   &AMoodCharacter::ToggleInteraction);
 
 		// Pausing
 		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &AMoodCharacter::PauseGame);
 	}
-	
+
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		UE_LOG(LogTemplateCharacter, Error,
+		       TEXT(
+			       "'%s' Failed to find an Enhanced Input Component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
+		       ), *GetNameSafe(this));
 	}
 }
 
@@ -132,14 +142,16 @@ void AMoodCharacter::CheckPlayerState()
 	switch (CurrentState)
 	{
 	case Eps_Idle:
-		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV, AlphaFOV);
+		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV,
+		                                                      AlphaFOV);
 		if (!bIsMidAir)
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(IdleHeadBob, 1.f);
-		if (GetCharacterMovement()->Velocity != FVector(0, 0,  0))
+		if (GetCharacterMovement()->Velocity != FVector(0, 0, 0))
 			CurrentState = Eps_Walking;
 		break;
 	case Eps_Walking:
-		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV, AlphaFOV);
+		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, WalkingFOV,
+		                                                      AlphaFOV);
 		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 		if (!bIsMidAir)
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
@@ -148,14 +160,15 @@ void AMoodCharacter::CheckPlayerState()
 		break;
 	case Eps_Sprinting:
 		GetCharacterMovement()->MaxWalkSpeed = SprintingSpeed;
-		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, SprintingFOV, AlphaFOV);
+		FirstPersonCameraComponent->FieldOfView = FMath::Lerp(FirstPersonCameraComponent->FieldOfView, SprintingFOV,
+		                                                      AlphaFOV);
 		if (!bIsMidAir)
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(SprintHeadBob, 1.f);
 		if (GetCharacterMovement()->Velocity.Length() < 10.f)
 			StopSprinting();
 		break;
 	case Eps_ClimbingLedge:
-		GetCharacterMovement()->Velocity = FVector(0,0, 0);
+		GetCharacterMovement()->Velocity = FVector(0, 0, 0);
 		GetCharacterMovement()->MaxWalkSpeed = WalkingSpeed;
 		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(WalkHeadBob, 1.f);
 		StopShootWeapon();
@@ -169,43 +182,33 @@ void AMoodCharacter::CheckPlayerState()
 		ExecuteFoundEnemy();
 		break;
 
-		default:
-			UE_LOG(LogTemp, Error, TEXT("No player state found. MoodCharacter.cpp - CheckPlayerState"));
-			CurrentState = Eps_Idle;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("No player state found. MoodCharacter.cpp - CheckPlayerState"));
+		CurrentState = Eps_Idle;
 		break;
 	}
 }
 
-void AMoodCharacter::OnMoodChanged(EMoodState NewState) {
-	switch (NewState) {
+void AMoodCharacter::OnMoodChanged(EMoodState NewState)
+{
+	switch (NewState)
+	{
 	case Ems_Mood666:
-		if (TimeLeftMood666 <= 0.f)
-			bIsChangingMood = true;
-		TimeLeftMood666 = TimerSlowMotionReset;
 		MoodSpeedPercent = 1.5f;
 		MoodDamagePercent = 2.5f;
 		MoodHealthLoss = 0.5f;
 		break;
 	case Ems_Mood444:
-		if (LastMoodState > NewState && TimeLeftMood444 <= 0.f)
-			bIsChangingMood = true;
-		TimeLeftMood444 = TimerSlowMotionReset;
 		MoodSpeedPercent = 1.2f;
 		MoodDamagePercent = 1.8f;
 		MoodHealthLoss = 0.8f;
 		break;
 	case Ems_Mood222:
-		if (LastMoodState > NewState && TimeLeftMood222 <= 0.f)
-			bIsChangingMood = true;
-		TimeLeftMood222 = TimerSlowMotionReset;
-		TimeLeftMood666 = 0.f;
 		MoodSpeedPercent = 1.1f;
 		MoodDamagePercent = 1.3f;
 		MoodHealthLoss = 0.9f;
 		break;
 	case Ems_NoMood:
-		TimeLeftMood666 = 0.f;
-		TimeLeftMood444 = 0.f;
 		MoodSpeedPercent = 1.f;
 		MoodDamagePercent = 1.f;
 		MoodHealthLoss = 1.f;
@@ -214,12 +217,8 @@ void AMoodCharacter::OnMoodChanged(EMoodState NewState) {
 		return;
 	}
 
-	UE_LOG(LogTemp, Log, TEXT("Old: %d. New: %d."), LastMoodState, NewState)
-	LastMoodState = NewState;
 	WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 	HealthComponent->AlterHealthLoss(MoodHealthLoss);
-	// bIsChangingMood = true;
-	
 }
 
 void AMoodCharacter::AttemptClimb()
@@ -281,7 +280,7 @@ void AMoodCharacter::SelectWeapon2()
 {
 	if (WeaponSlotComponent == nullptr || !WeaponSlotComponent->HasWeapon())
 		return;
-	
+
 	WeaponSlotComponent->SelectWeapon(1);
 }
 
@@ -303,7 +302,7 @@ void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 	auto PlayerController = Cast<APlayerController>(GetController());
 	if (!PlayerController) { return; }
 
-	PlayerController->PlayerCameraManager->StartCameraShake(Weapon->GetRecoilCameraShake(), 1.0f); 
+	PlayerController->PlayerCameraManager->StartCameraShake(Weapon->GetRecoilCameraShake(), 1.0f);
 }
 
 void AMoodCharacter::LoseHealth(int Amount, int NewHealth)
@@ -312,7 +311,7 @@ void AMoodCharacter::LoseHealth(int Amount, int NewHealth)
 }
 
 void AMoodCharacter::ToggleInteraction()
-{	
+{
 }
 
 void AMoodCharacter::ResetPlayer()
@@ -339,32 +338,33 @@ void AMoodCharacter::Execute()
 {
 	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl)
 		return;
-	
+
 	FHitResult HitResult;
 	FCollisionQueryParams Parameters;
 	Parameters.AddIgnoredActor(this);
 
 	const FVector TraceStart = FirstPersonCameraComponent->GetComponentLocation();
 	const FVector TraceEnd = FirstPersonCameraComponent->GetComponentLocation()
-	+ FirstPersonCameraComponent->GetForwardVector() * ExecutionDistance;
-	
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters, FCollisionResponseParams()))
+		+ FirstPersonCameraComponent->GetForwardVector() * ExecutionDistance;
+
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters,
+	                                         FCollisionResponseParams()))
 	{
 		Executee = Cast<AMoodEnemyCharacter>(HitResult.GetActor());
 		if (!IsValid(Executee))
 			return;
-		
+
 		ExecuteeHealth = Cast<UMoodHealthComponent>(Executee->FindComponentByClass<UMoodHealthComponent>());
 		if (!IsValid(ExecuteeHealth))
 			return;
-		
+
 		if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP)
 		{
 			bIsExecuting = true;
 			CurrentState = Eps_NoControl;
 			FLatentActionInfo LatentInfo;
 			LatentInfo.CallbackTarget = Owner;
-			
+
 			UKismetSystemLibrary::MoveComponentTo(
 				RootComponent,
 				Executee->GetActorLocation(),
@@ -375,7 +375,7 @@ void AMoodCharacter::Execute()
 				true,
 				EMoveComponentAction::Move,
 				LatentInfo
-				);
+			);
 		}
 	}
 }
@@ -384,12 +384,12 @@ void AMoodCharacter::ExecuteFoundEnemy()
 {
 	if (!bIsExecuting)
 		return;
-	
+
 	if (IsValid(Executee) && IsValid(ExecuteeHealth))
 	{
-		GetCharacterMovement()->Velocity = FVector(0,0, 0);
+		GetCharacterMovement()->Velocity = FVector(0, 0, 0);
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), ExecutionTimeDilation);
-	
+
 		if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 100.f)
 		{
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ExecuteShake, 1.f);
@@ -426,32 +426,36 @@ void AMoodCharacter::FindLedge()
 {
 	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl || !bCanClimb)
 		return;
-	
+
 	FHitResult BottomHitResult;
 	FHitResult TopHitResult;
-	
+
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
 	const FVector BottomTraceStart = GetActorLocation() + GetActorUpVector() * 40.f;
 	const FVector BottomTraceEnd = GetActorLocation() + GetActorForwardVector() * 80.f + GetActorUpVector() * 40.f;
-	
+
 	const FVector TopTraceStart = GetActorLocation() + GetActorUpVector() * 60.f;
 	const FVector TopTraceEnd = GetActorLocation() + GetActorForwardVector() * 80.f + GetActorUpVector() * 60.f;
-	
-	auto WallInFront = GetWorld()->LineTraceSingleByChannel(BottomHitResult, BottomTraceStart, BottomTraceEnd, ClimbableChannel, QueryParams, FCollisionResponseParams());
-	auto WallAbove = GetWorld()->LineTraceSingleByChannel(TopHitResult, TopTraceStart, TopTraceEnd, InterruptClimbingChannel, QueryParams, FCollisionResponseParams());
+
+	auto WallInFront = GetWorld()->LineTraceSingleByChannel(BottomHitResult, BottomTraceStart, BottomTraceEnd,
+	                                                        ClimbableChannel, QueryParams, FCollisionResponseParams());
+	auto WallAbove = GetWorld()->LineTraceSingleByChannel(TopHitResult, TopTraceStart, TopTraceEnd,
+	                                                      InterruptClimbingChannel, QueryParams,
+	                                                      FCollisionResponseParams());
 	if (WallInFront && !WallAbove && bIsMidAir)
 	{
 		TimeSinceClimbStart = 0.f;
 		CurrentState = Eps_ClimbingLedge;
-		
+
 		FLatentActionInfo LatentInfo;
 		LatentInfo.CallbackTarget = Owner;
 
 		UKismetSystemLibrary::MoveComponentTo(
 			RootComponent,
-			GetActorLocation() + GetActorForwardVector() * ClimbingLocation.X + GetActorUpVector() * ClimbingLocation.Z,/*HitResult.Location, */
+			GetActorLocation() + GetActorForwardVector() * ClimbingLocation.X + GetActorUpVector() * ClimbingLocation.Z,
+			/*HitResult.Location, */
 			GetActorRotation(),
 			true,
 			true,
@@ -460,39 +464,6 @@ void AMoodCharacter::FindLedge()
 			EMoveComponentAction::Move,
 			LatentInfo);
 	}
-}
-
-void AMoodCharacter::MoodChanged()
-{
-	const auto DeltaTime = GetWorld()->DeltaTimeSeconds;
-	if (TimeLeftMood222 >= 0.f)
-		TimeLeftMood222 -= DeltaTime;
-	if (TimeLeftMood444 >= 0.f)
-		TimeLeftMood444 -= DeltaTime;
-	if (TimeLeftMood666 >= 0.f)
-		TimeLeftMood666 -= DeltaTime;
-	
-	if (!bIsChangingMood)
-		return;
-
-	if (!bHasReachedTimeDilationBottom)
-	{
-		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha);
-		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.05f)
-			bHasReachedTimeDilationBottom = true;
-	}
-	else
-	{
-		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, 1.1f, MoodChangeAlpha);
-		if (CurrentTimeDilation >= 1.f)
-		{
-			CurrentTimeDilation = 1.f;
-			bHasReachedTimeDilationBottom = false;
-			bIsChangingMood = false;
-		}
-	}
-
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), CurrentTimeDilation);
 }
 
 void AMoodCharacter::KillPlayer()
@@ -513,7 +484,9 @@ void AMoodCharacter::DeathCamMovement()
 	{
 		if (FirstPersonCameraComponent->GetComponentRotation().Roll < 30.f && !bHasRespawned)
 		{
-			GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 40), 0.01));
+			GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(),
+			                                                FRotator(GetControlRotation().Pitch,
+			                                                         GetControlRotation().Yaw, 40), 0.01));
 			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 2);
 			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 2);
 		}
@@ -522,12 +495,15 @@ void AMoodCharacter::DeathCamMovement()
 		{
 			if (FirstPersonCameraComponent->GetComponentRotation().Roll > 0)
 			{
-				GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(), FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, -2), 0.01));
+				GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(),
+				                                                FRotator(GetControlRotation().Pitch,
+				                                                         GetControlRotation().Yaw, -2), 0.01));
 			}
-				
+
 			else
 			{
-				GetController()->SetControlRotation(FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw, 0.00f));
+				GetController()->SetControlRotation(FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw,
+				                                             0.00f));
 				bIsDead = false;
 				bHasRespawned = false;
 				CurrentState = Eps_Idle;
