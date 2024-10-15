@@ -15,7 +15,7 @@ void UMoodHealthComponent::Hurt(int Amount) {
 	if (CurrentHealth <= 0) {
 		CurrentHealth = 0;
 		IsDead = true;
-		OnDeath.Broadcast();
+		OnDeath.Broadcast(GetOwner());
 		return;
 	}
 }

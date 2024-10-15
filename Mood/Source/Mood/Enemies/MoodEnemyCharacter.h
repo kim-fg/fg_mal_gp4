@@ -27,13 +27,15 @@ public:
 	UMoodHealthComponent* GetHealth() { return Health; }
 	UFUNCTION(BlueprintCallable)
 	UMoodWeaponSlotComponent* GetWeaponSlot() { return WeaponSlot; }
-
+	UFUNCTION()
+	void SetPlayer(AMoodCharacter* InPlayer);
+	
 	UFUNCTION(BlueprintCallable)
 	bool CanSeePlayer();
 	
 	UFUNCTION()
 	void LoseHealth(int Amount, int NewHealth);
-	
+
 protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TObjectPtr<UBehaviorTree> BehaviorTree = nullptr;

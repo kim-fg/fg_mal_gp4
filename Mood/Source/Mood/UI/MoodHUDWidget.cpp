@@ -155,7 +155,7 @@ void UMoodHUDWidget::SetTint(FLinearColor Color, FLinearColor FaceColor)
 	TopRightCorner->SetColorAndOpacity(Color);
 }
 
-void UMoodHUDWidget::DisplayLostScreen()
+void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
 	LostScreen->SetVisibility(ESlateVisibility::Visible);
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);

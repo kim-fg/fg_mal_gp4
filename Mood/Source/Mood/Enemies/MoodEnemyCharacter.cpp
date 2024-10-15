@@ -29,6 +29,15 @@ void AMoodEnemyCharacter::LoseHealth(int Amount, int NewHealth) {
 	MoodGameMode->ResetDamageTime();
 }
 
+void AMoodEnemyCharacter::SetPlayer(AMoodCharacter* InPlayer) {
+	// don't allow un-setting player
+	if (!Player) { return; }
+	
+	Player = InPlayer;
+	// I assume beginplay runs BEFORE this. we'll see :shrug: -KIM
+	ActivationSphere->OnComponentBeginOverlap.RemoveAll(this);
+}
+
 void AMoodEnemyCharacter::ScanForPlayer() {
 	if (CanSeePlayer()) {
 		GetWorldTimerManager().ClearTimer(PlayerScanTimer);

@@ -123,7 +123,7 @@ public:
 
 
 	UFUNCTION(Blueprintable)
-	void DisplayLostScreen();
+	void DisplayLostScreen(AActor* DeadActor);
 
 	UFUNCTION(Blueprintable)
 	void DisplayWinScreen();

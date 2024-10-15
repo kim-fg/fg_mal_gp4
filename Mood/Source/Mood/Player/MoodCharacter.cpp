@@ -495,7 +495,7 @@ void AMoodCharacter::MoodChanged()
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), CurrentTimeDilation);
 }
 
-void AMoodCharacter::KillPlayer()
+void AMoodCharacter::KillPlayer(AActor* DeadActor)
 {
 	bIsDead = true;
 	MoodGameMode->ResetMoodValue();

@@ -4,7 +4,7 @@
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHeal, int, Amount, int, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnHurt, int, Amount, int, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnDeath);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*, DeadActor);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class UMoodHealthComponent : public UActorComponent {

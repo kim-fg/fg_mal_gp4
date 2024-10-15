@@ -211,7 +211,7 @@ protected:
 	UFUNCTION()
 	void LoseHealth(int Amount, int NewHealth);
 	UFUNCTION()
-	void KillPlayer();
+	void KillPlayer(AActor* DeadActor);
 	UFUNCTION()
 	void RevivePlayer();
 	void DeathCamMovement();
