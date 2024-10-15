@@ -18,6 +18,7 @@ enum EMoodState
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FGameFinished);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerRespawn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMoodChanged, EMoodState, NewState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlowMotionTriggered, EMoodState, MoodState);
 
 UCLASS(minimalapi)
 class AMoodGameMode : public AGameModeBase
@@ -45,6 +46,9 @@ public:
 	UPROPERTY(BlueprintAssignable)
 	FOnMoodChanged OnMoodChanged;
 
+	UPROPERTY(BlueprintAssignable)
+	FOnSlowMotionTriggered OnSlowMotionTriggered;
+
 	float GetMoodMeterValue() const { return MoodMeterValue; }
 	EMoodState GetMoodState() const;
 
@@ -64,5 +68,32 @@ private:
 	float MoodMeterValue = 0.f;
 	float TimeSinceEnemyDamaged = 0.f;
 
+	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
+	float MoodLossWhenHit = 1.f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
+	float MoodGainWhenDamaging = 5.f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
+	float TimeIdleBeforeMoodLoss = 2.f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
+	float MoodDecayRate = 3.f;
+
+	// Slow motion
+	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
+	float TimerSlowMotionReset = 30.f;
+	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
+	float MoodChangeTimeDilation = 0.05f;
+	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
+	float MoodChangeAlpha = 0.01f;
+
+	float TimeLeftMood666 = 0.f;
+	float TimeLeftMood444 = 0.f;
+	float TimeLeftMood222 = 0.f;
+	bool bIsChangingMood = false;
+	bool bHasReachedTimeDilationBottom = false;
+	float CurrentTimeDilation = 1.f;
+	
 	void DecreaseMoodOverTime();
+
+	void CheckSlowMotionValidity(EMoodState PreviousState, EMoodState NewMoodState);
+	void SetSlowMotion();
 };

@@ -150,7 +150,7 @@ private:
 	float TimeSinceClimbStart = 0.f;
 	UPROPERTY(EditDefaultsOnly)
 	float ExecutionTimeDilation = 0.5f;
-
+	
 	float MoodSpeedPercent = 1.f;
 	float MoodDamagePercent = 1.f;
 	float CurrentMoodDamagePercent = 1.f;
@@ -162,19 +162,11 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float CameraSpeed = 1.f;
 
-	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
-	float MoodChangeTimeDilation = 0.05f;
-	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
-	float MoodChangeAlpha = 0.01f;
-	float CurrentTimeDilation = 1.f;
-	bool bHasReachedTimeDilationBottom = false;
-
 	bool bIsDead = false;
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
-	bool bIsChangingMood = false;
 
 protected:
 	void CheckPlayerState();
@@ -219,9 +211,7 @@ protected:
 	void StopShootWeapon();
 
 	void FindLedge();
-
-	void MoodChanged();
-
+	
 	TEnumAsByte<EPlayerState> CurrentState;
 
 protected:

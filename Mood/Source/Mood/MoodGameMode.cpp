@@ -2,6 +2,7 @@
 
 #include "MoodGameMode.h"
 
+#include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "UObject/ConstructorHelpers.h"
 
@@ -18,6 +19,7 @@ void AMoodGameMode::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	DecreaseMoodOverTime();
+	SetSlowMotion();
 }
 
 void AMoodGameMode::GameFinished() {
@@ -60,14 +62,19 @@ void AMoodGameMode::ChangeMoodValue(int Value) {
 	auto previousMoodState = GetMoodState();
 
 	if (Value < 0)
-		Value /= 2;
-
-	MoodMeterValue += Value * 5;
+	{
+		if (bIsChangingMood)
+			return;
+		Value *= MoodLossWhenHit;
+	}
+	
+	MoodMeterValue += Value * MoodGainWhenDamaging;
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 
 	auto NewMoodState = GetMoodState();
 	if (NewMoodState != previousMoodState) {
 		OnMoodChanged.Broadcast(NewMoodState);
+		CheckSlowMotionValidity(previousMoodState, NewMoodState);
 	}
 }
 
@@ -80,17 +87,92 @@ void AMoodGameMode::ResetDamageTime() {
 }
 
 void AMoodGameMode::DecreaseMoodOverTime() {
+	if (bIsChangingMood)
+		return;
+	
 	auto PreviousMoodState = GetMoodState();
 	
 	TimeSinceEnemyDamaged += GetWorld()->DeltaTimeSeconds;
 
-	if (TimeSinceEnemyDamaged >= 1)
-		MoodMeterValue -= GetWorld()->DeltaTimeSeconds;
+	if (TimeSinceEnemyDamaged >= TimeIdleBeforeMoodLoss)
+		MoodMeterValue -= GetWorld()->DeltaTimeSeconds * MoodDecayRate;
 
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 
 	auto NewMoodState = GetMoodState();
 	if (PreviousMoodState != NewMoodState) {
 		OnMoodChanged.Broadcast(NewMoodState);
+		CheckSlowMotionValidity(PreviousMoodState, NewMoodState);
 	}
+}
+
+void AMoodGameMode::CheckSlowMotionValidity(EMoodState PreviousState, EMoodState NewMoodState)
+{
+	switch (NewMoodState)
+	{
+	case Ems_Mood666:
+		if (TimeLeftMood666 <= 0.f)
+		{
+			bIsChangingMood = true;
+			TimeLeftMood666 = TimerSlowMotionReset;
+			OnSlowMotionTriggered.Broadcast(NewMoodState);
+		}
+		break;
+	case Ems_Mood444:
+		if (PreviousState > NewMoodState && TimeLeftMood444 <= 0.f)
+		{
+			bIsChangingMood = true;
+			TimeLeftMood444 = TimerSlowMotionReset;
+			OnSlowMotionTriggered.Broadcast(NewMoodState);
+		}
+		break;
+	case Ems_Mood222:
+		if (PreviousState > NewMoodState && TimeLeftMood222 <= 0.f)
+		{
+			bIsChangingMood = true;
+			TimeLeftMood222 = TimerSlowMotionReset;
+			OnSlowMotionTriggered.Broadcast(NewMoodState);
+		}
+		TimeLeftMood666 = 0.f;
+		break;
+	case Ems_NoMood:
+		TimeLeftMood666 = 0.f;
+		TimeLeftMood444 = 0.f;
+		break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("MoodGameMode: No new mood state"));
+	}
+}
+
+void AMoodGameMode::SetSlowMotion()
+{
+	const auto DeltaTime = GetWorld()->DeltaTimeSeconds;
+	if (TimeLeftMood222 >= 0.f)
+		TimeLeftMood222 -= DeltaTime;
+	if (TimeLeftMood444 >= 0.f)
+		TimeLeftMood444 -= DeltaTime;
+	if (TimeLeftMood666 >= 0.f)
+		TimeLeftMood666 -= DeltaTime;
+
+	if (!bIsChangingMood)
+		return;
+	
+	if (!bHasReachedTimeDilationBottom)
+	{
+		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha);
+		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.05f)
+			bHasReachedTimeDilationBottom = true;
+	}
+	else
+	{
+		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, 1.1f, MoodChangeAlpha);
+		if (CurrentTimeDilation >= 1.f)
+		{
+			CurrentTimeDilation = 1.f;
+			bHasReachedTimeDilationBottom = false;
+			bIsChangingMood = false;
+		}
+	}
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), CurrentTimeDilation);
 }

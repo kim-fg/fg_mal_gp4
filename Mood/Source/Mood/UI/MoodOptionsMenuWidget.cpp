@@ -9,7 +9,7 @@
 
 void UMoodOptionsMenuWidget::ApplySettings_Implementation()
 {
-	Settings->SetAimSensitivity(MouseSensitivitySlider->Value, MouseSensitivitySlider->Value);
+	Settings->SetAimSensitivity(MouseSensitivitySlider->GetValue(), MouseSensitivitySlider->GetValue());
 	MouseSensitivitySavedValue = Settings->GetAimSensVector().X;
 
 
@@ -41,9 +41,9 @@ void UMoodOptionsMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 {
 	Super::NativeTick(MyGeometry, InDeltaTime);
 
-	MasterVolumeSliderValue->SetText(FText::FromString(FString::SanitizeFloat(MasterVolumeSlider->Value, 1)));
-	MusicVolumeSliderValue->SetText(FText::FromString(FString::SanitizeFloat(MusicVolumeSlider->Value, 1)));
-	SFXVolumeSliderValue->SetText(FText::FromString(FString::SanitizeFloat(SFXVolumeSlider->Value, 1)));
-	MouseSensitivitySliderValue->SetText(FText::FromString(FString::SanitizeFloat(MouseSensitivitySlider->Value, 1)));
-	BrightnessSliderValue->SetText(FText::FromString(FString::SanitizeFloat(BrightnessSlider->Value, 1)));
+	MasterVolumeSliderValue->SetText(FText::FromString(FString::SanitizeFloat(MasterVolumeSlider->GetValue(), 1)));
+	MusicVolumeSliderValue->SetText(FText::FromString(FString::SanitizeFloat(MusicVolumeSlider->GetValue(), 1)));
+	SFXVolumeSliderValue->SetText(FText::FromString(FString::SanitizeFloat(SFXVolumeSlider->GetValue(), 1)));
+	MouseSensitivitySliderValue->SetText(FText::FromString(FString::SanitizeFloat(MouseSensitivitySlider->GetValue(), 1)));
+	BrightnessSliderValue->SetText(FText::FromString(FString::SanitizeFloat(BrightnessSlider->GetValue(), 1)));
 }
