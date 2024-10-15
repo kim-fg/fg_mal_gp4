@@ -35,7 +35,6 @@ enum EPlayerState
 };
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPaused);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlowMotionTriggered, EMoodState, MoodState);
 
 UCLASS(config=Game)
 class AMoodCharacter : public ACharacter
@@ -141,8 +140,6 @@ public:
 	
 	UPROPERTY(BlueprintAssignable)
 	FOnPaused OnPaused;
-	UPROPERTY(BlueprintAssignable)
-	FOnSlowMotionTriggered OnSlowMotionTriggered;
 	
 	UFUNCTION(BlueprintCallable)
 	void ResetPlayer();

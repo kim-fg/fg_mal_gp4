@@ -65,10 +65,10 @@ void AMoodGameMode::ChangeMoodValue(int Value) {
 	{
 		if (bIsChangingMood)
 			return;
-		Value /= 2;
+		Value *= MoodLossWhenHit;
 	}
 	
-	MoodMeterValue += Value * 5;
+	MoodMeterValue += Value * MoodGainWhenDamaging;
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 
 	auto NewMoodState = GetMoodState();
@@ -94,8 +94,8 @@ void AMoodGameMode::DecreaseMoodOverTime() {
 	
 	TimeSinceEnemyDamaged += GetWorld()->DeltaTimeSeconds;
 
-	if (TimeSinceEnemyDamaged >= 1)
-		MoodMeterValue -= GetWorld()->DeltaTimeSeconds;
+	if (TimeSinceEnemyDamaged >= TimeIdleBeforeMoodLoss)
+		MoodMeterValue -= GetWorld()->DeltaTimeSeconds * MoodDecayRate;
 
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 
@@ -115,6 +115,7 @@ void AMoodGameMode::CheckSlowMotionValidity(EMoodState PreviousState, EMoodState
 		{
 			bIsChangingMood = true;
 			TimeLeftMood666 = TimerSlowMotionReset;
+			OnSlowMotionTriggered.Broadcast(NewMoodState);
 		}
 		break;
 	case Ems_Mood444:
@@ -122,6 +123,7 @@ void AMoodGameMode::CheckSlowMotionValidity(EMoodState PreviousState, EMoodState
 		{
 			bIsChangingMood = true;
 			TimeLeftMood444 = TimerSlowMotionReset;
+			OnSlowMotionTriggered.Broadcast(NewMoodState);
 		}
 		break;
 	case Ems_Mood222:
@@ -129,6 +131,7 @@ void AMoodGameMode::CheckSlowMotionValidity(EMoodState PreviousState, EMoodState
 		{
 			bIsChangingMood = true;
 			TimeLeftMood222 = TimerSlowMotionReset;
+			OnSlowMotionTriggered.Broadcast(NewMoodState);
 		}
 		TimeLeftMood666 = 0.f;
 		break;
