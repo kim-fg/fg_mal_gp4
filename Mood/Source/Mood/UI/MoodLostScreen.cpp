@@ -9,9 +9,9 @@
 void UMoodLostScreen::RestartLevel()
 {
 	GameMode->Respawn();
-	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), this, false);
+	UGameplayStatics::OpenLevel(GetWorld(), FName(GetWorld()->GetName()), false);
 
-	
+
 }
 
 void UMoodLostScreen::ToMainMenu()
