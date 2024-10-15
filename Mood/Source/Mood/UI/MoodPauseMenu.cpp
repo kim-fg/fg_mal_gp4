@@ -16,11 +16,13 @@ void UMoodPauseMenu::ResumeGame_Implementation()
 	PlayerController->SetInputMode(FInputModeGameOnly());
 	PlayerController->SetShowMouseCursor(false);
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
 }
 
 void UMoodPauseMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
 
+	ResumeButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodPauseMenu::ResumeGame);
 	OpenOptionsMenuButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodPauseMenu::OpenOptionsMenu);
 }

@@ -57,6 +57,8 @@ void AMoodCharacter::BeginPlay()
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &AMoodCharacter::LoseHealth);
 	HealthComponent->OnDeath.AddUniqueDynamic(this, &AMoodCharacter::KillPlayer);
 	WeaponSlotComponent->OnWeaponUsed.AddUniqueDynamic(this, &AMoodCharacter::ShootCameraShake);
+
+	bIsFirstTime = true;
 }
 
 void AMoodCharacter::Tick(float const DeltaTime)
@@ -67,6 +69,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	
 	CheckPlayerState();
 	FindLedge();
+	MoodChanged();
 }
 
 void AMoodCharacter::Landed(const FHitResult& Hit)
@@ -115,6 +118,9 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Interact 
 		EnhancedInputComponent->BindAction(InteractAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ToggleInteraction);
+
+		// Pausing
+		EnhancedInputComponent->BindAction(PauseAction, ETriggerEvent::Triggered, this, &AMoodCharacter::PauseGame);
 	}
 	
 	else
@@ -200,6 +206,7 @@ void AMoodCharacter::OnMoodChanged(EMoodState NewState) {
 	
 	WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 	HealthComponent->AlterHealthLoss(MoodHealthLoss);
+	bIsChangingMood = true;
 }
 
 void AMoodCharacter::AttemptClimb()
@@ -271,6 +278,11 @@ void AMoodCharacter::SelectWeapon3()
 		return;
 
 	WeaponSlotComponent->SelectWeapon(2);
+}
+
+void AMoodCharacter::PauseGame()
+{
+	OnPaused.Broadcast();
 }
 
 void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
@@ -439,7 +451,33 @@ void AMoodCharacter::FindLedge()
 
 void AMoodCharacter::MoodChanged()
 {
-	// continue here tomorrow
+	if (!bIsChangingMood)
+		return;
+
+	if (bIsFirstTime)
+	{
+		bIsFirstTime = false;
+		bIsChangingMood = false;
+	}
+	
+	if (!bHasReachedTimeDilationBottom)
+	{
+		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha);
+		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.05f)
+			bHasReachedTimeDilationBottom = true;
+	}
+	else
+	{
+		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, 1.1f, MoodChangeAlpha);
+		if (CurrentTimeDilation >= 1.f)
+		{
+			CurrentTimeDilation = 1.f;
+			bHasReachedTimeDilationBottom = false;
+			bIsChangingMood = false;
+		}
+	}
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), CurrentTimeDilation);
 }
 
 void AMoodCharacter::KillPlayer()

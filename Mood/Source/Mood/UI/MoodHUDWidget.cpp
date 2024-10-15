@@ -187,11 +187,15 @@ void UMoodHUDWidget::HideLostScreen()
 
 void UMoodHUDWidget::DisplayPauseMenu()
 {
-	PauseMenu->SetVisibility(ESlateVisibility::Visible);
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	PlayerController->SetInputMode(FInputModeUIOnly());
-	PlayerController->SetShowMouseCursor(true);
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+	if (!UGameplayStatics::IsGamePaused(GetWorld()))
+	{
+		PauseMenu->SetVisibility(ESlateVisibility::Visible);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PlayerController->SetInputMode(FInputModeUIOnly());
+		PlayerController->SetShowMouseCursor(true);
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+	}
 }
 
 
@@ -211,9 +215,10 @@ void UMoodHUDWidget::NativeConstruct()
 	GameMode->PlayerRespawn.AddUniqueDynamic(this, &UMoodHUDWidget::HideLostScreen);
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
+	PauseMenu->SetVisibility(ESlateVisibility::Hidden);
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
-
+	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
 }
 
