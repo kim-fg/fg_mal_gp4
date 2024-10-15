@@ -127,7 +127,7 @@ void UMoodHUDWidget::UpdateCrosshair(UMoodWeaponComponent* WeaponToPass)
 
 void UMoodHUDWidget::UpdateHUDTint()
 {
-	switch (Player->MoodState)
+	switch (GameMode->GetMoodState())
 	{
 	case EMoodState::Ems_NoMood:
 		SetTint(TintColorStage0, TintColorStage0);
