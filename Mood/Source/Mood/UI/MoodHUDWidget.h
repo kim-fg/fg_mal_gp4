@@ -119,6 +119,7 @@ public:
 	void UpdateHUDTint();
 	void SetTint(FLinearColor Color, FLinearColor FaceColor);
 
+
 #pragma endregion
 
 
@@ -133,6 +134,9 @@ public:
 
 	UFUNCTION(Blueprintable)
 	void DisplayPauseMenu();
+
+	UFUNCTION()
+	void RequestHurtAnimation(int Amount, int NewHealth);
 
 	virtual void NativeConstruct() override;
 

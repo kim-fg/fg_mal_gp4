@@ -17,6 +17,7 @@
 #include "Components/Image.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "MoodPauseMenu.h"
+#include "MoodFaceWidget.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -155,6 +156,12 @@ void UMoodHUDWidget::SetTint(FLinearColor Color, FLinearColor FaceColor)
 	TopRightCorner->SetColorAndOpacity(Color);
 }
 
+void UMoodHUDWidget::RequestHurtAnimation(int Amount, int NewHealth)
+{
+	if (MoodMeterValue < 666.f)
+	MoodMeterWidget->Face->PlayHurtAnimation();
+}
+
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
 	LostScreen->SetVisibility(ESlateVisibility::Visible);
@@ -215,5 +222,6 @@ void UMoodHUDWidget::NativeConstruct()
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
 	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
+	HealthComponent->OnHurt.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHurtAnimation);
 }
 
