@@ -43,8 +43,6 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     TSubclassOf<UCameraShakeBase> GetRecoilCameraShake() { return RecoilCameraShake; }
 
-    
-
 protected:
     virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection, float DamageMultiplier);
     
@@ -56,8 +54,7 @@ private:
     UPROPERTY(EditAnywhere, Category=Debug)
     bool DebugBullet = false;
 
-    //todo! MOVE ALL THIS TO A DATA CLASS
-    
+    //todo! MOVE ALL THIS TO A DATA CLASS    
     UPROPERTY(EditDefaultsOnly, Category=Effects)
     USoundBase* FireSound = nullptr;
     UPROPERTY(EditDefaultsOnly, Category=Effects)
