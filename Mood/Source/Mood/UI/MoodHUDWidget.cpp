@@ -1,9 +1,5 @@
 #include "MoodHUDWidget.h"
-#include "MoodHUDWidget.h"
 
-#include <string>
-
-#include "MathUtil.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Player/MoodCharacter.h"
 #include "../MoodHealthComponent.h"
@@ -14,13 +10,13 @@
 #include "MoodPlayerHealthbar.h"
 #include "MoodAmmoWidget.h"
 #include "MoodWinScreen.h"
-#include "../Player/MoodCharacter.h"
 #include "Components/RadialSlider.h"
 #include "Components/ProgressBar.h"
 #include "../MoodGameMode.h"
 #include "Components/TextBlock.h"
 #include "Components/Image.h"
 #include "Kismet/KismetMathLibrary.h"
+#include "MoodPauseMenu.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -126,7 +122,7 @@ void UMoodHUDWidget::UpdateCrosshair(UMoodWeaponComponent* WeaponToPass)
 
 void UMoodHUDWidget::UpdateHUDTint()
 {
-	switch (Player->MoodState)
+	switch (GameMode->GetMoodState())
 	{
 	case EMoodState::Ems_NoMood:
 		SetTint(TintColorStage0, TintColorStage0);
@@ -184,6 +180,19 @@ void UMoodHUDWidget::HideLostScreen()
 	PlayerController->SetShowMouseCursor(false);
 }
 
+void UMoodHUDWidget::DisplayPauseMenu()
+{
+	if (!UGameplayStatics::IsGamePaused(GetWorld()))
+	{
+		PauseMenu->SetVisibility(ESlateVisibility::Visible);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PlayerController->SetInputMode(FInputModeUIOnly());
+		PlayerController->SetShowMouseCursor(true);
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
+	}
+}
+
 
 void UMoodHUDWidget::NativeConstruct()
 {
@@ -201,9 +210,10 @@ void UMoodHUDWidget::NativeConstruct()
 	GameMode->PlayerRespawn.AddUniqueDynamic(this, &UMoodHUDWidget::HideLostScreen);
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
+	PauseMenu->SetVisibility(ESlateVisibility::Hidden);
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
-
+	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
 }
 

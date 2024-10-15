@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
 #include "Logging/LogMacros.h"
+#include "Mood/MoodGameMode.h"
 #include "MoodCharacter.generated.h"
 
 class AMoodEnemyCharacter;
@@ -20,6 +21,7 @@ class UMoodWeaponSlotComponent;
 class UMoodHealthComponent;
 class AMoodGameMode;
 struct FInputActionValue;
+enum EMoodState;
 
 DECLARE_LOG_CATEGORY_EXTERN(LogTemplateCharacter, Log, All);
 
@@ -32,16 +34,7 @@ enum EPlayerState
 	Eps_NoControl
 };
 
-UENUM(BlueprintType)
-enum EMoodState
-{
-	Ems_Mood666,
-	Ems_Mood444,
-	Ems_Mood222,
-	Ems_NoMood
-};
-
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMoodChanged, EMoodState, NewState);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnPaused);
 
 UCLASS(config=Game)
 class AMoodCharacter : public ACharacter
@@ -86,6 +79,8 @@ class AMoodCharacter : public ACharacter
 	UInputAction* InteractAction;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
 	UInputAction* ExecuteAction;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category=Input, meta=(AllowPrivateAccess = "true"))
+	UInputAction* PauseAction;
 
 public:
 	AMoodCharacter();
@@ -140,13 +135,11 @@ public:
 	float ClimbingTime = 1.f;
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
 	FVector ClimbingLocation = FVector(50.f, 0.f, 150.f);
-
-	// UFUNCTION(Blueprintable)
+	
 	void ToggleInteraction();
-
-	TEnumAsByte<EMoodState> MoodState;
+	
 	UPROPERTY(BlueprintAssignable)
-	FOnMoodChanged OnMoodChanged;
+	FOnPaused OnPaused;
 	
 	UFUNCTION(BlueprintCallable)
 	void ResetPlayer();
@@ -169,16 +162,26 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float CameraSpeed = 1.f;
 
+	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
+	float MoodChangeTimeDilation = 0.05f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodMeter)
+	float MoodChangeAlpha = 0.01f;
+	float CurrentTimeDilation = 1.f;
+	bool bHasReachedTimeDilationBottom = false;
+
 	bool bIsDead = false;
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
+	bool bIsChangingMood = false;
 
 protected:
 	void CheckPlayerState();
-	void CheckMoodMeter();
 
+	UFUNCTION()
+	void OnMoodChanged(EMoodState NewState);
+	
 	void AttemptClimb();
 	void DontClimb();
 	
@@ -193,6 +196,8 @@ protected:
 	void SelectWeapon1();
 	void SelectWeapon2();
 	void SelectWeapon3();
+
+	void PauseGame();
 
 	UFUNCTION()
 	void ShootCameraShake(UMoodWeaponComponent* Weapon);
@@ -218,7 +223,6 @@ protected:
 	void MoodChanged();
 
 	TEnumAsByte<EPlayerState> CurrentState;
-	TEnumAsByte<EMoodState> LastMoodState;
 
 protected:
 	// APawn interface

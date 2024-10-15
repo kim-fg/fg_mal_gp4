@@ -2,25 +2,26 @@
 #include "MoodCyberButton.h"
 #include "Components/Slider.h"
 #include "Widgets/DeclarativeSyntaxSupport.h"
-#include "Widgets/Input/SSlider.h"
-#include "Styling/DefaultStyleCache.h"
-#include "Styling/UMGCoreStyle.h"
 #include "Components/TextBlock.h"
 #include "../MoodEnhancedInputUserSettings.h"
-#include "../MoodInputModifierLookSensitivity.h"
-#include "EnhancedPlayerInput.h"
 #include "EnhancedInputSubsystems.h"
-#include "EnhancedInputComponent.h"
 #include "CoreMinimal.h"
-#include "InputModifiers.h"
 
 void UMoodOptionsMenuWidget::ApplySettings_Implementation()
 {
 	Settings->SetAimSensitivity(MouseSensitivitySlider->Value, MouseSensitivitySlider->Value);
+	MouseSensitivitySavedValue = Settings->GetAimSensVector().X;
+
+
 }
 void UMoodOptionsMenuWidget::OpenWidget_Implementation()
 {
 	this->SetVisibility(ESlateVisibility::HitTestInvisible);
+	MasterVolumeSlider->SetValue(MasterVolumeSavedValue);
+	MusicVolumeSlider->SetValue(MusicVolumeSavedValue);
+	SFXVolumeSlider->SetValue(SFXVolumeSavedValue);
+	MouseSensitivitySlider->SetValue(MouseSensitivitySavedValue);
+	BrightnessSlider->SetValue(BrightnessSavedValue);
 }
 void UMoodOptionsMenuWidget::CloseWidget_Implementation()
 {

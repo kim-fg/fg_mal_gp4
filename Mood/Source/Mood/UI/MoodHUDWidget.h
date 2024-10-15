@@ -16,6 +16,7 @@ class UMoodHealthComponent;
 class AMoodGameMode;
 class UImage;
 class UMoodWeaponSlotComponent;
+class UMoodPauseMenu;
 struct FInputModeUIOnly;
 
 UCLASS()
@@ -45,6 +46,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodAmmoWidget* AmmoWidget;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UMoodPauseMenu* PauseMenu;
 
 	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
 	UImage* CrossHair;
@@ -126,6 +130,9 @@ public:
 
 	UFUNCTION(Blueprintable)
 	void HideLostScreen();
+
+	UFUNCTION(Blueprintable)
+	void DisplayPauseMenu();
 
 	virtual void NativeConstruct() override;
 

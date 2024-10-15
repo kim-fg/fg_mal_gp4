@@ -1,7 +1,6 @@
 ﻿#pragma once
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Components/ContentWidget.h"
 #include "MoodLevelSelectWidget.generated.h"
 
 class UMoodCyberButton;
