@@ -158,6 +158,7 @@ void UMoodHUDWidget::SetTint(FLinearColor Color, FLinearColor FaceColor)
 
 void UMoodHUDWidget::RequestHurtAnimation(int Amount, int NewHealth)
 {
+	if (MoodMeterValue < 666.f)
 	MoodMeterWidget->Face->PlayHurtAnimation();
 }
 
