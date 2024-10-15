@@ -2,7 +2,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "Slate.h"
 #include "MoodMoodMeterWidget.generated.h"
 
 class UTextBlock;

@@ -1,9 +1,5 @@
 #include "MoodHUDWidget.h"
-#include "MoodHUDWidget.h"
 
-#include <string>
-
-#include "MathUtil.h"
 #include "Kismet/GameplayStatics.h"
 #include "../Player/MoodCharacter.h"
 #include "../MoodHealthComponent.h"
@@ -14,7 +10,6 @@
 #include "MoodPlayerHealthbar.h"
 #include "MoodAmmoWidget.h"
 #include "MoodWinScreen.h"
-#include "../Player/MoodCharacter.h"
 #include "Components/RadialSlider.h"
 #include "Components/ProgressBar.h"
 #include "../MoodGameMode.h"
