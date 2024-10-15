@@ -211,6 +211,7 @@ void UMoodHUDWidget::NativeConstruct()
 	GameMode->PlayerRespawn.AddUniqueDynamic(this, &UMoodHUDWidget::HideLostScreen);
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
+	PauseMenu->SetVisibility(ESlateVisibility::Hidden);
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
