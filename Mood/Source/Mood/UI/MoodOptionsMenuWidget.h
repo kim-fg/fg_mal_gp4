@@ -4,6 +4,8 @@
 #include "Blueprint/UserWidget.h"
 #include "MoodOptionsMenuWidget.generated.h"
 
+class UMoodGameInstance;
+class UMoodUserSettings;
 class UTextBlock;
 class USlider;
 class UMoodCyberButton;
@@ -70,6 +72,18 @@ protected:
 
 	UPROPERTY()
 	UMoodEnhancedInputUserSettings* Settings;
+
+	UPROPERTY()
+	UMoodUserSettings* UserSettings;
+
+	UPROPERTY()
+	UMoodGameInstance* GameInstance;
+
+	UPROPERTY()
+	USoundClass* MusicSoundClass;
+
+	UPROPERTY()
+	USoundClass* SFXSoundClass;
 
 private:
 	virtual void NativeConstruct() override;

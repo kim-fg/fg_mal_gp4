@@ -188,6 +188,7 @@ void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 	PlayerController->SetInputMode(FInputModeUIOnly());
 	PlayerController->SetShowMouseCursor(true);
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+	UGameplayStatics::SetGamePaused(GetWorld(),true);
 }
 
 void UMoodHUDWidget::DisplayWinScreen()
@@ -204,6 +205,8 @@ void UMoodHUDWidget::HideLostScreen()
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerController->SetInputMode(FInputModeGameOnly());
 	PlayerController->SetShowMouseCursor(false);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	UGameplayStatics::SetGamePaused(GetWorld(),false);
 }
 
 void UMoodHUDWidget::DisplayPauseMenu()

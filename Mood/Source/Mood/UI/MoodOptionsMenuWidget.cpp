@@ -6,12 +6,19 @@
 #include "../MoodEnhancedInputUserSettings.h"
 #include "EnhancedInputSubsystems.h"
 #include "CoreMinimal.h"
+#include "MoodGameInstance.h"
+#include "Kismet/GameplayStatics.h"
+#include "Sound/SoundClass.h"
 
 void UMoodOptionsMenuWidget::ApplySettings_Implementation()
 {
 	Settings->SetAimSensitivity(MouseSensitivitySlider->GetValue(), MouseSensitivitySlider->GetValue());
 	MouseSensitivitySavedValue = Settings->GetAimSensVector().X;
 
+	
+	
+	MusicSoundClass->Properties.Volume = MusicVolumeSlider->GetValue();
+	SFXSoundClass->Properties.Volume = SFXVolumeSlider->GetValue();
 
 }
 void UMoodOptionsMenuWidget::OpenWidget_Implementation()
@@ -30,6 +37,7 @@ void UMoodOptionsMenuWidget::CloseWidget_Implementation()
 void UMoodOptionsMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
+	GameInstance = Cast<UMoodGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	ApplySettingsButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodOptionsMenuWidget::ApplySettings);
 	CloseOptionsMenu->ButtonClickedSig.AddUniqueDynamic(this, &UMoodOptionsMenuWidget::CloseWidget);
 	if (!Settings)
