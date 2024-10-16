@@ -17,6 +17,13 @@ void AMoodEnemySpawnerTrigger::OnBeginOverlap(UPrimitiveComponent* OverlappedCom
 	if (!Player) { return; }
 
 	for	(auto i = 0; i < Spawners.Num(); i++) {
+		auto Spawner = Spawners[i];
+		if (!Spawner) {
+			UE_LOG(LogTemp, Error, TEXT("%ls tried to start a null spawner, remove the element!"),
+				*GetActorNameOrLabel());
+			continue;
+		}
+		
 		Spawners[i]->ActivateSpawning(Player);
 	}
 

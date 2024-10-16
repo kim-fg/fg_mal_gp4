@@ -171,6 +171,7 @@ void AMoodGameMode::SetSlowMotion()
 			CurrentTimeDilation = 1.f;
 			bHasReachedTimeDilationBottom = false;
 			bIsChangingMood = false;
+			OnSlowMotionEnded.Broadcast();
 		}
 	}
 

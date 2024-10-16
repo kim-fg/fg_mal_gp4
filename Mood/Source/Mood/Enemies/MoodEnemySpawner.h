@@ -6,7 +6,6 @@ class AMoodEnemyCharacter;
 class UArrowComponent;
 class UBillboardComponent;
 
-
 UCLASS(Abstract)
 class AMoodEnemySpawner : public AActor {
     GENERATED_BODY()
@@ -17,7 +16,7 @@ public:
     void ActivateSpawning(AMoodCharacter* InPlayer);
     
 protected:
-    UPROPERTY(EditInstanceOnly, BlueprintReadOnly)
+    UPROPERTY(EditInstanceOnly, BlueprintReadOnly, Category=Spawning)
     TSubclassOf<AMoodEnemyCharacter> EnemyToSpawn = nullptr;
 
 private:
@@ -30,9 +29,9 @@ private:
 
     TObjectPtr<AMoodCharacter> Player;
     
-    UPROPERTY(EditDefaultsOnly, Category=Spawning)
+    UPROPERTY(EditAnywhere, Category=Spawning)
     float RespawnDelay = 30.0f;
-    UPROPERTY(EditDefaultsOnly, Category=Spawning)
+    UPROPERTY(EditAnywhere, Category=Spawning)
     int EnemiesPerWave = 1;
     UFUNCTION()
     void Spawn();
