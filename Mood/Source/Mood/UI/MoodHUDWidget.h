@@ -17,7 +17,9 @@ class AMoodGameMode;
 class UImage;
 class UMoodWeaponSlotComponent;
 class UMoodPauseMenu;
+class UMoodMoodStage;
 struct FInputModeUIOnly;
+enum EMoodState;
 
 UCLASS()
 
@@ -64,6 +66,15 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UImage* TopRightCorner;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere);
+	UMoodMoodStage* MoodStage222Widget;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere);
+	UMoodMoodStage* MoodStage444Widget;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere);
+	UMoodMoodStage* MoodStage666Widget;
 
 #pragma endregion
 
@@ -137,6 +148,9 @@ public:
 
 	UFUNCTION()
 	void RequestHurtAnimation(int Amount, int NewHealth);
+
+	UFUNCTION()
+	void RequestStageAdvanceAnimation(EMoodState IncomingState);
 
 	virtual void NativeConstruct() override;
 
