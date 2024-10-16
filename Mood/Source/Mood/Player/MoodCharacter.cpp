@@ -232,7 +232,6 @@ void AMoodCharacter::PlaySlowMotion()
 {
 	if (bIsSlowMotion)
 	{
-		UE_LOG(LogTemp, Log, TEXT("Slow motion active. "))
 		SlowMotionTime += GetWorld()->DeltaTimeSeconds;
 		if (SlowMotionTime >= 2.5f)
 		{
@@ -277,8 +276,6 @@ void AMoodCharacter::Look(const FInputActionValue& Value)
 		
 		AddControllerYawInput(TotalLookAxis.X);
 		AddControllerPitchInput(TotalLookAxis.Y);
-
-		// UE_LOG(LogTemp, Log, TEXT("Look axis: %s"), *TotalLookAxis.ToString());
 	}
 }
 
