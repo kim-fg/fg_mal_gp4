@@ -159,20 +159,31 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	float DeathFallSpeed = 20.f;
 
-	UPROPERTY(EditDefaultsOnly)
+	// Default camera speed is multiplied by this number
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float CameraSpeed = 1.f;
+
+	// Camera speed is multiplied by this number 
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	float SlowMotionCameraSpeed = 0.1f;
+	float SlowMotionTime = 0.f;
 
 	bool bIsDead = false;
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
+	bool bIsSlowMotion = false;
 
 protected:
 	void CheckPlayerState();
 
 	UFUNCTION()
 	void OnMoodChanged(EMoodState NewState);
+	UFUNCTION()
+	void OnSlowMotionTriggered(EMoodState NewState);
+
+	void PlaySlowMotion(); 
 	
 	void AttemptClimb();
 	void DontClimb();

@@ -49,6 +49,7 @@ void AMoodCharacter::BeginPlay()
 	{
 		MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
 		MoodGameMode->OnMoodChanged.AddUniqueDynamic(this, &AMoodCharacter::OnMoodChanged);
+		MoodGameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &AMoodCharacter::OnSlowMotionTriggered);
 	}
 
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
@@ -67,6 +68,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 
 	CheckPlayerState();
 	FindLedge();
+	PlaySlowMotion();
 	// MoodChanged();
 }
 
@@ -221,6 +223,25 @@ void AMoodCharacter::OnMoodChanged(EMoodState NewState)
 	HealthComponent->AlterHealthLoss(MoodHealthLoss);
 }
 
+void AMoodCharacter::OnSlowMotionTriggered(EMoodState NewState)
+{
+	bIsSlowMotion = true;
+}
+
+void AMoodCharacter::PlaySlowMotion()
+{
+	if (bIsSlowMotion)
+	{
+		UE_LOG(LogTemp, Log, TEXT("Slow motion active. "))
+		SlowMotionTime += GetWorld()->DeltaTimeSeconds;
+		if (SlowMotionTime >= 2.5f)
+		{
+			bIsSlowMotion = false;
+			SlowMotionTime = 0.f;
+		}
+	}
+}
+
 void AMoodCharacter::AttemptClimb()
 {
 	bCanClimb = true;
@@ -249,9 +270,15 @@ void AMoodCharacter::Look(const FInputActionValue& Value)
 
 	if (Controller != nullptr && CurrentState != Eps_NoControl)
 	{
-		const FVector2D TotalLookAxis = LookAxisVector * CameraSpeed;
+		FVector2D TotalLookAxis = LookAxisVector * CameraSpeed;
+
+		if (bIsSlowMotion)
+			TotalLookAxis *= SlowMotionCameraSpeed;
+		
 		AddControllerYawInput(TotalLookAxis.X);
 		AddControllerPitchInput(TotalLookAxis.Y);
+
+		// UE_LOG(LogTemp, Log, TEXT("Look axis: %s"), *TotalLookAxis.ToString());
 	}
 }
 
