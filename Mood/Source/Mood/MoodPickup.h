@@ -9,6 +9,9 @@ class AMoodPickup : public AActor {
 public:
 	AMoodPickup();
 
+	UFUNCTION()
+	void Disable();
+	
 	UMoodPickUpComponent* GetPickup() { return Pickup; } 
 protected:
 	UFUNCTION()

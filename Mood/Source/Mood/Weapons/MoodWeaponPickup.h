@@ -13,7 +13,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	UMoodWeaponComponent* GetWeapon() { return Weapon; }
-	
+
 private:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<UMoodWeaponComponent> Weapon;
