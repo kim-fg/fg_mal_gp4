@@ -420,6 +420,7 @@ void AMoodCharacter::ExecuteFoundEnemy()
 			ExecuteeHealth->Hurt(ExecutionDamage);
 			Executee = nullptr;
 			ExecuteeHealth = nullptr;
+			HealthComponent->Heal(ExecutionHealing);
 			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
 			bIsExecuting = false;
 			CurrentState = Eps_Walking;
