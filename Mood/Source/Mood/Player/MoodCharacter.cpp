@@ -272,10 +272,17 @@ void AMoodCharacter::Look(const FInputActionValue& Value)
 		FVector2D TotalLookAxis = LookAxisVector * CameraSpeed;
 
 		if (bIsSlowMotion)
-			TotalLookAxis *= SlowMotionCameraSpeed;
+		{
+			AddControllerYawInput(TotalLookAxis.X *= SlowMotionCameraSpeed);
+			AddControllerPitchInput(TotalLookAxis.Y *= SlowMotionCameraSpeed);		
+		}
+		else
+		{
+			AddControllerYawInput(TotalLookAxis.X);
+			AddControllerPitchInput(TotalLookAxis.Y);
+		}
+			// TotalLookAxis *= SlowMotionCameraSpeed;
 		
-		AddControllerYawInput(TotalLookAxis.X);
-		AddControllerPitchInput(TotalLookAxis.Y);
 	}
 }
 
