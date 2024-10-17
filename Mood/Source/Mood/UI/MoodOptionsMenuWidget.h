@@ -79,10 +79,10 @@ protected:
 	UPROPERTY()
 	UMoodGameInstance* GameInstance;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	USoundClass* MusicSoundClass;
 
-	UPROPERTY()
+	UPROPERTY(EditDefaultsOnly)
 	USoundClass* SFXSoundClass;
 
 private:

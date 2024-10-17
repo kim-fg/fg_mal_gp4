@@ -7,6 +7,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "CoreMinimal.h"
 #include "MoodGameInstance.h"
+#include "MoodUserSettings.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundClass.h"
 
@@ -14,12 +15,12 @@ void UMoodOptionsMenuWidget::ApplySettings_Implementation()
 {
 	Settings->SetAimSensitivity(MouseSensitivitySlider->GetValue(), MouseSensitivitySlider->GetValue());
 	MouseSensitivitySavedValue = Settings->GetAimSensVector().X;
-
-	
 	
 	MusicSoundClass->Properties.Volume = MusicVolumeSlider->GetValue();
 	SFXSoundClass->Properties.Volume = SFXVolumeSlider->GetValue();
-
+	//UserSettings->SetMusicVolume(MusicVolumeSlider->GetValue());
+	//UserSettings->SetSFXVolume(MusicVolumeSlider->GetValue());
+	
 }
 void UMoodOptionsMenuWidget::OpenWidget_Implementation()
 {

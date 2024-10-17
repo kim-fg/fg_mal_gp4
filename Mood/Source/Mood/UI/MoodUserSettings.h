@@ -10,17 +10,25 @@ class UMoodUserSettings : public UGameUserSettings
 {
 	GENERATED_BODY()
 public:
+
+
+	UFUNCTION()
+	float GetMusicVolume();
+
+	UFUNCTION()
+	void SetMusicVolume(float NewVolume);
+
+	UFUNCTION()
+	float GetSFXVolume();
+
+	UFUNCTION()
+	void SetSFXVolume(float NewVolume);
+
+private:
 	UPROPERTY(EditAnywhere)
 	float MusicVolume;
 
 	UPROPERTY(EditAnywhere)
 	float SFXVolume;
-
-	UFUNCTION()
-	void GetMusicVolume();
-
-	UFUNCTION()
-	void GetSFXVolume();
-
 	
 };
