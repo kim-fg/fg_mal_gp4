@@ -4,6 +4,8 @@
 #include "Engine/GameInstance.h"
 #include "MoodGameInstance.generated.h"
 
+class UMoodUserSettings;
+
 UCLASS()
 class UMoodGameInstance : public UGameInstance
 {
@@ -20,4 +22,23 @@ public:
     	
 	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<UWorld> Level2;
+
+	
+
+	UPROPERTY()
+	UMoodUserSettings* UserSettings;
+	
+	UPROPERTY(BlueprintReadOnly)
+	float MusicVolume;
+
+	UPROPERTY(BlueprintReadOnly)
+	float SFXVolume;
+
+	UPROPERTY(BlueprintReadOnly)
+	float MouseSensitivity;
+
+protected:
+
+	virtual void Init() override;
+	
 };

@@ -20,9 +20,11 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite);
 	UImage* StageNumber;
 */
+	UFUNCTION(BlueprintNativeEvent)
+	void PlayStageAnimation();
 protected:
 
-	
+	virtual void NativeConstruct() override;
 	
 private:
 

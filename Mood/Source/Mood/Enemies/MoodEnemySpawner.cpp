@@ -29,10 +29,13 @@ void AMoodEnemySpawner::ActivateSpawning(AMoodCharacter* InPlayer) {
 }
 
 void AMoodEnemySpawner::Spawn() {
+	auto SpawnParameters = FActorSpawnParameters{};
+	SpawnParameters.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	
 	for (auto i = 0; i < EnemiesPerWave; i++) {
 		auto SpawnLocation = GetActorLocation();
 		auto SpawnRotation = GetActorRotation();
-		auto SpawnedActor = GetWorld()->SpawnActor(EnemyToSpawn, &SpawnLocation, &SpawnRotation);
+		auto SpawnedActor = GetWorld()->SpawnActor(EnemyToSpawn, &SpawnLocation, &SpawnRotation, SpawnParameters);
 		auto Enemy = Cast<AMoodEnemyCharacter>(SpawnedActor);
 		Enemy->SpawnDefaultController();
 		Enemy->SetPlayer(Player);

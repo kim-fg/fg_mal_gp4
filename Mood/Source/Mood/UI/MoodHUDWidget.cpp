@@ -18,6 +18,7 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "MoodPauseMenu.h"
 #include "MoodFaceWidget.h"
+#include "MoodMoodStage.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -162,6 +163,24 @@ void UMoodHUDWidget::RequestHurtAnimation(int Amount, int NewHealth)
 	MoodMeterWidget->Face->PlayHurtAnimation();
 }
 
+void UMoodHUDWidget::RequestStageAdvanceAnimation(EMoodState IncomingState)
+{
+	switch (IncomingState)
+	{
+	case Ems_Mood222:
+		MoodStage222Widget->PlayStageAnimation();
+		break;
+	case Ems_Mood444:
+		MoodStage444Widget->PlayStageAnimation();
+		break;
+	case Ems_Mood666:
+		MoodStage666Widget->PlayStageAnimation();
+		break;
+	default:
+		break;
+	}
+}
+
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
 	LostScreen->SetVisibility(ESlateVisibility::Visible);
@@ -169,6 +188,7 @@ void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 	PlayerController->SetInputMode(FInputModeUIOnly());
 	PlayerController->SetShowMouseCursor(true);
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+	UGameplayStatics::SetGamePaused(GetWorld(),true);
 }
 
 void UMoodHUDWidget::DisplayWinScreen()
@@ -185,6 +205,8 @@ void UMoodHUDWidget::HideLostScreen()
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
 	PlayerController->SetInputMode(FInputModeGameOnly());
 	PlayerController->SetShowMouseCursor(false);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	UGameplayStatics::SetGamePaused(GetWorld(),false);
 }
 
 void UMoodHUDWidget::DisplayPauseMenu()
@@ -223,5 +245,6 @@ void UMoodHUDWidget::NativeConstruct()
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
 	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHurtAnimation);
+	GameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &UMoodHUDWidget::RequestStageAdvanceAnimation);
 }
 
