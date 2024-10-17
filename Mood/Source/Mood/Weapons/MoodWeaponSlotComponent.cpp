@@ -2,6 +2,7 @@
 #include "MoodWeaponComponent.h"
 #include "MoodWeaponPickup.h"
 #include "GameFramework/Character.h"
+#include "Mood/MoodPickUpComponent.h"
 
 UMoodWeaponSlotComponent::UMoodWeaponSlotComponent() {
 	PrimaryComponentTick.bCanEverTick = true;
@@ -124,6 +125,7 @@ void UMoodWeaponSlotComponent::BeginPlay() {
 	for (auto i = 0; i < DefaultWeapons.Num(); i++) {
 		auto WeaponPickup = GetWorld()->SpawnActor<AMoodWeaponPickup>(DefaultWeapons[i]);
 		AddWeapon(WeaponPickup->GetWeapon());
+		WeaponPickup->Disable();
 	}
 }
 
