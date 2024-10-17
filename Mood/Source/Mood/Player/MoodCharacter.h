@@ -121,6 +121,8 @@ public:
 	float ClimbingTime = 1.f;
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
 	FVector ClimbingLocation = FVector(50.f, 0.f, 150.f);
+	UPROPERTY(EditDefaultsOnly, Category=Climbing)
+	FVector ReachLedgeLocation = FVector(80.f, 0.f, 50.f);
 	
 	void ToggleInteraction();
 	

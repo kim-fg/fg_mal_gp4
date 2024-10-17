@@ -389,7 +389,8 @@ void AMoodCharacter::Execute()
 		if (!IsValid(ExecuteeHealth))
 			return;
 
-		if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP)
+		if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP
+			&& ExecuteeHealth->HealthPercent() > 0.f)
 		{
 			bIsExecuting = true;
 			CurrentState = Eps_NoControl;
@@ -465,8 +466,8 @@ void AMoodCharacter::FindLedge()
 	FCollisionQueryParams QueryParams;
 	QueryParams.AddIgnoredActor(this);
 
-	const FVector BottomTraceStart = GetActorLocation() + GetActorUpVector() * 40.f;
-	const FVector BottomTraceEnd = GetActorLocation() + GetActorForwardVector() * 80.f + GetActorUpVector() * 40.f;
+	const FVector BottomTraceStart = GetActorLocation() + GetActorUpVector() * ReachLedgeLocation.Z;
+	const FVector BottomTraceEnd = GetActorLocation() + GetActorForwardVector() * ReachLedgeLocation.X + GetActorUpVector() * ReachLedgeLocation.Z;
 
 	const FVector TopTraceStart = GetActorLocation() + GetActorUpVector() * 60.f;
 	const FVector TopTraceEnd = GetActorLocation() + GetActorForwardVector() * 80.f + GetActorUpVector() * 60.f;
