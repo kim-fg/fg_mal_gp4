@@ -31,11 +31,12 @@ void AMoodEnemyCharacter::LoseHealth(int Amount, int NewHealth) {
 
 void AMoodEnemyCharacter::SetPlayer(AMoodCharacter* InPlayer) {
 	// don't allow un-setting player
-	if (!Player) { return; }
+	if (!InPlayer) { return; }
 	
 	Player = InPlayer;
 	// I assume beginplay runs BEFORE this. we'll see :shrug: -KIM
 	ActivationSphere->OnComponentBeginOverlap.RemoveAll(this);
+	OnPlayerSeen.Broadcast(Player);
 }
 
 void AMoodEnemyCharacter::ScanForPlayer() {

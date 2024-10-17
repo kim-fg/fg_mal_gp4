@@ -1,9 +1,12 @@
 ﻿#include "MoodHealthComponent.h"
+#include "Kismet/KismetMathLibrary.h"
 
 void UMoodHealthComponent::Hurt(int Amount) {
 	if (IsDead) { return; }
 	
 	Amount = abs(Amount) * HealthLossPercent;
+	Amount = UKismetMathLibrary::Clamp(Amount, 0, CurrentHealth);
+	
 	CurrentHealth -= Amount;
 	
 	OnHurt.Broadcast(Amount, CurrentHealth);
