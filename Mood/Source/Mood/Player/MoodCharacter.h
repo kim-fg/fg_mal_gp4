@@ -113,20 +113,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	TSubclassOf<UCameraShakeBase> ExecuteShake;
 	
-	UPROPERTY(EditDefaultsOnly, Category=Camera)
-	float SprintingFOV = 110.f;
-	UPROPERTY(EditDefaultsOnly, Category=Camera)
-	float AlphaFOV = 0.1f;
-
-	UPROPERTY(EditDefaultsOnly)
-	float ExecutionThresholdEnemyHP = 0.3f;
-	UPROPERTY(EditDefaultsOnly)
-	int ExecutionDamage = 5.f;
-	UPROPERTY(EditDefaultsOnly)
-	float ExecutionDistance = 600.f;
-	UPROPERTY(EditDefaultsOnly)
-	float MoveToExecuteTime = 0.1f;
-	
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
 	TEnumAsByte<ECollisionChannel> ClimbableChannel;
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
@@ -167,6 +153,24 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SlowMotionCameraSpeed = 0.1f;
 	float SlowMotionTime = 0.f;
+
+		
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	float SprintingFOV = 110.f;
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	float AlphaFOV = 0.1f;
+
+	UPROPERTY(EditDefaultsOnly, Category=Execution)
+	float ExecutionThresholdEnemyHP = 0.3f;
+	UPROPERTY(EditDefaultsOnly, Category=Execution)
+	int ExecutionDamage = 5.f;
+	UPROPERTY(EditDefaultsOnly, Category=Execution)
+	float ExecutionDistance = 600.f;
+	UPROPERTY(EditDefaultsOnly, Category=Execution)
+	float MoveToExecuteTime = 0.1f;
+	// How much to heal the player when executing 
+	UPROPERTY(EditDefaultsOnly, Category=Execution)
+	int ExecutionHealing = 5;
 
 	bool bIsDead = false;
 	bool bIsMidAir = false;
