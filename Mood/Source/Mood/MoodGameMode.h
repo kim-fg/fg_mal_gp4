@@ -86,7 +86,10 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
 	float MoodChangeTimeDilation = 0.05f;
 	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
-	float MoodChangeAlpha = 0.01f;
+	float MoodChangeAlpha = 0.1f;
+	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
+	float SlowMotionTime = 1.f;
+	float TimeInSlowMotion = 0.f;
 
 	float TimeLeftMood666 = 0.f;
 	float TimeLeftMood444 = 0.f;

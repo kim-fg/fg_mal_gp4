@@ -154,6 +154,8 @@ private:
 	// Camera speed is multiplied by this number 
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SlowMotionCameraSpeed = 0.1f;
+	UPROPERTY(EditDefaultsOnly, Category=Camera)
+	float MaxTimeInSlowMotion = 1.5f;
 	float SlowMotionTime = 0.f;
 
 		

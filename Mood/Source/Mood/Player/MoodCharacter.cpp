@@ -233,7 +233,7 @@ void AMoodCharacter::PlaySlowMotion()
 	if (bIsSlowMotion)
 	{
 		SlowMotionTime += GetWorld()->DeltaTimeSeconds;
-		if (SlowMotionTime >= 2.5f)
+		if (SlowMotionTime >= MaxTimeInSlowMotion)
 		{
 			bIsSlowMotion = false;
 			SlowMotionTime = 0.f;
