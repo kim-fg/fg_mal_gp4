@@ -8,7 +8,14 @@ void UMoodWinScreen::ReturnToMainMenu()
 {
 	if (MoodGameInstance != nullptr)
 	{
-		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->Level2, false);	
+		if (UGameplayStatics::GetCurrentLevelName(GetWorld()) != MoodGameInstance->Level1->GetName())
+		{
+			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->Level2, false);
+		}
+		else
+		{
+			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->MainMenu, false);
+		}
 	}
 	else
 	{
