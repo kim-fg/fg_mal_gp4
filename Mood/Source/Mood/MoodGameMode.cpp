@@ -156,21 +156,27 @@ void AMoodGameMode::SetSlowMotion()
 
 	if (!bIsChangingMood)
 		return;
+
+	TimeInSlowMotion += DeltaTime / CurrentTimeDilation;
 	
 	if (!bHasReachedTimeDilationBottom)
 	{
-		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha);
-		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.05f)
+		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha * DeltaTime);
+		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.01f)
 			bHasReachedTimeDilationBottom = true;
 	}
 	else
 	{
-		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, 1.1f, MoodChangeAlpha);
+		if (TimeInSlowMotion < SlowMotionTime)
+			return;
+		
+		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, 1.1f, MoodChangeAlpha * DeltaTime);
 		if (CurrentTimeDilation >= 1.f)
 		{
 			CurrentTimeDilation = 1.f;
 			bHasReachedTimeDilationBottom = false;
 			bIsChangingMood = false;
+			TimeInSlowMotion = 0.f;
 			OnSlowMotionEnded.Broadcast();
 		}
 	}
