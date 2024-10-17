@@ -1,11 +1,21 @@
 ﻿#include "MoodUserSettings.h"
 
-void UMoodUserSettings::GetMusicVolume()
+float UMoodUserSettings::GetMusicVolume()
 {
-	
+	return MusicVolume;
 }
 
-void UMoodUserSettings::GetSFXVolume()
+void UMoodUserSettings::SetMusicVolume(float NewVolume)
 {
-	
+	MusicVolume = NewVolume;
+}
+
+float UMoodUserSettings::GetSFXVolume()
+{
+	return SFXVolume;
+}
+
+void UMoodUserSettings::SetSFXVolume(float NewVolume)
+{
+	SFXVolume = NewVolume;
 }
