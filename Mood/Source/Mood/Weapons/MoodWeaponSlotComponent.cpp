@@ -51,7 +51,7 @@ void UMoodWeaponSlotComponent::EnableSelectedWeapon() {
 	for (int i = 0; i < Weapons.Num(); i++) {
 		auto WeaponActive = i == SelectedWeaponIndex;
 		auto Weapon = Weapons[i];
-		Weapon->SetVisibility(WeaponActive);
+		Weapon->SetVisibility(WeaponActive, true);
 		Weapon->SetActive(WeaponActive);
 	}
 
