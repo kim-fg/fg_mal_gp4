@@ -43,6 +43,7 @@ void UMoodOptionsMenuWidget::NativeConstruct()
 	CloseOptionsMenu->ButtonClickedSig.AddUniqueDynamic(this, &UMoodOptionsMenuWidget::CloseWidget);
 	if (!Settings)
 		Settings = GetOwningLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->GetUserSettings<UMoodEnhancedInputUserSettings>();
+	MouseSensitivitySavedValue = Settings->GetAimSensVector().X;
 	this->SetVisibility(ESlateVisibility::Hidden);
 }
 
