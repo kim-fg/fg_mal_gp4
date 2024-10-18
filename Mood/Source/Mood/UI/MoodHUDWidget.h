@@ -6,6 +6,7 @@
 #include "MoodHUDWidget.generated.h"
 
 
+class URetainerBox;
 class UMoodWeaponComponent;
 class UMoodAmmoWidget;
 class UMoodMoodMeterWidget;
@@ -18,6 +19,7 @@ class UImage;
 class UMoodWeaponSlotComponent;
 class UMoodPauseMenu;
 class UMoodMoodStage;
+class UMaterialInstance;
 struct FInputModeUIOnly;
 enum EMoodState;
 
@@ -76,6 +78,9 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere);
 	UMoodMoodStage* MoodStage666Widget;
 
+	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere);
+	URetainerBox* GlitchEffectWidget;
+
 #pragma endregion
 
 
@@ -111,6 +116,21 @@ public:
 	UPROPERTY()
 	float MoodMeterValue;
 
+	UPROPERTY()
+	bool GlitchHurtPlaying = false;
+
+	UPROPERTY()
+	float GlitchHurtTimer = 0.f;
+
+	UPROPERTY()
+	bool GlitchEffectSet = false;
+
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInstance* M_GlitchEffectEnabled;
+	
+	UPROPERTY(EditDefaultsOnly)
+	UMaterialInstance* M_GlitchEffectDisabled;
+
 	virtual void NativeTick(const FGeometry& MyGeometry, float InDeltaTime) override;
 
 #pragma region Component Functions
@@ -129,7 +149,7 @@ public:
 	void UpdateCrosshair(UMoodWeaponComponent* WeaponToPass);
 	void UpdateHUDTint();
 	void SetTint(FLinearColor Color, FLinearColor FaceColor);
-
+	void PlayGlitchEffect(const FGeometry& MyGeometry, float InDeltaTime);
 
 #pragma endregion
 

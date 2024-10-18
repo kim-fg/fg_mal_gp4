@@ -19,6 +19,7 @@
 #include "MoodPauseMenu.h"
 #include "MoodFaceWidget.h"
 #include "MoodMoodStage.h"
+#include "Components/RetainerBox.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -29,6 +30,7 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	UpdateAmmoWidget();
 	UpdateMoodMeterWidget(MyGeometry, InDeltaTime);
 	UpdateHUDTint();
+	PlayGlitchEffect(MyGeometry, InDeltaTime);
 }
 
 void UMoodHUDWidget::GetHealthComponent(ACharacter* PlayerPass)
@@ -157,10 +159,40 @@ void UMoodHUDWidget::SetTint(FLinearColor Color, FLinearColor FaceColor)
 	TopRightCorner->SetColorAndOpacity(Color);
 }
 
+void UMoodHUDWidget::PlayGlitchEffect(const FGeometry& MyGeometry, float InDeltaTime)
+{
+	if (GlitchHurtPlaying)
+	{
+		GlitchHurtTimer += InDeltaTime;
+		GEngine->AddOnScreenDebugMessage(-1, 0.01f, FColor::Red, FString::SanitizeFloat(GlitchHurtTimer));
+		if (GlitchHurtTimer <= 0.25f)
+		{
+			if (!GlitchEffectSet)
+			{
+				GlitchEffectWidget->SetEffectMaterial(M_GlitchEffectEnabled);
+				GlitchEffectWidget->SetTextureParameter("GlitchUI");
+				GlitchEffectSet = true;
+			}
+		}
+		else
+		{
+			GlitchEffectWidget->SetEffectMaterial(M_GlitchEffectDisabled);
+			GlitchEffectWidget->SetTextureParameter("GlitchUI");
+			GlitchHurtPlaying = false;
+			GlitchHurtTimer = 0.f;
+			GlitchEffectSet = false;
+		}
+	}
+}
+
 void UMoodHUDWidget::RequestHurtAnimation(int Amount, int NewHealth)
 {
 	if (MoodMeterValue < 666.f)
 	MoodMeterWidget->Face->PlayHurtAnimation();
+	if (!GlitchHurtPlaying)
+	{
+		GlitchHurtPlaying = true;
+	}
 }
 
 void UMoodHUDWidget::RequestStageAdvanceAnimation(EMoodState IncomingState)
@@ -243,6 +275,7 @@ void UMoodHUDWidget::NativeConstruct()
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
+	
 	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHurtAnimation);
 	GameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &UMoodHUDWidget::RequestStageAdvanceAnimation);
