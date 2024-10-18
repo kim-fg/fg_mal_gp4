@@ -422,7 +422,7 @@ void AMoodCharacter::ExecuteFoundEnemy()
 		GetCharacterMovement()->Velocity = FVector(0, 0, 0);
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), ExecutionTimeDilation);
 
-		if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 100.f)
+		if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 200.f)
 		{
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ExecuteShake, 1.f);
 			ExecuteeHealth->Hurt(ExecutionDamage);

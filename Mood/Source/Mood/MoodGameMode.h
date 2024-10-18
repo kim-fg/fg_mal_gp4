@@ -78,7 +78,14 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
 	float TimeIdleBeforeMoodLoss = 2.f;
 	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
-	float MoodDecayRate = 3.f;
+	float MoodDecayRate0 = 0.5f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
+	float MoodDecayRate222 = 1.f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
+	float MoodDecayRate444 = 2.f;
+	UPROPERTY(EditDefaultsOnly, Category=MoodValues)
+	float MoodDecayRate666 = 3.f;
+	float MoodDecayRate = 1.f;
 
 	// Slow motion
 	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
