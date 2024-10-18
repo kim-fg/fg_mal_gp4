@@ -426,6 +426,7 @@ void AMoodCharacter::ExecuteFoundEnemy()
 		{
 			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ExecuteShake, 1.f);
 			ExecuteeHealth->Hurt(ExecutionDamage);
+			MoodGameMode->ChangeMoodValue(ExecutionDamage);
 			Executee = nullptr;
 			ExecuteeHealth = nullptr;
 			HealthComponent->Heal(ExecutionHealing);
