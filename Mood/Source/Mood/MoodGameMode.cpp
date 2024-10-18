@@ -95,7 +95,26 @@ void AMoodGameMode::DecreaseMoodOverTime() {
 	TimeSinceEnemyDamaged += GetWorld()->DeltaTimeSeconds;
 
 	if (TimeSinceEnemyDamaged >= TimeIdleBeforeMoodLoss)
+	{
+		switch (PreviousMoodState)
+		{
+		case Ems_NoMood:
+			MoodDecayRate = MoodDecayRate0;
+			break;
+		case Ems_Mood222:
+			MoodDecayRate = MoodDecayRate222;
+			break;
+		case Ems_Mood444:
+			MoodDecayRate = MoodDecayRate444;
+			break;
+		case Ems_Mood666:
+			MoodDecayRate = MoodDecayRate666;
+			break;
+			default:
+				UE_LOG(LogTemp, Error, TEXT("AMoodGameMode::DecreaseMoodOverTime"))
+		}
 		MoodMeterValue -= GetWorld()->DeltaTimeSeconds * MoodDecayRate;
+	}
 
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 
