@@ -20,6 +20,7 @@ class UMoodWeaponSlotComponent;
 class UMoodPauseMenu;
 class UMoodMoodStage;
 class UMaterialInstance;
+class UMoodHitmarkerWidget;
 struct FInputModeUIOnly;
 enum EMoodState;
 
@@ -54,7 +55,7 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodPauseMenu* PauseMenu;
 
-	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UImage* CrossHair;
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
@@ -69,17 +70,20 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UImage* TopRightCorner;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere);
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodMoodStage* MoodStage222Widget;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere);
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodMoodStage* MoodStage444Widget;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere);
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodMoodStage* MoodStage666Widget;
 
-	UPROPERTY(meta =(BindWidget), BlueprintReadWrite, EditAnywhere);
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	URetainerBox* GlitchEffectWidget;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UMoodHitmarkerWidget* HitmarkerWidget;
 
 #pragma endregion
 
@@ -171,6 +175,9 @@ public:
 
 	UFUNCTION()
 	void RequestStageAdvanceAnimation(EMoodState IncomingState);
+
+	UFUNCTION()
+	void RequestHitmarkerAnimation();
 
 	virtual void NativeConstruct() override;
 

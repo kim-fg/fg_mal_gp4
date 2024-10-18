@@ -20,6 +20,7 @@ DECLARE_DYNAMIC_MULTICAST_DELEGATE(FPlayerRespawn);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMoodChanged, EMoodState, NewState);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnSlowMotionTriggered, EMoodState, MoodState);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnSlowMotionEnded);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FOnEnemyHit);
 
 UCLASS(minimalapi)
 class AMoodGameMode : public AGameModeBase
@@ -51,6 +52,8 @@ public:
 	FOnSlowMotionTriggered OnSlowMotionTriggered;
 	UPROPERTY(BlueprintAssignable)
 	FOnSlowMotionEnded OnSlowMotionEnded;
+	UPROPERTY(BlueprintAssignable)
+	FOnEnemyHit OnEnemyHit;
 
 	float GetMoodMeterValue() const { return MoodMeterValue; }
 	EMoodState GetMoodState() const;

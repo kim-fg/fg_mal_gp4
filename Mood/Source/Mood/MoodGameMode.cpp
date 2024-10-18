@@ -71,6 +71,9 @@ void AMoodGameMode::ChangeMoodValue(int Value) {
 	MoodMeterValue += Value * MoodGainWhenDamaging;
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 
+	//TODO: Only broadcast when dealing damage and not taking
+	OnEnemyHit.Broadcast();
+
 	auto NewMoodState = GetMoodState();
 	if (NewMoodState != previousMoodState) {
 		OnMoodChanged.Broadcast(NewMoodState);

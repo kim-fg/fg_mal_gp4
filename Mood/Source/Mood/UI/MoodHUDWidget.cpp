@@ -20,6 +20,7 @@
 #include "MoodFaceWidget.h"
 #include "MoodMoodStage.h"
 #include "Components/RetainerBox.h"
+#include "MoodHitmarkerWidget.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -213,6 +214,11 @@ void UMoodHUDWidget::RequestStageAdvanceAnimation(EMoodState IncomingState)
 	}
 }
 
+void UMoodHUDWidget::RequestHitmarkerAnimation()
+{
+	HitmarkerWidget->PlayHitmarkerAnimation();
+}
+
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
 	LostScreen->SetVisibility(ESlateVisibility::Visible);
@@ -275,7 +281,7 @@ void UMoodHUDWidget::NativeConstruct()
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
-	
+	GameMode->OnEnemyHit.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHitmarkerAnimation);
 	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHurtAnimation);
 	GameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &UMoodHUDWidget::RequestStageAdvanceAnimation);
