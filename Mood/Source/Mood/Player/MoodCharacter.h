@@ -136,8 +136,6 @@ private:
 	float WalkingSpeed;
 	float WalkingFOV;
 	float TimeSinceClimbStart = 0.f;
-	UPROPERTY(EditDefaultsOnly)
-	float ExecutionTimeDilation = 0.5f;
 	
 	float MoodSpeedPercent = 1.f;
 	float MoodDamagePercent = 1.f;
@@ -164,6 +162,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float AlphaFOV = 0.1f;
 
+	
+	UPROPERTY(EditDefaultsOnly, Category=Execution)
+	float ExecutionTimeDilation = 0.5f;
 	UPROPERTY(EditDefaultsOnly, Category=Execution)
 	float ExecutionThresholdEnemyHP = 0.3f;
 	UPROPERTY(EditDefaultsOnly, Category=Execution)
