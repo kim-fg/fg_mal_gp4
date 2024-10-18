@@ -61,6 +61,11 @@ float AMoodGameMode::GetGibbingChance() {
 void AMoodGameMode::ChangeMoodValue(int Value) {
 	auto previousMoodState = GetMoodState();
 
+	if ((MoodMeterValue + Value) > MoodMeterValue)
+	{
+		OnEnemyHit.Broadcast();
+	}
+
 	if (Value < 0)
 	{
 		if (bIsChangingMood)
@@ -68,11 +73,11 @@ void AMoodGameMode::ChangeMoodValue(int Value) {
 		Value *= MoodLossWhenHit;
 	}
 	
+
+
 	MoodMeterValue += Value * MoodGainWhenDamaging;
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
 
-	//TODO: Only broadcast when dealing damage and not taking
-	OnEnemyHit.Broadcast();
 
 	auto NewMoodState = GetMoodState();
 	if (NewMoodState != previousMoodState) {
