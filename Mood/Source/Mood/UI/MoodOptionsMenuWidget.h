@@ -24,6 +24,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void CloseWidget();
+
+	UPROPERTY()
+	UMoodUserSettings* UserSettings;
 	
 protected:
 	
@@ -73,8 +76,7 @@ protected:
 	UPROPERTY()
 	UMoodEnhancedInputUserSettings* Settings;
 
-	UPROPERTY()
-	UMoodUserSettings* UserSettings;
+
 
 	UPROPERTY()
 	UMoodGameInstance* GameInstance;

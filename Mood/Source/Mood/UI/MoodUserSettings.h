@@ -14,15 +14,18 @@ public:
 
 	UFUNCTION()
 	float GetMusicVolume();
-
 	UFUNCTION()
 	void SetMusicVolume(float NewVolume);
 
 	UFUNCTION()
 	float GetSFXVolume();
-
 	UFUNCTION()
 	void SetSFXVolume(float NewVolume);
+
+	UFUNCTION()
+	bool GetSettingsExists();
+	UFUNCTION()
+	void SetSettingsExists(bool bExists);
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -30,5 +33,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float SFXVolume;
+
+	UPROPERTY()
+	bool bSettingsExists = false;
 	
 };

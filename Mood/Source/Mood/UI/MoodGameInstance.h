@@ -5,6 +5,7 @@
 #include "MoodGameInstance.generated.h"
 
 class UMoodUserSettings;
+class UMusicSoundClass;
 
 UCLASS()
 class UMoodGameInstance : public UGameInstance
@@ -23,22 +24,19 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<UWorld> Level2;
 
-	
-
 	UPROPERTY()
 	UMoodUserSettings* UserSettings;
-	
-	UPROPERTY(BlueprintReadOnly)
-	float MusicVolume;
 
-	UPROPERTY(BlueprintReadOnly)
-	float SFXVolume;
+	UPROPERTY(EditDefaultsOnly)
+	USoundClass* MusicSoundClass;
+	UPROPERTY(EditDefaultsOnly)
+	USoundClass* SFXSoundClass;
 
-	UPROPERTY(BlueprintReadOnly)
-	float MouseSensitivity;
 
 protected:
 
 	virtual void Init() override;
+
+	void SetDefaultUserSettings();
 	
 };

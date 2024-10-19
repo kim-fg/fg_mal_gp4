@@ -19,3 +19,13 @@ void UMoodUserSettings::SetSFXVolume(float NewVolume)
 {
 	SFXVolume = NewVolume;
 }
+
+bool UMoodUserSettings::GetSettingsExists()
+{
+	return bSettingsExists;
+}
+
+void UMoodUserSettings::SetSettingsExists(bool Exists)
+{
+	bSettingsExists = Exists;
+}

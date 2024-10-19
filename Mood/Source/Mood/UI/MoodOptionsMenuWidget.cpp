@@ -18,16 +18,17 @@ void UMoodOptionsMenuWidget::ApplySettings_Implementation()
 	
 	MusicSoundClass->Properties.Volume = MusicVolumeSlider->GetValue();
 	SFXSoundClass->Properties.Volume = SFXVolumeSlider->GetValue();
-	//UserSettings->SetMusicVolume(MusicVolumeSlider->GetValue());
-	//UserSettings->SetSFXVolume(MusicVolumeSlider->GetValue());
+	
+	UserSettings->SetMusicVolume(MusicVolumeSlider->GetValue());
+	UserSettings->SetSFXVolume(SFXVolumeSlider->GetValue());
 	
 }
 void UMoodOptionsMenuWidget::OpenWidget_Implementation()
 {
 	this->SetVisibility(ESlateVisibility::HitTestInvisible);
 	MasterVolumeSlider->SetValue(MasterVolumeSavedValue);
-	MusicVolumeSlider->SetValue(MusicVolumeSavedValue);
-	SFXVolumeSlider->SetValue(SFXVolumeSavedValue);
+	MusicVolumeSlider->SetValue(UserSettings->GetMusicVolume());
+	SFXVolumeSlider->SetValue(UserSettings->GetSFXVolume());
 	MouseSensitivitySlider->SetValue(MouseSensitivitySavedValue);
 	BrightnessSlider->SetValue(BrightnessSavedValue);
 }
@@ -45,6 +46,7 @@ void UMoodOptionsMenuWidget::NativeConstruct()
 		Settings = GetOwningLocalPlayer()->GetSubsystem<UEnhancedInputLocalPlayerSubsystem>()->GetUserSettings<UMoodEnhancedInputUserSettings>();
 	MouseSensitivitySavedValue = Settings->GetAimSensVector().X;
 	this->SetVisibility(ESlateVisibility::Hidden);
+	UserSettings = Cast<UMoodUserSettings>(GEngine->GetGameUserSettings());
 }
 
 void UMoodOptionsMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
