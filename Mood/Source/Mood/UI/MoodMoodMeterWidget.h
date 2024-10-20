@@ -32,6 +32,19 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodFaceWidget* Face;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void PlayMoodMeterNumbersAnimation();
+
+	UPROPERTY(BlueprintReadWrite)
+	bool AnimationPlaying;
+
+	UPROPERTY(BlueprintReadOnly)
+	int AnimationToPlay;
+
+	UPROPERTY(BlueprintReadOnly)
+	int PreviousPlayedAnimation;
+
+protected:
 	virtual void NativeConstruct() override;
 	
 };

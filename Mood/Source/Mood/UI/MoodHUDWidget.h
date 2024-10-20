@@ -179,6 +179,9 @@ public:
 	UFUNCTION()
 	void RequestHitmarkerAnimation();
 
+	UFUNCTION()
+	void RequestMoodMeterValueAnimation();
+
 	virtual void NativeConstruct() override;
 
 	

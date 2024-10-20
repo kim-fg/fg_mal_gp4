@@ -219,6 +219,11 @@ void UMoodHUDWidget::RequestHitmarkerAnimation()
 	HitmarkerWidget->PlayHitmarkerAnimation();
 }
 
+void UMoodHUDWidget::RequestMoodMeterValueAnimation()
+{
+	MoodMeterWidget->PlayMoodMeterNumbersAnimation();
+}
+
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
 	LostScreen->SetVisibility(ESlateVisibility::Visible);
@@ -282,6 +287,7 @@ void UMoodHUDWidget::NativeConstruct()
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
 	GameMode->OnEnemyHit.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHitmarkerAnimation);
+	GameMode->OnEnemyHit.AddUniqueDynamic(this, &UMoodHUDWidget::RequestMoodMeterValueAnimation);
 	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHurtAnimation);
 	GameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &UMoodHUDWidget::RequestStageAdvanceAnimation);

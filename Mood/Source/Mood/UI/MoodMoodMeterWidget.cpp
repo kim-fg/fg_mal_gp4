@@ -3,6 +3,15 @@
 #include "Components/RadialSlider.h"
 #include "Components/TextBlock.h"
 
+void UMoodMoodMeterWidget::PlayMoodMeterNumbersAnimation_Implementation()
+{
+	if (!AnimationPlaying)
+	{
+		AnimationToPlay = FMath::RandRange(0, 2);
+		AnimationPlaying = true;
+	}
+}
+
 void UMoodMoodMeterWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
