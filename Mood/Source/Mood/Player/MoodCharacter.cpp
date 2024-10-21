@@ -44,14 +44,14 @@ AMoodCharacter::AMoodCharacter()
 void AMoodCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
+	
 	if (!IsValid(MoodGameMode))
 	{
 		MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
 		MoodGameMode->OnMoodChanged.AddUniqueDynamic(this, &AMoodCharacter::OnMoodChanged);
 		MoodGameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &AMoodCharacter::OnSlowMotionTriggered);
 	}
-
+	
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
 	WalkingFOV = FirstPersonCameraComponent->FieldOfView;
 
@@ -68,6 +68,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 
 	CheckPlayerState();
 	FindLedge();
+	FindExecutee();
 	PlaySlowMotion();
 	// MoodChanged();
 }
@@ -110,7 +111,7 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ShootWeapon);
 		EnhancedInputComponent->BindAction(ShootAction, ETriggerEvent::Canceled, this,
 		                                   &AMoodCharacter::StopShootWeapon);
-		EnhancedInputComponent->BindAction(ExecuteAction, ETriggerEvent::Triggered, this, &AMoodCharacter::Execute);
+		EnhancedInputComponent->BindAction(ExecuteAction, ETriggerEvent::Triggered, this, &AMoodCharacter::ToggleExecute);
 
 		// Weapon Selection
 		EnhancedInputComponent->BindAction(ScrollWeaponAction, ETriggerEvent::Triggered, this,
@@ -365,11 +366,11 @@ void AMoodCharacter::StopSprinting()
 	CurrentState = Eps_Walking;
 }
 
-void AMoodCharacter::Execute()
+void AMoodCharacter::FindExecutee()
 {
-	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl)
+	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl || bIsExecuting)
 		return;
-
+	
 	FHitResult HitResult;
 	FCollisionQueryParams Parameters;
 	Parameters.AddIgnoredActor(this);
@@ -381,35 +382,54 @@ void AMoodCharacter::Execute()
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters,
 	                                         FCollisionResponseParams()))
 	{
-		Executee = Cast<AMoodEnemyCharacter>(HitResult.GetActor());
-		if (!IsValid(Executee))
-			return;
+		if (FoundActor != HitResult.GetActor())
+		{
+			FoundActor = HitResult.GetActor();
+			Executee = Cast<AMoodEnemyCharacter>(FoundActor);
+			if (!IsValid(Executee))
+			{
+				bHasFoundExecutableEnemy = false;
+				return;
+			}
 
-		ExecuteeHealth = Cast<UMoodHealthComponent>(Executee->FindComponentByClass<UMoodHealthComponent>());
-		if (!IsValid(ExecuteeHealth))
-			return;
+			ExecuteeHealth = Cast<UMoodHealthComponent>(Executee->FindComponentByClass<UMoodHealthComponent>());
+		}
 
+		if (!IsValid(Executee) || !IsValid(ExecuteeHealth))
+		{
+			bHasFoundExecutableEnemy = false;
+			return;
+		}
+		
 		if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP
 			&& ExecuteeHealth->HealthPercent() > 0.f)
-		{
-			bIsExecuting = true;
-			CurrentState = Eps_NoControl;
-			FLatentActionInfo LatentInfo;
-			LatentInfo.CallbackTarget = Owner;
-
-			UKismetSystemLibrary::MoveComponentTo(
-				RootComponent,
-				Executee->GetActorLocation(),
-				GetActorRotation(),
-				false,
-				false,
-				MoveToExecuteTime,
-				true,
-				EMoveComponentAction::Move,
-				LatentInfo
-			);
-		}
+			bHasFoundExecutableEnemy = true;
+		else
+			bHasFoundExecutableEnemy = false;
 	}
+}
+
+void AMoodCharacter::ToggleExecute()
+{
+	if (!bHasFoundExecutableEnemy)
+		return;
+	
+	bIsExecuting = true;
+	CurrentState = Eps_NoControl;
+	FLatentActionInfo LatentInfo;
+	LatentInfo.CallbackTarget = Owner;
+
+	UKismetSystemLibrary::MoveComponentTo(
+		RootComponent,
+		Executee->GetActorLocation(),
+		GetActorRotation(),
+		false,
+		false,
+		MoveToExecuteTime,
+		true,
+		EMoveComponentAction::Move,
+		LatentInfo
+	);
 }
 
 void AMoodCharacter::ExecuteFoundEnemy()
@@ -432,6 +452,7 @@ void AMoodCharacter::ExecuteFoundEnemy()
 			HealthComponent->Heal(ExecutionHealing);
 			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
 			bIsExecuting = false;
+			bHasFoundExecutableEnemy = false;
 			CurrentState = Eps_Walking;
 		}
 	}
@@ -439,6 +460,7 @@ void AMoodCharacter::ExecuteFoundEnemy()
 	{
 		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter: Executee or ExecuteeHealth are invalid."))
 		bIsExecuting = false;
+		bHasFoundExecutableEnemy = false;
 		CurrentState = Eps_Walking;
 	}
 }
@@ -489,7 +511,6 @@ void AMoodCharacter::FindLedge()
 		UKismetSystemLibrary::MoveComponentTo(
 			RootComponent,
 			GetActorLocation() + GetActorForwardVector() * ClimbingLocation.X + GetActorUpVector() * ClimbingLocation.Z,
-			/*HitResult.Location, */
 			GetActorRotation(),
 			true,
 			true,
