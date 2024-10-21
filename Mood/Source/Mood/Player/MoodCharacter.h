@@ -123,6 +123,9 @@ public:
 	FVector ClimbingLocation = FVector(50.f, 0.f, 150.f);
 	UPROPERTY(EditDefaultsOnly, Category=Climbing)
 	FVector ReachLedgeLocation = FVector(80.f, 0.f, 50.f);
+
+	UPROPERTY(BlueprintReadOnly, Category=Execution)
+	bool bHasFoundExecutableEnemy = false;
 	
 	void ToggleInteraction();
 	
@@ -161,7 +164,6 @@ private:
 	float SprintingFOV = 110.f;
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float AlphaFOV = 0.1f;
-
 	
 	UPROPERTY(EditDefaultsOnly, Category=Execution)
 	float ExecutionTimeDilation = 0.5f;
@@ -225,7 +227,8 @@ protected:
 	void Sprint();
 	void StopSprinting();
 
-	void Execute();
+	void FindExecutee();
+	void ToggleExecute();
 	void ExecuteFoundEnemy();
 	void ShootWeapon();
 	void StopShootWeapon();
@@ -242,6 +245,8 @@ protected:
 	UPROPERTY()
 	AMoodGameMode* MoodGameMode = nullptr;
 
+	UPROPERTY()
+	AActor* FoundActor = nullptr;
 	UPROPERTY()
 	AMoodEnemyCharacter* Executee = nullptr;
 	UPROPERTY()

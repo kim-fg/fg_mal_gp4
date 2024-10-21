@@ -21,6 +21,7 @@ class UMoodPauseMenu;
 class UMoodMoodStage;
 class UMaterialInstance;
 class UMoodHitmarkerWidget;
+class UMoodWeaponSlotWidget;
 struct FInputModeUIOnly;
 enum EMoodState;
 
@@ -84,6 +85,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodHitmarkerWidget* HitmarkerWidget;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UMoodWeaponSlotWidget* WeaponSlotWidget;
 
 #pragma endregion
 

@@ -49,6 +49,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool TryAddAmmo(int Amount);
 
+	UFUNCTION()
+	TArray<UMoodWeaponComponent*> GetWeaponArray();
+
 private:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
