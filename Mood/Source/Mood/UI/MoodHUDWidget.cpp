@@ -22,6 +22,7 @@
 #include "Components/RetainerBox.h"
 #include "MoodHitmarkerWidget.h"
 #include "MoodWeaponSlotWidget.h"
+#include "MoodExecutionPrompt.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -33,6 +34,7 @@ void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 	UpdateMoodMeterWidget(MyGeometry, InDeltaTime);
 	UpdateHUDTint();
 	PlayGlitchEffect(MyGeometry, InDeltaTime);
+	UpdateExecutionPrompt();
 }
 
 void UMoodHUDWidget::GetHealthComponent(ACharacter* PlayerPass)
@@ -187,6 +189,18 @@ void UMoodHUDWidget::PlayGlitchEffect(const FGeometry& MyGeometry, float InDelta
 	}
 }
 
+void UMoodHUDWidget::UpdateExecutionPrompt()
+{
+	if (Player->bHasFoundExecutableEnemy)
+	{
+		ExecutionPrompt->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+	}
+	else
+	{
+		ExecutionPrompt->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
 void UMoodHUDWidget::RequestHurtAnimation(int Amount, int NewHealth)
 {
 	if (MoodMeterValue < 666.f)
@@ -293,5 +307,6 @@ void UMoodHUDWidget::NativeConstruct()
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHurtAnimation);
 	GameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &UMoodHUDWidget::RequestStageAdvanceAnimation);
 	WeaponSlotWidget->GetWeaponSlotComponent(WeaponSlotComponent);
+	ExecutionPrompt->SetVisibility(ESlateVisibility::Hidden);
 }
 
