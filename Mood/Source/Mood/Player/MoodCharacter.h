@@ -178,6 +178,7 @@ private:
 	// How much to heal the player when executing 
 	UPROPERTY(EditDefaultsOnly, Category=Execution)
 	int ExecutionHealing = 5;
+	FVector ExecuteeLocation = FVector(0, 0, 0);
 
 	bool bIsDead = false;
 	bool bIsMidAir = false;
