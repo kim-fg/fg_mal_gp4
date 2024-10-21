@@ -21,6 +21,7 @@
 #include "MoodMoodStage.h"
 #include "Components/RetainerBox.h"
 #include "MoodHitmarkerWidget.h"
+#include "MoodWeaponSlotWidget.h"
 
 void UMoodHUDWidget::NativeTick(const FGeometry& MyGeometry, float InDeltaTime)
 {
@@ -291,5 +292,6 @@ void UMoodHUDWidget::NativeConstruct()
 	Player->OnPaused.AddUniqueDynamic(this, &UMoodHUDWidget::DisplayPauseMenu);
 	HealthComponent->OnHurt.AddUniqueDynamic(this, &UMoodHUDWidget::RequestHurtAnimation);
 	GameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &UMoodHUDWidget::RequestStageAdvanceAnimation);
+	WeaponSlotWidget->GetWeaponSlotComponent(WeaponSlotComponent);
 }
 

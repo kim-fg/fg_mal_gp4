@@ -117,6 +117,11 @@ bool UMoodWeaponSlotComponent::TryAddAmmo(int Amount) {
 	return AddedAmmo;
 }
 
+TArray<UMoodWeaponComponent*> UMoodWeaponSlotComponent::GetWeaponArray()
+{
+	return Weapons;
+}
+
 void UMoodWeaponSlotComponent::BeginPlay() {
 	Super::BeginPlay();
 
