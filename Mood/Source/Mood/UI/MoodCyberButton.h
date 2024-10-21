@@ -37,11 +37,15 @@ public:
 	FButtonClicked ButtonClickedSig;
 	UFUNCTION(Blueprintable)
 	void OnButtonClicked();
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundBase* ButtonClicked;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Blueprintable, BlueprintCallable, BlueprintAssignable)
 	FButtonHovered ButtonHoveredSig;
 	UFUNCTION(Blueprintable)
 	void OnButtonHovered();
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundBase* ButtonHovered;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Blueprintable, BlueprintCallable, BlueprintAssignable)
 	FButtonUnhovered ButtonUnhoveredSig;

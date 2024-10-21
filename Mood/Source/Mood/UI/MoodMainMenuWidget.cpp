@@ -10,7 +10,7 @@ void UMoodMainMenuWidget::NativeConstruct()
 {
 	Super::NativeConstruct();
 	
-	MoodGameInstance = Cast<UMoodGameInstance>(GetGameInstance());
+	MoodGameInstance = Cast<UMoodGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	StartGameButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::StartGame);
 	LevelSelectButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowLevelSelectMenu);
 	OptionsButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowOptionsMenu);
@@ -26,7 +26,7 @@ void UMoodMainMenuWidget::StartGame()
 
 	if (MoodGameInstance != nullptr)
 	{	
-		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(),MoodGameInstance->Level1);
+		UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->Level1);
 	}
 	else
 	{
