@@ -22,6 +22,7 @@ class UMoodMoodStage;
 class UMaterialInstance;
 class UMoodHitmarkerWidget;
 class UMoodWeaponSlotWidget;
+class UMoodExecutionPrompt;
 struct FInputModeUIOnly;
 enum EMoodState;
 
@@ -88,6 +89,9 @@ public:
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
 	UMoodWeaponSlotWidget* WeaponSlotWidget;
+
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite, EditAnywhere)
+	UMoodExecutionPrompt* ExecutionPrompt;
 
 #pragma endregion
 
@@ -158,6 +162,7 @@ public:
 	void UpdateHUDTint();
 	void SetTint(FLinearColor Color, FLinearColor FaceColor);
 	void PlayGlitchEffect(const FGeometry& MyGeometry, float InDeltaTime);
+	void UpdateExecutionPrompt();
 
 #pragma endregion
 
