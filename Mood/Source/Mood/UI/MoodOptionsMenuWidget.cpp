@@ -34,7 +34,7 @@ void UMoodOptionsMenuWidget::OpenWidget_Implementation()
 }
 void UMoodOptionsMenuWidget::CloseWidget_Implementation()
 {
-	this->SetVisibility(ESlateVisibility::HitTestInvisible);
+	//this->SetVisibility(ESlateVisibility::HitTestInvisible);
 }
 void UMoodOptionsMenuWidget::NativeConstruct()
 {
