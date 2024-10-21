@@ -33,11 +33,12 @@ void UMoodLevelSelectWidget::HideWidget()
 
 void UMoodLevelSelectWidget::LoadLevelOne()
 {
-	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Cast<UMoodGameInstance>(UGameplayStatics::GetGameInstance(GetWorld())));
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Cast<UMoodGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->Level1);
 }
 
 void UMoodLevelSelectWidget::LoadLevelTwo()
 {
+	UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), Cast<UMoodGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()))->Level2);
 
 }
 
