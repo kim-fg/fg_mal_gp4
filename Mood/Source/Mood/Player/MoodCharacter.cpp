@@ -429,6 +429,8 @@ void AMoodCharacter::ToggleExecute()
 		return;
 	}
 
+	UGameplayStatics::PlaySound2D(GetWorld(), ExecutionSprint);
+
 	UKismetSystemLibrary::MoveComponentTo(
 		RootComponent,
 		ExecuteeLocation,

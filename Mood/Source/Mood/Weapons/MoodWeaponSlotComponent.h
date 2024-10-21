@@ -52,6 +52,9 @@ public:
 	UFUNCTION()
 	TArray<UMoodWeaponComponent*> GetWeaponArray();
 
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundBase* SelectWeaponSound;
+
 private:
 	virtual void BeginPlay() override;
 	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;

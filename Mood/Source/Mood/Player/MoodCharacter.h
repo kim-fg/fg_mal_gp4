@@ -187,6 +187,9 @@ private:
 	bool bIsExecuting = false;
 	bool bIsSlowMotion = false;
 
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundBase* ExecutionSprint;
+
 protected:
 	void CheckPlayerState();
 

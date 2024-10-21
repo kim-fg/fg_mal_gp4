@@ -2,6 +2,7 @@
 #include "MoodWeaponComponent.h"
 #include "MoodWeaponPickup.h"
 #include "GameFramework/Character.h"
+#include "Kismet/GameplayStatics.h"
 #include "Mood/MoodPickUpComponent.h"
 
 UMoodWeaponSlotComponent::UMoodWeaponSlotComponent() {
@@ -78,6 +79,7 @@ void UMoodWeaponSlotComponent::SelectWeapon(const int Index) {
 	}
 
 	SelectedWeaponIndex = Index;
+	UGameplayStatics::PlaySound2D(GetWorld(), SelectWeaponSound);
 	EnableSelectedWeapon();
 }
 
