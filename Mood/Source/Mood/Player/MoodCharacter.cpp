@@ -70,7 +70,6 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	FindLedge();
 	FindExecutee();
 	PlaySlowMotion();
-	// MoodChanged();
 }
 
 void AMoodCharacter::Landed(const FHitResult& Hit)
