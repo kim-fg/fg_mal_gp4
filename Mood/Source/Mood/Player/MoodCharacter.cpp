@@ -197,18 +197,18 @@ void AMoodCharacter::OnMoodChanged(EMoodState NewState)
 	{
 	case Ems_Mood666:
 		MoodSpeedPercent = 1.5f;
-		MoodDamagePercent = 2.5f;
-		MoodHealthLoss = 0.5f;
+		MoodDamagePercent = 2.f;
+		MoodHealthLoss = 0.9f;
 		break;
 	case Ems_Mood444:
 		MoodSpeedPercent = 1.2f;
-		MoodDamagePercent = 1.8f;
-		MoodHealthLoss = 0.8f;
+		MoodDamagePercent = 1.6f;
+		MoodHealthLoss = 0.9f;
 		break;
 	case Ems_Mood222:
 		MoodSpeedPercent = 1.1f;
 		MoodDamagePercent = 1.3f;
-		MoodHealthLoss = 0.9f;
+		MoodHealthLoss = 1.f;
 		break;
 	case Ems_NoMood:
 		MoodSpeedPercent = 1.f;
@@ -402,7 +402,10 @@ void AMoodCharacter::FindExecutee()
 		
 		if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP
 			&& ExecuteeHealth->HealthPercent() > 0.f)
+		{
+			ExecuteeLocation = Executee->GetActorLocation();
 			bHasFoundExecutableEnemy = true;
+		}
 		else
 			bHasFoundExecutableEnemy = false;
 	}
@@ -410,7 +413,7 @@ void AMoodCharacter::FindExecutee()
 
 void AMoodCharacter::ToggleExecute()
 {
-	if (!bHasFoundExecutableEnemy)
+	if (!bHasFoundExecutableEnemy || bIsExecuting)
 		return;
 	
 	bIsExecuting = true;
@@ -418,9 +421,17 @@ void AMoodCharacter::ToggleExecute()
 	FLatentActionInfo LatentInfo;
 	LatentInfo.CallbackTarget = Owner;
 
+	if (!IsValid(Executee) || !IsValid(ExecuteeHealth) || ExecuteeLocation == FVector(0, 0, 0))
+	{
+		bIsExecuting = false;
+		bHasFoundExecutableEnemy = false;
+		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter::ToggleExecute - Executee is invalid"));
+		return;
+	}
+
 	UKismetSystemLibrary::MoveComponentTo(
 		RootComponent,
-		Executee->GetActorLocation(),
+		ExecuteeLocation,
 		GetActorRotation(),
 		false,
 		false,
