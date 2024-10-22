@@ -25,6 +25,12 @@ public:
 	UFUNCTION(Blueprintable)
 	void ToMainMenu();
 
+	UFUNCTION(BlueprintNativeEvent)
+	void RequestBleedoutAnimation();
+
+	UFUNCTION(BlueprintCallable)
+	void DisplayMenu();
+
 	virtual void NativeConstruct() override;
 
 	UPROPERTY()
