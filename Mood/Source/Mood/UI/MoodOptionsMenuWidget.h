@@ -38,9 +38,9 @@ protected:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UMoodCyberButton* CloseOptionsMenu;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadWrite)
 	UTextBlock* MasterVolumeSliderValue;
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadWrite)
 	USlider* MasterVolumeSlider;
 	UPROPERTY()
 	float MasterVolumeSavedValue = 1.f;
