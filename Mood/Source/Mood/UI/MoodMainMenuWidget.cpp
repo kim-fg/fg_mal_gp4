@@ -11,7 +11,7 @@ void UMoodMainMenuWidget::NativeConstruct()
 	Super::NativeConstruct();
 	
 	MoodGameInstance = Cast<UMoodGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
-	StartGameButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::StartGame);
+	StartGameButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::RequestFadeAnim);
 	LevelSelectButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowLevelSelectMenu);
 	OptionsButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ShowOptionsMenu);
 	ExitGameButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodMainMenuWidget::ExitGame);
@@ -33,6 +33,11 @@ void UMoodMainMenuWidget::StartGame()
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Game Instance is nullptr in MainMenuWidget!"));
 	}
 	
+}
+
+void UMoodMainMenuWidget::RequestFadeAnim_Implementation()
+{
+
 }
 
 void UMoodMainMenuWidget::ShowLevelSelectMenu()

@@ -25,6 +25,8 @@ public:
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OpenOptionsMenu();
 
+	virtual void RestartLevel() override;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ResumeGame();
 
