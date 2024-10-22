@@ -23,11 +23,14 @@ void UMoodWeaponSlotWidget::NativeTick(const FGeometry& MyGeometry, float InDelt
 
 	for (int i = 0; i < WeaponsArray.Num(); i++)
 	{
-		WeaponSlotWidgetArray[i]->SetText(FText::FromString(FString::FromInt(i + 1)));
-		if (EquippedWeapon == WeaponsArray[i])
+		if (i <= 2)
 		{
-			if (WeaponSlotWidgetArray[i] != nullptr)
-				WeaponSlotWidgetArray[i]->SetText(FText::FromString("[ " + FString::FromInt(i + 1) + " ]"));
+			WeaponSlotWidgetArray[i]->SetText(FText::FromString(FString::FromInt(i + 1)));
+			if (EquippedWeapon == WeaponsArray[i])
+			{
+				if (WeaponSlotWidgetArray[i] != nullptr)
+					WeaponSlotWidgetArray[i]->SetText(FText::FromString("[ " + FString::FromInt(i + 1) + " ]"));
+			}
 		}
 	}
 
