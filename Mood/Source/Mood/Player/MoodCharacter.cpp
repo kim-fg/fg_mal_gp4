@@ -339,6 +339,7 @@ void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 void AMoodCharacter::LoseHealth(int Amount, int NewHealth)
 {
 	MoodGameMode->ChangeMoodValue(-Amount);
+	UGameplayStatics::PlaySound2D(GetWorld(), PlayerHurtSound);
 }
 
 void AMoodCharacter::ToggleInteraction()
@@ -401,7 +402,8 @@ void AMoodCharacter::FindExecutee()
 		}
 		
 		if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP
-			&& ExecuteeHealth->HealthPercent() > 0.f)
+			&& ExecuteeHealth->HealthPercent() > 0.f
+			&& (Executee->GetActorLocation() - GetActorLocation()).Length() <= (TraceEnd - TraceStart).Length())
 		{
 			ExecuteeLocation = Executee->GetActorLocation();
 			bHasFoundExecutableEnemy = true;

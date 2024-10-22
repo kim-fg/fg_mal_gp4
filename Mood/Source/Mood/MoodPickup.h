@@ -16,6 +16,9 @@ public:
 protected:
 	UFUNCTION()
 	virtual void PickedUp(ACharacter* Character);
+	
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundBase* PickupSound;
 
 private:
 	UPROPERTY(EditDefaultsOnly)
