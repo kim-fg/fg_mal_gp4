@@ -187,9 +187,6 @@ private:
 	bool bIsExecuting = false;
 	bool bIsSlowMotion = false;
 
-	UPROPERTY(EditDefaultsOnly, Category=Sound)
-	USoundBase* ExecutionSprint;
-
 protected:
 	void CheckPlayerState();
 
@@ -240,6 +237,11 @@ protected:
 	void FindLedge();
 	
 	TEnumAsByte<EPlayerState> CurrentState;
+	
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundBase* ExecutionSprint;
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundBase* PlayerHurtSound;
 
 protected:
 	// APawn interface
