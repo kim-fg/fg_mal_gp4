@@ -8,7 +8,6 @@
 void UMoodLostScreen::RestartLevel()
 {
 	GameMode->Respawn();
-	
 	//UGameplayStatics::OpenLevel(GetWorld(), FName(GetWorld()->GetName()), false);
 
 

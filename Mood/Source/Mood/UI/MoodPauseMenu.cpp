@@ -19,6 +19,17 @@ void UMoodPauseMenu::ResumeGame_Implementation()
 	UGameplayStatics::SetGamePaused(GetWorld(), false);
 }
 
+void UMoodPauseMenu::RestartLevel()
+{
+	this->SetVisibility(ESlateVisibility::Hidden);
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->SetInputMode(FInputModeGameOnly());
+	PlayerController->SetShowMouseCursor(false);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	UGameplayStatics::SetGamePaused(GetWorld(), false);
+	Super::RestartLevel();
+}
+
 void UMoodPauseMenu::NativeConstruct()
 {
 	Super::NativeConstruct();

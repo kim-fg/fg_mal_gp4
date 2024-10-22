@@ -18,10 +18,10 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	TSoftObjectPtr<UWorld> MainMenu;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UWorld> Level1;
     	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UWorld> Level2;
 
 	UPROPERTY()

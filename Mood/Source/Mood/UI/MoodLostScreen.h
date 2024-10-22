@@ -20,7 +20,7 @@ public:
 	UMoodCyberButton* MainMenuButton;
 
 	UFUNCTION(Blueprintable)
-	void RestartLevel();
+	virtual void RestartLevel();
 
 	UFUNCTION(Blueprintable)
 	void ToMainMenu();

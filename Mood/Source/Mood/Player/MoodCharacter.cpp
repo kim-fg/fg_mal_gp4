@@ -339,6 +339,7 @@ void AMoodCharacter::ShootCameraShake(UMoodWeaponComponent* Weapon)
 void AMoodCharacter::LoseHealth(int Amount, int NewHealth)
 {
 	MoodGameMode->ChangeMoodValue(-Amount);
+	UGameplayStatics::PlaySound2D(GetWorld(), PlayerHurtSound);
 }
 
 void AMoodCharacter::ToggleInteraction()

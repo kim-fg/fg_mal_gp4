@@ -42,8 +42,11 @@ public:
 
 	virtual void NativeConstruct() override;
 
-	UFUNCTION(Blueprintable)
+	UFUNCTION(BlueprintCallable)
 	void StartGame();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void RequestFadeAnim();
 
 	UFUNCTION(Blueprintable)
 	void ShowLevelSelectMenu();
