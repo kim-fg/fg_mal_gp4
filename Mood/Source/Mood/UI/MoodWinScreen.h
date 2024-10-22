@@ -12,13 +12,16 @@ class UMoodWinScreen : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidgetOptional))
 	UButton* MainMenuButton;
 
 	//Show stats for the player upon finish?
 
-	UFUNCTION(Blueprintable)
+	UFUNCTION(Blueprintable, BlueprintCallable)
 	void ReturnToMainMenu();
+
+	UFUNCTION(BlueprintNativeEvent)
+	void PlayFadeAnimation();
 
 	virtual void NativeConstruct() override;
 

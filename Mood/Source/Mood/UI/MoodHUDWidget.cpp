@@ -251,10 +251,9 @@ void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 
 void UMoodHUDWidget::DisplayWinScreen()
 {
-	WinScreen->SetVisibility(ESlateVisibility::Visible);
+	WinScreen->SetVisibility(ESlateVisibility::HitTestInvisible);
+	WinScreen->PlayFadeAnimation();
 	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
-	PlayerController->SetInputMode(FInputModeUIOnly());
-	PlayerController->SetShowMouseCursor(true);
 }
 
 void UMoodHUDWidget::HideLostScreen()
