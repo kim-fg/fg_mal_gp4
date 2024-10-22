@@ -253,7 +253,6 @@ void UMoodHUDWidget::DisplayWinScreen()
 {
 	WinScreen->SetVisibility(ESlateVisibility::HitTestInvisible);
 	WinScreen->PlayFadeAnimation();
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 }
 
 void UMoodHUDWidget::HideLostScreen()
