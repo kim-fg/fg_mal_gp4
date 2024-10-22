@@ -20,9 +20,15 @@ public:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UWorld> Level1;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FString Level1Name = "Level1";
     	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UWorld> Level2;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	FString Level2Name = "Level2";
 
 	UPROPERTY()
 	UMoodUserSettings* UserSettings;

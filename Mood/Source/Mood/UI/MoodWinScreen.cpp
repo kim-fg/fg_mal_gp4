@@ -8,7 +8,9 @@ void UMoodWinScreen::ReturnToMainMenu()
 {
 	if (MoodGameInstance != nullptr)
 	{
-		if (UGameplayStatics::GetCurrentLevelName(GetWorld()) == MoodGameInstance->Level1->GetName())
+		//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, UGameplayStatics::GetCurrentLevelName(GetWorld(), false));
+		//GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Blue, MoodGameInstance->Level1->GetName());
+		if (UGameplayStatics::GetCurrentLevelName(GetWorld()) == MoodGameInstance->Level1Name)
 		{
 			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->Level2, false);
 		}
@@ -32,6 +34,6 @@ void UMoodWinScreen::PlayFadeAnimation_Implementation()
 void UMoodWinScreen::NativeConstruct()
 {
 	Super::NativeConstruct();
-	MoodGameInstance = Cast<UMoodGameInstance>(GetGameInstance());
+	MoodGameInstance = Cast<UMoodGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 	//MainMenuButton->OnClicked.AddUniqueDynamic(this, &UMoodWinScreen::ReturnToMainMenu);
 }
