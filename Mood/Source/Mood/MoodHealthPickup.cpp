@@ -2,6 +2,7 @@
 #include "Player/MoodCharacter.h"
 #include "MoodHealthComponent.h"
 #include "Components/StaticMeshComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 AMoodHealthPickup::AMoodHealthPickup() {
     //Default value for HealAmount, can be configured in the editor
@@ -28,6 +29,9 @@ void AMoodHealthPickup::PickedUp(ACharacter* Character) {
         if (HealthComponent) {
             //Use the configurable HealAmount
             HealthComponent->Heal(HealAmount);
+
+            // Play the pickup sound
+            UGameplayStatics::PlaySound2D(GetWorld(), PickupSound);
         }
     }
     //After the health is picked up, destroy the pickup actor!
