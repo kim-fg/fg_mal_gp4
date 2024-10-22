@@ -24,9 +24,14 @@ void UMoodWinScreen::ReturnToMainMenu()
 	}
 }
 
+void UMoodWinScreen::PlayFadeAnimation_Implementation()
+{
+
+}
+
 void UMoodWinScreen::NativeConstruct()
 {
 	Super::NativeConstruct();
 	MoodGameInstance = Cast<UMoodGameInstance>(GetGameInstance());
-	MainMenuButton->OnClicked.AddUniqueDynamic(this, &UMoodWinScreen::ReturnToMainMenu);
+	//MainMenuButton->OnClicked.AddUniqueDynamic(this, &UMoodWinScreen::ReturnToMainMenu);
 }
