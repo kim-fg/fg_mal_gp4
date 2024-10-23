@@ -27,12 +27,15 @@ public:
 		if (InDamageMultiplier < 1.0f) { InDamageMultiplier = 1.0f; }
 		DamageMultiplier = InDamageMultiplier;
 	}
-
+	
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	bool HasWeapon() { return Weapons.Num() > 0; }
 	void SelectNextWeapon();
 	void SelectPreviousWeapon();
 	void SelectWeapon(int Index);
+
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	int GetSelectedWeaponIndex() { return SelectedWeaponIndex; }
 
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UMoodWeaponComponent* GetSelectedWeapon();
