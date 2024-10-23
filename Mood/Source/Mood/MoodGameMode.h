@@ -107,6 +107,13 @@ private:
 	bool bIsChangingMood = false;
 	bool bHasReachedTimeDilationBottom = false;
 	float CurrentTimeDilation = 1.f;
+
+	FTimerHandle KeepMoodTimer;
+	bool bCanLoseMood = true;
+	UFUNCTION()
+	void AllowMoodDecrease();
+	UPROPERTY(EditDefaultsOnly)
+	float TimeToKeepMood = 3.f;
 	
 	void DecreaseMoodOverTime();
 
