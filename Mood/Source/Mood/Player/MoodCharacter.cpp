@@ -72,6 +72,12 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	PlaySlowMotion();
 }
 
+void AMoodCharacter::Jump()
+{
+	if (CurrentState != Eps_NoControl)
+		Super::Jump();
+}
+
 void AMoodCharacter::Landed(const FHitResult& Hit)
 {
 	Super::Landed(Hit);
@@ -90,7 +96,7 @@ void AMoodCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
 	{
 		// Jumping
-		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &AMoodCharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Climbing

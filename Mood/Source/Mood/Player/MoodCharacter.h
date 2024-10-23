@@ -90,8 +90,8 @@ protected:
 	
 	virtual void Tick(float DeltaTime) override;
 
+	virtual void Jump() override;
 	virtual void Landed(const FHitResult& Hit) override;
-
 public:
 	/** Look Input Action */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
