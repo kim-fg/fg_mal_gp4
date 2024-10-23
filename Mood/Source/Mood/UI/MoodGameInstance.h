@@ -15,8 +15,11 @@ class UMoodGameInstance : public UGameInstance
 public:
 	//Reference to levels
 	
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UWorld> MainMenu;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	TSoftObjectPtr<UWorld> CreditsScene;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	TSoftObjectPtr<UWorld> Level1;
