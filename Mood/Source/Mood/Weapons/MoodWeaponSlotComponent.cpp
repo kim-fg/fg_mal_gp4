@@ -77,7 +77,7 @@ void UMoodWeaponSlotComponent::SelectWeapon(const int Index) {
 	if (SelectedWeaponIndex == Index) {
 		return;
 	}
-
+	
 	SelectedWeaponIndex = Index;
 	UGameplayStatics::PlaySound2D(GetWorld(), SelectWeaponSound);
 	EnableSelectedWeapon();
@@ -87,7 +87,6 @@ UMoodWeaponComponent* UMoodWeaponSlotComponent::GetSelectedWeapon() {
 	if (Weapons.Num() < 1) { return nullptr; }
 	return Weapons[SelectedWeaponIndex];
 }
-
 
 void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 	// We dont have any weapons
@@ -100,6 +99,11 @@ void UMoodWeaponSlotComponent::UseSelectedWeapon() {
 		return;
 	}
 
+	if (Weapons[SelectedWeaponIndex]->GetCurrentAmmo() < 1 && !Weapons[SelectedWeaponIndex]->HasUnlimitedAmmo()) {
+		SelectPreviousWeapon();
+		UE_LOG(LogTemp, Log, TEXT("Out of ammo. Switching weapon"));
+	}
+	
 	auto SelectedWeapon = Weapons[SelectedWeaponIndex];
 	auto MuzzleOrigin = MuzzleRoot ? MuzzleRoot->GetComponentLocation() : Owner->GetActorLocation();
 	auto MuzzleDirection = MuzzleRoot ? MuzzleRoot->GetForwardVector() : Owner->GetActorForwardVector();

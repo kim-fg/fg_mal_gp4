@@ -566,7 +566,7 @@ void AMoodCharacter::DeathCamMovement()
 			{
 				GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(),
 				                                                FRotator(GetControlRotation().Pitch,
-				                                                         GetControlRotation().Yaw, -2), 0.01));
+				                                                         GetControlRotation().Yaw, -2), 0.02));
 			}
 
 			else
