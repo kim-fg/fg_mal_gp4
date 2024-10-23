@@ -242,18 +242,14 @@ void UMoodHUDWidget::RequestMoodMeterValueAnimation()
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
 	LostScreen->SetVisibility(ESlateVisibility::Visible);
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-	PlayerController->SetInputMode(FInputModeUIOnly());
-	PlayerController->SetShowMouseCursor(true);
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
-	UGameplayStatics::SetGamePaused(GetWorld(),true);
+	LostScreen->RequestBleedoutAnimation();
+
 }
 
 void UMoodHUDWidget::DisplayWinScreen()
 {
 	WinScreen->SetVisibility(ESlateVisibility::HitTestInvisible);
 	WinScreen->PlayFadeAnimation();
-	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(),0);
 }
 
 void UMoodHUDWidget::HideLostScreen()

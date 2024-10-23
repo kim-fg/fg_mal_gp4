@@ -25,6 +25,20 @@ void UMoodLostScreen::ToMainMenu()
 	}
 }
 
+void UMoodLostScreen::RequestBleedoutAnimation_Implementation()
+{
+
+}
+
+void UMoodLostScreen::DisplayMenu()
+{
+	APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+	PlayerController->SetInputMode(FInputModeUIOnly());
+	PlayerController->SetShowMouseCursor(true);
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+	UGameplayStatics::SetGamePaused(GetWorld(), true);
+}
+
 void UMoodLostScreen::NativeConstruct()
 {
 	Super::NativeConstruct();
