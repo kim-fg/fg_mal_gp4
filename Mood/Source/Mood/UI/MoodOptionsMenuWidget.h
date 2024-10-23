@@ -66,9 +66,9 @@ protected:
 	UPROPERTY()
 	float MouseSensitivitySavedValue = 1.f;
 
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadWrite)
 	UTextBlock* BrightnessSliderValue;
-	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	UPROPERTY(meta = (BindWidgetOptional), BlueprintReadWrite)
 	USlider* BrightnessSlider;
 	UPROPERTY()
 	float BrightnessSavedValue = 0.5f;

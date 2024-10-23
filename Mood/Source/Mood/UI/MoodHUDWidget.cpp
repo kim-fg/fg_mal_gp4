@@ -71,13 +71,13 @@ void UMoodHUDWidget::UpdateAmmoWidget()
 			if (Weapon->HasUnlimitedAmmo())
 			{
 				//THIS SUCKS
-				AmmoWidget->AmmoTextInfinite->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
+				//AmmoWidget->AmmoTextInfinite->SetVisibility(ESlateVisibility::SelfHitTestInvisible);
 				AmmoWidget->AmmoText->SetText(FText::FromString(""));
 			}
 			else
 			{
 				//I HATE THIS
-				AmmoWidget->AmmoTextInfinite->SetVisibility(ESlateVisibility::Hidden);
+				//AmmoWidget->AmmoTextInfinite->SetVisibility(ESlateVisibility::Hidden);
 				AmmoWidget->AmmoText->SetText(FText::FromString(FString::FromInt(Weapon->GetCurrentAmmo())));
 			}
 			AmmoWidget->AmmoIcon->SetBrushFromTexture(Weapon->GetAmmoIcon());
