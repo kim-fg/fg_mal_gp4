@@ -68,21 +68,23 @@ void AMoodGameMode::ChangeMoodValue(int Value) {
 
 	if (Value < 0)
 	{
-		if (bIsChangingMood)
+		if (bIsChangingMood || !bCanLoseMood)
 			return;
 		Value *= MoodLossWhenHit;
 	}
 	
-
-
 	MoodMeterValue += Value * MoodGainWhenDamaging;
 	MoodMeterValue = FMath::Clamp(MoodMeterValue, 0, 1000);
-
-
+	
 	auto NewMoodState = GetMoodState();
 	if (NewMoodState != previousMoodState) {
 		OnMoodChanged.Broadcast(NewMoodState);
 		CheckSlowMotionValidity(previousMoodState, NewMoodState);
+		if (NewMoodState < previousMoodState)
+		{
+			bCanLoseMood = false;
+			GetWorldTimerManager().SetTimer(KeepMoodTimer, this, &AMoodGameMode::AllowMoodDecrease, TimeToKeepMood, false, TimeToKeepMood);
+		}
 	}
 }
 
@@ -92,6 +94,11 @@ void AMoodGameMode::ResetMoodValue() {
 
 void AMoodGameMode::ResetDamageTime() {
 	TimeSinceEnemyDamaged = 0;
+}
+
+void AMoodGameMode::AllowMoodDecrease()
+{
+	bCanLoseMood = true;
 }
 
 void AMoodGameMode::DecreaseMoodOverTime() {
@@ -184,6 +191,9 @@ void AMoodGameMode::SetSlowMotion()
 	if (!bIsChangingMood)
 		return;
 
+	if (bCanLoseMood)
+		bCanLoseMood = false;
+	
 	TimeInSlowMotion += DeltaTime / CurrentTimeDilation;
 	
 	if (!bHasReachedTimeDilationBottom)
