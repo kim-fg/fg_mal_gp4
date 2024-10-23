@@ -30,7 +30,7 @@ void UMoodOptionsMenuWidget::OpenWidget_Implementation()
 	MusicVolumeSlider->SetValue(UserSettings->GetMusicVolume());
 	SFXVolumeSlider->SetValue(UserSettings->GetSFXVolume());
 	MouseSensitivitySlider->SetValue(MouseSensitivitySavedValue);
-	BrightnessSlider->SetValue(BrightnessSavedValue);
+	//BrightnessSlider->SetValue(BrightnessSavedValue);
 }
 void UMoodOptionsMenuWidget::CloseWidget_Implementation()
 {
@@ -57,5 +57,5 @@ void UMoodOptionsMenuWidget::NativeTick(const FGeometry& MyGeometry, float InDel
 	MusicVolumeSliderValue->SetText(FText::FromString(FString::SanitizeFloat(MusicVolumeSlider->GetValue(), 1)));
 	SFXVolumeSliderValue->SetText(FText::FromString(FString::SanitizeFloat(SFXVolumeSlider->GetValue(), 1)));
 	MouseSensitivitySliderValue->SetText(FText::FromString(FString::SanitizeFloat(MouseSensitivitySlider->GetValue(), 1)));
-	BrightnessSliderValue->SetText(FText::FromString(FString::SanitizeFloat(BrightnessSlider->GetValue(), 1)));
+	//BrightnessSliderValue->SetText(FText::FromString(FString::SanitizeFloat(BrightnessSlider->GetValue(), 1)));
 }
