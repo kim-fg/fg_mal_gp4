@@ -195,6 +195,11 @@ void AMoodCharacter::CheckPlayerState()
 		CurrentState = Eps_Idle;
 		break;
 	}
+
+	// Making sure that the player has rotated back after dying. There is a rare bug. 
+	if (CurrentState != Eps_NoControl && FirstPersonCameraComponent->GetComponentRotation().Roll > 0)
+		GetController()->SetControlRotation(FRotator(GetControlRotation().Pitch, GetControlRotation().Yaw,
+															 0.00f));
 }
 
 void AMoodCharacter::OnMoodChanged(EMoodState NewState)
