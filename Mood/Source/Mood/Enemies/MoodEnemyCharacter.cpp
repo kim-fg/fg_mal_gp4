@@ -27,6 +27,12 @@ void AMoodEnemyCharacter::BeginPlay() {
 void AMoodEnemyCharacter::LoseHealth(int Amount, int NewHealth) {
 	MoodGameMode->ChangeMoodValue(Amount);
 	MoodGameMode->ResetDamageTime();
+
+	if (!CanSeePlayer())
+	{
+		UE_LOG(LogTemp, Log, TEXT("Enemy's visibility increased"));
+		ActivationSphere->SetSphereRadius(FLT_MAX, true);
+	}
 }
 
 void AMoodEnemyCharacter::SetPlayer(AMoodCharacter* InPlayer) {
