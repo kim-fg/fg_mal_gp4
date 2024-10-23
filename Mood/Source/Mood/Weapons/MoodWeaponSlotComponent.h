@@ -34,6 +34,7 @@ public:
 	void SelectPreviousWeapon();
 	void SelectWeapon(int Index);
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
 	UMoodWeaponComponent* GetSelectedWeapon();
 
 	UFUNCTION(BlueprintCallable)
