@@ -46,6 +46,8 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> ActivationSphere = nullptr;
 
+	UFUNCTION(BlueprintNativeEvent)
+	void SetExecutionMaterial();
 
 private:
 	void BeginPlay() override;
@@ -65,4 +67,6 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void ScanForPlayer();
 	FTimerHandle PlayerScanTimer;
+
+
 };
