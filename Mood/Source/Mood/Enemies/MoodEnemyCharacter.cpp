@@ -27,6 +27,11 @@ void AMoodEnemyCharacter::BeginPlay() {
 void AMoodEnemyCharacter::LoseHealth(int Amount, int NewHealth) {
 	MoodGameMode->ChangeMoodValue(Amount);
 	MoodGameMode->ResetDamageTime();
+	
+	if (Health->HealthPercent() <= 0.3f)
+	{
+		SetExecutionMaterial();
+	}
 
 	if (!CanSeePlayer())
 	{
@@ -51,6 +56,11 @@ void AMoodEnemyCharacter::ScanForPlayer() {
 		ActivationSphere->OnComponentBeginOverlap.RemoveAll(this);
 		OnPlayerSeen.Broadcast(Player);
 	}
+}
+
+void AMoodEnemyCharacter::SetExecutionMaterial_Implementation()
+{
+
 }
 
 bool AMoodEnemyCharacter::CanSeePlayer() {
