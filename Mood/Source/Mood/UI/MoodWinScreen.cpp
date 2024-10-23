@@ -16,7 +16,7 @@ void UMoodWinScreen::ReturnToMainMenu()
 		}
 		else
 		{
-			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->MainMenu, false);
+			UGameplayStatics::OpenLevelBySoftObjectPtr(GetWorld(), MoodGameInstance->CreditsScene, false);
 		}
 	}
 	else
