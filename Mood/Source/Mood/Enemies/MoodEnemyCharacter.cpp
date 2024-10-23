@@ -1,6 +1,7 @@
 ﻿#include "MoodEnemyCharacter.h"
 
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Mood/MoodGameMode.h"
 #include "Mood/MoodHealthComponent.h"
 #include "Mood/Player/MoodCharacter.h"
@@ -27,6 +28,7 @@ void AMoodEnemyCharacter::BeginPlay() {
 void AMoodEnemyCharacter::LoseHealth(int Amount, int NewHealth) {
 	MoodGameMode->ChangeMoodValue(Amount);
 	MoodGameMode->ResetDamageTime();
+	UGameplayStatics::PlaySoundAtLocation(GetWorld(), EnemyHitSound, GetActorLocation());
 	
 	if (Health->HealthPercent() <= 0.3f)
 	{

@@ -46,6 +46,9 @@ protected:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 	TObjectPtr<USphereComponent> ActivationSphere = nullptr;
 
+	UPROPERTY(EditDefaultsOnly, Category=Sound)
+	USoundBase* EnemyHitSound = nullptr;
+
 	UFUNCTION(BlueprintNativeEvent)
 	void SetExecutionMaterial();
 
