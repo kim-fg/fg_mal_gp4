@@ -336,6 +336,9 @@ void AMoodCharacter::SelectWeapon3()
 
 void AMoodCharacter::PauseGame()
 {
+	if (CurrentState == Eps_NoControl)
+		return;
+	
 	OnPaused.Broadcast();
 }
 
