@@ -479,7 +479,7 @@ void AMoodCharacter::MoveToExecutee()
 	if (!bIsExecuting)
 		return;
 
-	if (TimeSinceExecutionStart < 3.f)
+	if (TimeSinceExecutionStart < 2.f)
 		TimeSinceExecutionStart += GetWorld()->DeltaTimeSeconds;
 	
 	const auto PlayerLocation = FMath::Lerp(
@@ -495,7 +495,7 @@ void AMoodCharacter::MoveToExecutee()
 	}
 
 	// If the executee can't be reached within 2 sec, then abort
-	if (TimeSinceExecutionStart >= 2.f)
+	if (TimeSinceExecutionStart >= 1.f)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter: Couldn't reach enemy."))
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
