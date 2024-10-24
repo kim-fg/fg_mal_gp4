@@ -47,6 +47,11 @@ void UMoodHUDWidget::GetWeaponSlotComponent(ACharacter* PlayerPass)
 	WeaponSlotComponent = PlayerPass->FindComponentByClass<UMoodWeaponSlotComponent>();
 }
 
+void UMoodHUDWidget::PassHealthComponent(UMoodHealthComponent* PassHealthComp)
+{
+	PauseMenu->PassHealthComponent(PassHealthComp);
+}
+
 void UMoodHUDWidget::UpdateHealthbarWidget()
 {
 	if (HealthComponent != nullptr)
@@ -241,16 +246,17 @@ void UMoodHUDWidget::RequestMoodMeterValueAnimation()
 
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
+
 	if (!UGameplayStatics::IsGamePaused(GetWorld()))
 	{
 		LostScreen->SetVisibility(ESlateVisibility::Visible);
 		LostScreen->RequestBleedoutAnimation();
 	}
-
 }
 
 void UMoodHUDWidget::DisplayWinScreen()
 {
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
 	WinScreen->SetVisibility(ESlateVisibility::HitTestInvisible);
 	WinScreen->PlayFadeAnimation();
 }
@@ -267,6 +273,10 @@ void UMoodHUDWidget::HideLostScreen()
 
 void UMoodHUDWidget::DisplayPauseMenu()
 {
+	if (Player->CurrentState == Eps_NoControl)
+		return;
+
+	
 	if (!UGameplayStatics::IsGamePaused(GetWorld()))
 	{
 		PauseMenu->SetVisibility(ESlateVisibility::Visible);
@@ -296,6 +306,7 @@ void UMoodHUDWidget::NativeConstruct()
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
 	PauseMenu->SetVisibility(ESlateVisibility::Hidden);
+	PauseMenu->PassHealthComponent(HealthComponent);
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);
