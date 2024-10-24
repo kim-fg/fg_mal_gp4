@@ -68,6 +68,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 
 	CheckPlayerState();
 	FindLedge();
+	MoveToExecutee();
 	FindExecutee();
 	PlaySlowMotion();
 }
@@ -187,7 +188,6 @@ void AMoodCharacter::CheckPlayerState()
 	case Eps_NoControl:
 		StopShootWeapon();
 		DeathCamMovement();
-		MoveToExecutee(); /* <-- Smarter to have it just in tick? */
 		break;
 
 	default:
@@ -457,6 +457,8 @@ void AMoodCharacter::ToggleExecute()
 {
 	if (!bHasFoundExecutableEnemy || bIsExecuting || CurrentState == Eps_NoControl)
 		return;
+
+	TimeSinceExecutionStart = 0.f;
 	
 	if (!IsValid(Executee) || !IsValid(ExecuteeHealth))
 	{
@@ -476,6 +478,9 @@ void AMoodCharacter::MoveToExecutee()
 {
 	if (!bIsExecuting)
 		return;
+
+	if (TimeSinceExecutionStart < 3.f)
+		TimeSinceExecutionStart += GetWorld()->DeltaTimeSeconds;
 	
 	const auto PlayerLocation = FMath::Lerp(
 		GetActorLocation(),
@@ -488,6 +493,16 @@ void AMoodCharacter::MoveToExecutee()
 	{
 		ExecuteFoundEnemy();
 	}
+
+	if (TimeSinceExecutionStart >= 2.f)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter: Couldn't reach enemy."))
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+		bIsExecuting = false;
+		bHasFoundExecutableEnemy = false;
+		CurrentState = Eps_Walking;
+	}
+	
 }
 
 void AMoodCharacter::ExecuteFoundEnemy()
