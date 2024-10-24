@@ -241,8 +241,11 @@ void UMoodHUDWidget::RequestMoodMeterValueAnimation()
 
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
-	LostScreen->SetVisibility(ESlateVisibility::Visible);
-	LostScreen->RequestBleedoutAnimation();
+	if (!UGameplayStatics::IsGamePaused(GetWorld()))
+	{
+		LostScreen->SetVisibility(ESlateVisibility::Visible);
+		LostScreen->RequestBleedoutAnimation();
+	}
 
 }
 

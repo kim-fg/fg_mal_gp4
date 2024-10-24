@@ -22,6 +22,9 @@ public:
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UMoodCyberButton* ResumeButton;
 
+	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
+	UMoodCyberButton* ResetLevelButton;
+
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void OpenOptionsMenu();
 
@@ -29,6 +32,9 @@ public:
 
 	UFUNCTION(BlueprintNativeEvent, BlueprintCallable)
 	void ResumeGame();
+
+	UFUNCTION()
+	void FullResetLevel();
 
 	UPROPERTY(meta = (BindWidget), BlueprintReadWrite)
 	UMoodOptionsMenuWidget* OptionsMenuWidget;
