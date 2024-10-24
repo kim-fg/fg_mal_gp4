@@ -292,8 +292,6 @@ void AMoodCharacter::Look(const FInputActionValue& Value)
 			AddControllerYawInput(TotalLookAxis.X);
 			AddControllerPitchInput(TotalLookAxis.Y);
 		}
-			// TotalLookAxis *= SlowMotionCameraSpeed;
-		
 	}
 }
 
@@ -388,32 +386,39 @@ void AMoodCharacter::FindExecutee()
 		return;
 	
 	FHitResult HitResult;
+	FCollisionQueryParams Parameters;
+	Parameters.AddIgnoredActor(this);
 
 	const FVector TraceStart = FirstPersonCameraComponent->GetComponentLocation();
 	const FVector TraceEnd = FirstPersonCameraComponent->GetComponentLocation()
 		+ FirstPersonCameraComponent->GetForwardVector() * ExecutionDistance;
 
-	const auto ObstacleTrace = UKismetSystemLibrary::CapsuleTraceSingleForObjects(
-		GetWorld(),
-		TraceStart,
-		TraceEnd,
-		GetCapsuleComponent()->GetScaledCapsuleRadius(),
-		GetCapsuleComponent()->GetScaledCapsuleHalfHeight(),
-		ObstacleObjectTypes,
-		false,
-		{ this },
-		EDrawDebugTrace::None,
-		HitResult,
-		true);
+	const FVector ShortTraceEnd = FirstPersonCameraComponent->GetComponentLocation()
+		+ FirstPersonCameraComponent->GetForwardVector() * 100;
 
-	if (ObstacleTrace)
+	const auto ShortEnemyTrace = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, ShortTraceEnd, InterruptClimbingChannel, Parameters,
+															 FCollisionResponseParams());
+	if (!ShortEnemyTrace)
 	{
-		bHasFoundExecutableEnemy = false;
-		return;
-	}
+		const auto ObstacleTrace = UKismetSystemLibrary::CapsuleTraceSingleForObjects(
+			GetWorld(),
+			TraceStart,
+			TraceEnd,
+			GetCapsuleComponent()->GetScaledCapsuleRadius() - 30,
+			GetCapsuleComponent()->GetScaledCapsuleHalfHeight() - 30,
+			ObstacleObjectTypes,
+			false,
+			{ this },
+			EDrawDebugTrace::None,
+			HitResult,
+			true);
 
-	FCollisionQueryParams Parameters;
-	Parameters.AddIgnoredActor(this);
+		if (ObstacleTrace)
+		{
+			bHasFoundExecutableEnemy = false;
+			return;
+		}
+	}
 
 	const auto EnemyTrace = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters,
 	                                                             FCollisionResponseParams());
