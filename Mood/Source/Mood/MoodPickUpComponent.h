@@ -7,7 +7,7 @@
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPickUp, ACharacter*, PickUpCharacter);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class UMoodPickUpComponent : public UBoxComponent {
+class UMoodPickUpComponent : public USphereComponent {
 	GENERATED_BODY()
 
 public:

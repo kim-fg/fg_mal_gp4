@@ -68,6 +68,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 
 	CheckPlayerState();
 	FindLedge();
+	MoveToExecutee();
 	FindExecutee();
 	PlaySlowMotion();
 }
@@ -187,7 +188,6 @@ void AMoodCharacter::CheckPlayerState()
 	case Eps_NoControl:
 		StopShootWeapon();
 		DeathCamMovement();
-		MoveToExecutee(); /* <-- Smarter to have it just in tick? */
 		break;
 
 	default:
@@ -292,8 +292,6 @@ void AMoodCharacter::Look(const FInputActionValue& Value)
 			AddControllerYawInput(TotalLookAxis.X);
 			AddControllerPitchInput(TotalLookAxis.Y);
 		}
-			// TotalLookAxis *= SlowMotionCameraSpeed;
-		
 	}
 }
 
@@ -336,6 +334,9 @@ void AMoodCharacter::SelectWeapon3()
 
 void AMoodCharacter::PauseGame()
 {
+	if (CurrentState == Eps_NoControl)
+		return;
+	
 	OnPaused.Broadcast();
 }
 
@@ -385,32 +386,39 @@ void AMoodCharacter::FindExecutee()
 		return;
 	
 	FHitResult HitResult;
+	FCollisionQueryParams Parameters;
+	Parameters.AddIgnoredActor(this);
 
 	const FVector TraceStart = FirstPersonCameraComponent->GetComponentLocation();
 	const FVector TraceEnd = FirstPersonCameraComponent->GetComponentLocation()
 		+ FirstPersonCameraComponent->GetForwardVector() * ExecutionDistance;
 
-	const auto ObstacleTrace = UKismetSystemLibrary::CapsuleTraceSingleForObjects(
-		GetWorld(),
-		TraceStart,
-		TraceEnd,
-		GetCapsuleComponent()->GetScaledCapsuleRadius(),
-		GetCapsuleComponent()->GetScaledCapsuleHalfHeight(),
-		ObstacleObjectTypes,
-		false,
-		{ this },
-		EDrawDebugTrace::None,
-		HitResult,
-		true);
+	const FVector ShortTraceEnd = FirstPersonCameraComponent->GetComponentLocation()
+		+ FirstPersonCameraComponent->GetForwardVector() * 100;
 
-	if (ObstacleTrace)
+	const auto ShortEnemyTrace = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, ShortTraceEnd, InterruptClimbingChannel, Parameters,
+															 FCollisionResponseParams());
+	if (!ShortEnemyTrace)
 	{
-		bHasFoundExecutableEnemy = false;
-		return;
-	}
+		const auto ObstacleTrace = UKismetSystemLibrary::CapsuleTraceSingleForObjects(
+			GetWorld(),
+			TraceStart,
+			TraceEnd,
+			GetCapsuleComponent()->GetScaledCapsuleRadius() - 30,
+			GetCapsuleComponent()->GetScaledCapsuleHalfHeight() - 30,
+			ObstacleObjectTypes,
+			false,
+			{ this },
+			EDrawDebugTrace::None,
+			HitResult,
+			true);
 
-	FCollisionQueryParams Parameters;
-	Parameters.AddIgnoredActor(this);
+		if (ObstacleTrace)
+		{
+			bHasFoundExecutableEnemy = false;
+			return;
+		}
+	}
 
 	const auto EnemyTrace = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters,
 	                                                             FCollisionResponseParams());
@@ -449,6 +457,8 @@ void AMoodCharacter::ToggleExecute()
 {
 	if (!bHasFoundExecutableEnemy || bIsExecuting || CurrentState == Eps_NoControl)
 		return;
+
+	TimeSinceExecutionStart = 0.f;
 	
 	if (!IsValid(Executee) || !IsValid(ExecuteeHealth))
 	{
@@ -468,6 +478,9 @@ void AMoodCharacter::MoveToExecutee()
 {
 	if (!bIsExecuting)
 		return;
+
+	if (TimeSinceExecutionStart < 3.f)
+		TimeSinceExecutionStart += GetWorld()->DeltaTimeSeconds;
 	
 	const auto PlayerLocation = FMath::Lerp(
 		GetActorLocation(),
@@ -480,6 +493,16 @@ void AMoodCharacter::MoveToExecutee()
 	{
 		ExecuteFoundEnemy();
 	}
+
+	if (TimeSinceExecutionStart >= 2.f)
+	{
+		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter: Couldn't reach enemy."))
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+		bIsExecuting = false;
+		bHasFoundExecutableEnemy = false;
+		CurrentState = Eps_Walking;
+	}
+	
 }
 
 void AMoodCharacter::ExecuteFoundEnemy()
