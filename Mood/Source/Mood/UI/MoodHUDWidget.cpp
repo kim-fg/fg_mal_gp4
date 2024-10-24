@@ -256,6 +256,7 @@ void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 
 void UMoodHUDWidget::DisplayWinScreen()
 {
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
 	WinScreen->SetVisibility(ESlateVisibility::HitTestInvisible);
 	WinScreen->PlayFadeAnimation();
 }
