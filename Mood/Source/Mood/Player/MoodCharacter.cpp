@@ -385,44 +385,64 @@ void AMoodCharacter::FindExecutee()
 		return;
 	
 	FHitResult HitResult;
-	FCollisionQueryParams Parameters;
-	Parameters.AddIgnoredActor(this);
 
 	const FVector TraceStart = FirstPersonCameraComponent->GetComponentLocation();
 	const FVector TraceEnd = FirstPersonCameraComponent->GetComponentLocation()
 		+ FirstPersonCameraComponent->GetForwardVector() * ExecutionDistance;
 
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters,
-	                                         FCollisionResponseParams()))
+	const auto ObstacleTrace = UKismetSystemLibrary::CapsuleTraceSingleForObjects(
+		GetWorld(),
+		TraceStart,
+		TraceEnd,
+		GetCapsuleComponent()->GetScaledCapsuleRadius(),
+		GetCapsuleComponent()->GetScaledCapsuleHalfHeight(),
+		ObstacleObjectTypes,
+		false,
+		{ this },
+		EDrawDebugTrace::None,
+		HitResult,
+		true);
+
+	if (ObstacleTrace)
 	{
-		if (FoundActor != HitResult.GetActor())
-		{
-			FoundActor = HitResult.GetActor();
-			Executee = Cast<AMoodEnemyCharacter>(FoundActor);
-			if (!IsValid(Executee))
-			{
-				bHasFoundExecutableEnemy = false;
-				return;
-			}
-
-			ExecuteeHealth = Executee->FindComponentByClass<UMoodHealthComponent>();
-		}
-
-		if (!IsValid(Executee) || !IsValid(ExecuteeHealth))
-		{
-			bHasFoundExecutableEnemy = false;
-			return;
-		}
-		
-		if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP
-			&& ExecuteeHealth->HealthPercent() > 0.f
-			&& (Executee->GetActorLocation() - GetActorLocation()).Length() <= (TraceEnd - TraceStart).Length())
-		{
-			bHasFoundExecutableEnemy = true;
-		}
-		else
-			bHasFoundExecutableEnemy = false;
+		bHasFoundExecutableEnemy = false;
+		return;
 	}
+
+	FCollisionQueryParams Parameters;
+	Parameters.AddIgnoredActor(this);
+
+	const auto EnemyTrace = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters,
+	                                                             FCollisionResponseParams());
+	if (!EnemyTrace)
+	{
+		bHasFoundExecutableEnemy = false;
+		return;
+	}
+	
+	FoundActor = HitResult.GetActor();
+	Executee = Cast<AMoodEnemyCharacter>(FoundActor);
+	if (!IsValid(Executee))
+	{
+		bHasFoundExecutableEnemy = false;
+		return;
+	}
+	ExecuteeHealth = Executee->FindComponentByClass<UMoodHealthComponent>();
+
+	if (!IsValid(ExecuteeHealth))
+	{
+		bHasFoundExecutableEnemy = false;
+		return;
+	}
+	
+	if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP
+		&& ExecuteeHealth->HealthPercent() > 0.f
+		&& (Executee->GetActorLocation() - GetActorLocation()).Length() <= (TraceEnd - TraceStart).Length())
+	{
+		bHasFoundExecutableEnemy = true;
+	}
+	else
+		bHasFoundExecutableEnemy = false;
 }
 
 void AMoodCharacter::ToggleExecute()
@@ -454,8 +474,7 @@ void AMoodCharacter::MoveToExecutee()
 		Executee->GetActorLocation(),
 		MoveToExecuteTime * GetWorld()->DeltaTimeSeconds
 		); 
-
-	SetActorLocation(PlayerLocation);
+	SetActorLocation(PlayerLocation /*, true, &HitResult */);
 	
 	if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 100.f)
 	{

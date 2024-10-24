@@ -47,6 +47,11 @@ void UMoodHUDWidget::GetWeaponSlotComponent(ACharacter* PlayerPass)
 	WeaponSlotComponent = PlayerPass->FindComponentByClass<UMoodWeaponSlotComponent>();
 }
 
+void UMoodHUDWidget::PassHealthComponent(UMoodHealthComponent* PassHealthComp)
+{
+	PauseMenu->PassHealthComponent(PassHealthComp);
+}
+
 void UMoodHUDWidget::UpdateHealthbarWidget()
 {
 	if (HealthComponent != nullptr)
@@ -241,8 +246,11 @@ void UMoodHUDWidget::RequestMoodMeterValueAnimation()
 
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
-	LostScreen->SetVisibility(ESlateVisibility::Visible);
-	LostScreen->RequestBleedoutAnimation();
+	if (!UGameplayStatics::IsGamePaused(GetWorld()))
+	{
+		LostScreen->SetVisibility(ESlateVisibility::Visible);
+		LostScreen->RequestBleedoutAnimation();
+	}
 
 }
 
@@ -293,6 +301,7 @@ void UMoodHUDWidget::NativeConstruct()
 	LostScreen->SetVisibility(ESlateVisibility::Hidden);
 	WinScreen->SetVisibility(ESlateVisibility::Hidden);
 	PauseMenu->SetVisibility(ESlateVisibility::Hidden);
+	PauseMenu->PassHealthComponent(HealthComponent);
 	MoodMeterWidget->MoodMeterInnerCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterMiddleCircle->SetValue(0);
 	MoodMeterWidget->MoodMeterOuterCircle->SetValue(0);

@@ -3,7 +3,7 @@
 
 UMoodPickUpComponent::UMoodPickUpComponent() {
 	// Setup the Sphere Collision
-	SphereRadius = 32.f;
+	// SphereRadius = 32.f;
 }
 
 void UMoodPickUpComponent::BeginPlay() {

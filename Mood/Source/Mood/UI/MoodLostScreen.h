@@ -13,7 +13,7 @@ class UMoodLostScreen : public UUserWidget
 	GENERATED_BODY()
 
 public:
-	UPROPERTY(meta = (BindWidget))
+	UPROPERTY(meta = (BindWidgetOptional))
 	UMoodCyberButton* RestartButton;
 
 	UPROPERTY(meta = (BindWidget))
