@@ -246,12 +246,12 @@ void UMoodHUDWidget::RequestMoodMeterValueAnimation()
 
 void UMoodHUDWidget::DisplayLostScreen(AActor* DeadActor)
 {
+
 	if (!UGameplayStatics::IsGamePaused(GetWorld()))
 	{
 		LostScreen->SetVisibility(ESlateVisibility::Visible);
 		LostScreen->RequestBleedoutAnimation();
 	}
-
 }
 
 void UMoodHUDWidget::DisplayWinScreen()
@@ -272,14 +272,18 @@ void UMoodHUDWidget::HideLostScreen()
 
 void UMoodHUDWidget::DisplayPauseMenu()
 {
+	if (Player->CurrentState == Eps_NoControl)
+		return;
+
+	
 	if (!UGameplayStatics::IsGamePaused(GetWorld()))
 	{
-		PauseMenu->SetVisibility(ESlateVisibility::Visible);
-		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-		PlayerController->SetInputMode(FInputModeUIOnly());
-		PlayerController->SetShowMouseCursor(true);
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
-		UGameplayStatics::SetGamePaused(GetWorld(), true);
+			PauseMenu->SetVisibility(ESlateVisibility::Visible);
+			APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+			PlayerController->SetInputMode(FInputModeUIOnly());
+			PlayerController->SetShowMouseCursor(true);
+			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+			UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
 }
 
