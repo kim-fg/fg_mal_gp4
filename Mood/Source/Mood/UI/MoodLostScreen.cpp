@@ -46,6 +46,9 @@ void UMoodLostScreen::NativeConstruct()
 	GameMode = Cast<AMoodGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 	
 	MoodGameInstance = Cast<UMoodGameInstance>(GetGameInstance());
-	RestartButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodLostScreen::RestartLevel);
+	if (RestartButton != nullptr)
+	{
+		RestartButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodLostScreen::RestartLevel);
+	}
 	MainMenuButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodLostScreen::ToMainMenu);
 }

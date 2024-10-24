@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
 #include "MoodPickUpComponent.generated.h"
 
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPickUp, ACharacter*, PickUpCharacter);
 
 UCLASS(Blueprintable, BlueprintType, ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
-class UMoodPickUpComponent : public USphereComponent {
+class UMoodPickUpComponent : public UBoxComponent {
 	GENERATED_BODY()
 
 public:
