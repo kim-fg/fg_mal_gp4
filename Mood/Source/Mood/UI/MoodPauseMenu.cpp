@@ -1,5 +1,4 @@
 #include "MoodPauseMenu.h"
-#include "Components/Button.h"
 #include "MoodCyberButton.h"
 #include "MoodOptionsMenuWidget.h"
 #include "Kismet/GameplayStatics.h"
@@ -30,10 +29,17 @@ void UMoodPauseMenu::RestartLevel()
 	Super::RestartLevel();
 }
 
+void UMoodPauseMenu::FullResetLevel()
+{
+	FName Level = FName(UGameplayStatics::GetCurrentLevelName(GetWorld(), true));
+	UGameplayStatics::OpenLevel(GetWorld(), Level, true);
+}
+
 void UMoodPauseMenu::NativeConstruct()
 {
 	Super::NativeConstruct();
 
 	ResumeButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodPauseMenu::ResumeGame);
 	OpenOptionsMenuButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodPauseMenu::OpenOptionsMenu);
+	ResetLevelButton->ButtonClickedSig.AddUniqueDynamic(this, &UMoodPauseMenu::FullResetLevel);
 }
