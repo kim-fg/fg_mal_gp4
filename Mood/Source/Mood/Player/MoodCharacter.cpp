@@ -397,29 +397,7 @@ void AMoodCharacter::FindExecutee()
 		+ FirstPersonCameraComponent->GetForwardVector() * 120;
 
 	const auto ShortEnemyTrace = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, ShortTraceEnd, InterruptClimbingChannel, Parameters,
-															 FCollisionResponseParams());
-	if (!ShortEnemyTrace)
-	{
-		const auto ObstacleTrace = UKismetSystemLibrary::CapsuleTraceSingleForObjects(
-			GetWorld(),
-			TraceStart,
-			TraceEnd,
-			GetCapsuleComponent()->GetScaledCapsuleRadius() - 30,
-			GetCapsuleComponent()->GetScaledCapsuleHalfHeight() - 30,
-			ObstacleObjectTypes,
-			false,
-			{ this },
-			EDrawDebugTrace::None,
-			HitResult,
-			true);
-
-		if (ObstacleTrace)
-		{
-			bHasFoundExecutableEnemy = false;
-			return;
-		}
-	}
-
+													 FCollisionResponseParams());
 	const auto EnemyTrace = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, TraceEnd, InterruptClimbingChannel, Parameters,
 	                                                             FCollisionResponseParams());
 	if (!EnemyTrace)
@@ -441,6 +419,28 @@ void AMoodCharacter::FindExecutee()
 	{
 		bHasFoundExecutableEnemy = false;
 		return;
+	}
+	
+	if (!ShortEnemyTrace)
+	{
+		const auto ObstacleTrace = UKismetSystemLibrary::CapsuleTraceSingleForObjects(
+		GetWorld(),
+		TraceStart,
+		FoundActor->GetActorLocation(),
+		GetCapsuleComponent()->GetScaledCapsuleRadius() - 30,
+		GetCapsuleComponent()->GetScaledCapsuleHalfHeight() - 30,
+		ObstacleObjectTypes,
+		false,
+		{ this },
+		EDrawDebugTrace::None,
+		HitResult,
+		true);
+
+		if (ObstacleTrace)
+		{
+			bHasFoundExecutableEnemy = false;
+			return;
+		}
 	}
 	
 	if (ExecuteeHealth->HealthPercent() <= ExecutionThresholdEnemyHP
@@ -494,7 +494,7 @@ void AMoodCharacter::MoveToExecutee()
 		ExecuteFoundEnemy();
 	}
 
-	// If the executee can't be reached within 2 sec, then abort
+	// If the executee can't be reached within 1 sec, then abort
 	if (TimeSinceExecutionStart >= 1.f)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter: Couldn't reach enemy."))
