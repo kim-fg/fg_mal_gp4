@@ -97,6 +97,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	class UInputAction* LookAction;
 
+	TEnumAsByte<EPlayerState> CurrentState;
+
 	UPROPERTY(EditDefaultsOnly)
 	float SprintingSpeed = 600.f;
 	
@@ -181,7 +183,9 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=Execution)
 	int ExecutionHealing = 5;
 	FVector ExecuteeLocation = FVector(0, 0, 0);
-
+	UPROPERTY(EditDefaultsOnly, Category=Execution)
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObstacleObjectTypes;
+	
 	bool bIsDead = false;
 	bool bIsMidAir = false;
 	bool bHasRespawned = false;
@@ -238,8 +242,6 @@ protected:
 	void StopShootWeapon();
 
 	void FindLedge();
-	
-	TEnumAsByte<EPlayerState> CurrentState;
 	
 	UPROPERTY(EditDefaultsOnly, Category=Sound)
 	USoundBase* ExecutionSprint;
