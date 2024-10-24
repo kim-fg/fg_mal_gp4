@@ -134,6 +134,8 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void ResetPlayer();
+	UFUNCTION(BlueprintCallable)
+	void OnLoseFocus() { StopShootWeapon(); }
 	
 private:
 	float WalkingSpeed;
@@ -230,6 +232,7 @@ protected:
 
 	void FindExecutee();
 	void ToggleExecute();
+	void MoveToExecutee();
 	void ExecuteFoundEnemy();
 	void ShootWeapon();
 	void StopShootWeapon();

@@ -187,7 +187,7 @@ void AMoodCharacter::CheckPlayerState()
 	case Eps_NoControl:
 		StopShootWeapon();
 		DeathCamMovement();
-		ExecuteFoundEnemy();
+		MoveToExecutee(); /* <-- Smarter to have it just in tick? */
 		break;
 
 	default:
@@ -405,7 +405,7 @@ void AMoodCharacter::FindExecutee()
 				return;
 			}
 
-			ExecuteeHealth = Cast<UMoodHealthComponent>(Executee->FindComponentByClass<UMoodHealthComponent>());
+			ExecuteeHealth = Executee->FindComponentByClass<UMoodHealthComponent>();
 		}
 
 		if (!IsValid(Executee) || !IsValid(ExecuteeHealth))
@@ -418,7 +418,6 @@ void AMoodCharacter::FindExecutee()
 			&& ExecuteeHealth->HealthPercent() > 0.f
 			&& (Executee->GetActorLocation() - GetActorLocation()).Length() <= (TraceEnd - TraceStart).Length())
 		{
-			ExecuteeLocation = Executee->GetActorLocation();
 			bHasFoundExecutableEnemy = true;
 		}
 		else
@@ -428,68 +427,60 @@ void AMoodCharacter::FindExecutee()
 
 void AMoodCharacter::ToggleExecute()
 {
-	if (!bHasFoundExecutableEnemy || bIsExecuting)
+	if (!bHasFoundExecutableEnemy || bIsExecuting || CurrentState == Eps_NoControl)
 		return;
 	
-	bIsExecuting = true;
-	CurrentState = Eps_NoControl;
-	FLatentActionInfo LatentInfo;
-	LatentInfo.CallbackTarget = Owner;
-
-	if (!IsValid(Executee) || !IsValid(ExecuteeHealth) || ExecuteeLocation == FVector(0, 0, 0))
+	if (!IsValid(Executee) || !IsValid(ExecuteeHealth))
 	{
 		bIsExecuting = false;
 		bHasFoundExecutableEnemy = false;
 		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter::ToggleExecute - Executee is invalid"));
 		return;
 	}
-
+	
+	bIsExecuting = true;
+	CurrentState = Eps_NoControl;
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), ExecutionTimeDilation);
 	UGameplayStatics::PlaySound2D(GetWorld(), ExecutionSprint);
+}
 
-	UKismetSystemLibrary::MoveComponentTo(
-		RootComponent,
-		ExecuteeLocation,
-		GetActorRotation(),
-		false,
-		false,
-		MoveToExecuteTime,
-		true,
-		EMoveComponentAction::Move,
-		LatentInfo
-	);
+void AMoodCharacter::MoveToExecutee()
+{
+	if (!bIsExecuting)
+		return;
+	
+	const auto PlayerLocation = FMath::Lerp(
+		GetActorLocation(),
+		Executee->GetActorLocation(),
+		MoveToExecuteTime * GetWorld()->DeltaTimeSeconds
+		); 
+
+	SetActorLocation(PlayerLocation);
+	
+	if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 100.f)
+	{
+		ExecuteFoundEnemy();
+	}
 }
 
 void AMoodCharacter::ExecuteFoundEnemy()
 {
-	if (!bIsExecuting)
-		return;
-
 	if (IsValid(Executee) && IsValid(ExecuteeHealth))
 	{
-		GetCharacterMovement()->Velocity = FVector(0, 0, 0);
-		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), ExecutionTimeDilation);
-
-		if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 200.f)
-		{
-			GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ExecuteShake, 1.f);
-			ExecuteeHealth->Hurt(ExecutionDamage);
-			MoodGameMode->ChangeMoodValue(ExecutionDamage);
-			Executee = nullptr;
-			ExecuteeHealth = nullptr;
-			HealthComponent->Heal(ExecutionHealing);
-			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
-			bIsExecuting = false;
-			bHasFoundExecutableEnemy = false;
-			CurrentState = Eps_Walking;
-		}
+		GetWorld()->GetFirstPlayerController()->PlayerCameraManager->StartCameraShake(ExecuteShake, 1.f);
+		ExecuteeHealth->Hurt(ExecutionDamage);
+		MoodGameMode->ChangeMoodValue(ExecutionDamage);
+		HealthComponent->Heal(ExecutionHealing);
+		Executee = nullptr;
+		ExecuteeHealth = nullptr;
 	}
 	else
-	{
 		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter: Executee or ExecuteeHealth are invalid."))
-		bIsExecuting = false;
-		bHasFoundExecutableEnemy = false;
-		CurrentState = Eps_Walking;
-	}
+
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
+	bIsExecuting = false;
+	bHasFoundExecutableEnemy = false;
+	CurrentState = Eps_Walking;
 }
 
 void AMoodCharacter::ShootWeapon()
@@ -568,9 +559,9 @@ void AMoodCharacter::DeathCamMovement()
 		{
 			GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(),
 			                                                FRotator(GetControlRotation().Pitch,
-			                                                         GetControlRotation().Yaw, 40), 0.01));
-			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 2);
-			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 2);
+			                                                         GetControlRotation().Yaw, 40), 1.25f * GetWorld()->DeltaTimeSeconds));
+			AddMovementInput(GetActorForwardVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 4);
+			AddMovementInput(GetActorRightVector() * GetWorld()->DeltaTimeSeconds * DeathFallSpeed / 4);
 		}
 
 		if (bHasRespawned)
@@ -579,7 +570,7 @@ void AMoodCharacter::DeathCamMovement()
 			{
 				GetController()->SetControlRotation(FMath::Lerp(GetControlRotation(),
 				                                                FRotator(GetControlRotation().Pitch,
-				                                                         GetControlRotation().Yaw, -2), 0.02));
+				                                                         GetControlRotation().Yaw, -2), 2.5f * GetWorld()->DeltaTimeSeconds));
 			}
 
 			else
