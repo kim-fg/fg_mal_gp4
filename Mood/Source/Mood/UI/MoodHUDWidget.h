@@ -149,6 +149,7 @@ public:
 
 	void GetHealthComponent(ACharacter* Player);
 	void GetWeaponSlotComponent(ACharacter* Player);
+	void PassHealthComponent(UMoodHealthComponent* PassHealthComp);
 
 #pragma endregion
 
@@ -190,6 +191,9 @@ public:
 
 	UFUNCTION()
 	void RequestMoodMeterValueAnimation();
+
+	UPROPERTY()
+	bool bCanPause;
 
 	virtual void NativeConstruct() override;
 
