@@ -394,7 +394,7 @@ void AMoodCharacter::FindExecutee()
 		+ FirstPersonCameraComponent->GetForwardVector() * ExecutionDistance;
 
 	const FVector ShortTraceEnd = FirstPersonCameraComponent->GetComponentLocation()
-		+ FirstPersonCameraComponent->GetForwardVector() * 100;
+		+ FirstPersonCameraComponent->GetForwardVector() * 120;
 
 	const auto ShortEnemyTrace = GetWorld()->LineTraceSingleByChannel(HitResult, TraceStart, ShortTraceEnd, InterruptClimbingChannel, Parameters,
 															 FCollisionResponseParams());
@@ -479,7 +479,7 @@ void AMoodCharacter::MoveToExecutee()
 	if (!bIsExecuting)
 		return;
 
-	if (TimeSinceExecutionStart < 3.f)
+	if (TimeSinceExecutionStart < 2.f)
 		TimeSinceExecutionStart += GetWorld()->DeltaTimeSeconds;
 	
 	const auto PlayerLocation = FMath::Lerp(
@@ -487,14 +487,15 @@ void AMoodCharacter::MoveToExecutee()
 		Executee->GetActorLocation(),
 		MoveToExecuteTime * GetWorld()->DeltaTimeSeconds
 		); 
-	SetActorLocation(PlayerLocation /*, true, &HitResult */);
+	SetActorLocation(PlayerLocation);
 	
-	if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 100.f)
+	if ((Executee->GetActorLocation() - GetActorLocation()).Length() < 150.f)
 	{
 		ExecuteFoundEnemy();
 	}
 
-	if (TimeSinceExecutionStart >= 2.f)
+	// If the executee can't be reached within 2 sec, then abort
+	if (TimeSinceExecutionStart >= 1.f)
 	{
 		UE_LOG(LogTemp, Error, TEXT("AMoodCharacter: Couldn't reach enemy."))
 		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1.f);
@@ -502,7 +503,6 @@ void AMoodCharacter::MoveToExecutee()
 		bHasFoundExecutableEnemy = false;
 		CurrentState = Eps_Walking;
 	}
-	
 }
 
 void AMoodCharacter::ExecuteFoundEnemy()
