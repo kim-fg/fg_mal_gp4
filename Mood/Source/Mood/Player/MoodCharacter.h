@@ -193,6 +193,8 @@ private:
 	bool bIsExecuting = false;
 	bool bIsSlowMotion = false;
 
+	float TimeSinceExecutionStart = 0.f;
+
 protected:
 	void CheckPlayerState();
 
