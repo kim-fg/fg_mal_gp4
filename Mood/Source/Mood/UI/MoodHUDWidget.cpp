@@ -278,12 +278,12 @@ void UMoodHUDWidget::DisplayPauseMenu()
 	
 	if (!UGameplayStatics::IsGamePaused(GetWorld()))
 	{
-			PauseMenu->SetVisibility(ESlateVisibility::Visible);
-			APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
-			PlayerController->SetInputMode(FInputModeUIOnly());
-			PlayerController->SetShowMouseCursor(true);
-			UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
-			UGameplayStatics::SetGamePaused(GetWorld(), true);
+		PauseMenu->SetVisibility(ESlateVisibility::Visible);
+		APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0);
+		PlayerController->SetInputMode(FInputModeUIOnly());
+		PlayerController->SetShowMouseCursor(true);
+		UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 0.f);
+		UGameplayStatics::SetGamePaused(GetWorld(), true);
 	}
 }
 
