@@ -230,6 +230,7 @@ protected:
 
 	void FindExecutee();
 	void ToggleExecute();
+	void MoveToExecutee();
 	void ExecuteFoundEnemy();
 	void ShootWeapon();
 	void StopShootWeapon();
