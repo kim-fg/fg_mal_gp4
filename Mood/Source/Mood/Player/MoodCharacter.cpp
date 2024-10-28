@@ -50,6 +50,7 @@ void AMoodCharacter::BeginPlay()
 		MoodGameMode = Cast<AMoodGameMode>(GetWorld()->GetAuthGameMode());
 		MoodGameMode->OnMoodChanged.AddUniqueDynamic(this, &AMoodCharacter::OnMoodChanged);
 		MoodGameMode->OnSlowMotionTriggered.AddUniqueDynamic(this, &AMoodCharacter::OnSlowMotionTriggered);
+		MoodGameMode->OnSlowMotionEnded.AddUniqueDynamic(this, &AMoodCharacter::OnSlowMotionEnded);
 	}
 	
 	WalkingSpeed = GetCharacterMovement()->MaxWalkSpeed;
@@ -70,7 +71,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	FindLedge();
 	MoveToExecutee();
 	FindExecutee();
-	PlaySlowMotion();
+	// PlaySlowMotion();
 }
 
 void AMoodCharacter::Jump()
@@ -237,19 +238,19 @@ void AMoodCharacter::OnMoodChanged(EMoodState NewState)
 void AMoodCharacter::OnSlowMotionTriggered(EMoodState NewState)
 {
 	bIsSlowMotion = true;
+	HealthComponent->Heal(50);
+	SetWeaponFireRate();
 }
 
-void AMoodCharacter::PlaySlowMotion()
+void AMoodCharacter::OnSlowMotionEnded()
 {
-	if (bIsSlowMotion)
-	{
-		SlowMotionTime += GetWorld()->DeltaTimeSeconds;
-		if (SlowMotionTime >= MaxTimeInSlowMotion)
-		{
-			bIsSlowMotion = false;
-			SlowMotionTime = 0.f;
-		}
-	}
+	bIsSlowMotion = false;
+	SetWeaponFireRate();
+}
+
+void AMoodCharacter::SetWeaponFireRate()
+{
+	WeaponSlotComponent->GetSelectedWeapon()->SetSlowMotion(bIsSlowMotion ? true : false);
 }
 
 void AMoodCharacter::AttemptClimb()
@@ -306,6 +307,8 @@ void AMoodCharacter::WeaponScroll(const FInputActionValue& Value)
 		WeaponSlotComponent->SelectNextWeapon();
 	else if (ScrollDirection < 0)
 		WeaponSlotComponent->SelectPreviousWeapon();
+
+	SetWeaponFireRate();		
 }
 
 void AMoodCharacter::SelectWeapon1()
@@ -314,6 +317,7 @@ void AMoodCharacter::SelectWeapon1()
 		return;
 
 	WeaponSlotComponent->SelectWeapon(0);
+	SetWeaponFireRate();
 }
 
 void AMoodCharacter::SelectWeapon2()
@@ -322,6 +326,7 @@ void AMoodCharacter::SelectWeapon2()
 		return;
 
 	WeaponSlotComponent->SelectWeapon(1);
+	SetWeaponFireRate();
 }
 
 void AMoodCharacter::SelectWeapon3()
@@ -330,6 +335,7 @@ void AMoodCharacter::SelectWeapon3()
 		return;
 
 	WeaponSlotComponent->SelectWeapon(2);
+	SetWeaponFireRate();
 }
 
 void AMoodCharacter::PauseGame()
@@ -382,7 +388,7 @@ void AMoodCharacter::StopSprinting()
 
 void AMoodCharacter::FindExecutee()
 {
-	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl || bIsExecuting)
+	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl || bIsExecuting || bIsSlowMotion)
 		return;
 	
 	FHitResult HitResult;

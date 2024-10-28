@@ -67,7 +67,7 @@ bool UMoodWeaponComponent::Use(FVector MuzzleOrigin, FVector MuzzleDirection, fl
 		return false;
 	}
 	
-	if (TimeSinceLastUse < FireDelay) {
+	if (bIsInSlowMotion ? TimeSinceLastUse < SlowMotionFireRate : TimeSinceLastUse < FireDelay) {
 		return false;
 	}
 

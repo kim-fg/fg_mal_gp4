@@ -43,6 +43,12 @@ public:
     UFUNCTION(BlueprintCallable, BlueprintPure)
     TSubclassOf<UCameraShakeBase> GetRecoilCameraShake() { return RecoilCameraShake; }
 
+    void SetSlowMotion(bool Value)
+    {
+        bIsInSlowMotion = Value;
+        UE_LOG(LogTemp, Log, TEXT("Slowmotion: %hhd"), Value);
+    }
+    
 protected:
     virtual void TraceHit(UWorld* World, FVector MuzzleOrigin, FVector MuzzleDirection, float DamageMultiplier);
     
@@ -67,6 +73,9 @@ private:
     UPROPERTY(EditDefaultsOnly, Category=Weapon)
     float FireDelay = 0.25f;
     float TimeSinceLastUse = 0;
+    UPROPERTY(EditDefaultsOnly, Category=Weapon)
+    float SlowMotionFireRate = 0.1f;
+    bool bIsInSlowMotion = false;
     
     UPROPERTY(EditDefaultsOnly, Category=Weapon)
     float Range = 10000.0f;

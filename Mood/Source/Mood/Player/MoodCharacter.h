@@ -159,10 +159,6 @@ private:
 	// Camera speed is multiplied by this number 
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SlowMotionCameraSpeed = 0.1f;
-	UPROPERTY(EditDefaultsOnly, Category=Camera)
-	float MaxTimeInSlowMotion = 1.5f;
-	float SlowMotionTime = 0.f;
-
 		
 	UPROPERTY(EditDefaultsOnly, Category=Camera)
 	float SprintingFOV = 110.f;
@@ -202,8 +198,9 @@ protected:
 	void OnMoodChanged(EMoodState NewState);
 	UFUNCTION()
 	void OnSlowMotionTriggered(EMoodState NewState);
-
-	void PlaySlowMotion(); 
+	UFUNCTION()
+	void OnSlowMotionEnded();
+	void SetWeaponFireRate();
 	
 	void AttemptClimb();
 	void DontClimb();
