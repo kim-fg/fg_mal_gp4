@@ -193,10 +193,7 @@ void AMoodGameMode::TriggerSlowMotion(EMoodState NewMoodState)
 
 	bIsChangingMood = true;
 	OnSlowMotionTriggered.Broadcast(NewMoodState);
-	const auto DeltaTime = GetWorld()->DeltaTimeSeconds;
-	
 	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), MoodChangeTimeDilation);
-
 	GetWorldTimerManager().SetTimer(TimerSlowMotion, this, &AMoodGameMode::EndSlowMotion, SlowMotionTime, false, SlowMotionTime);
 }
 
