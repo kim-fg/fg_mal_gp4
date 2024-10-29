@@ -19,7 +19,7 @@ void AMoodGameMode::Tick(float DeltaTime) {
 	Super::Tick(DeltaTime);
 
 	DecreaseMoodOverTime();
-	SetSlowMotion();
+	TimeSinceSlowMotion();
 }
 
 void AMoodGameMode::GameFinished() {
@@ -147,25 +147,22 @@ void AMoodGameMode::CheckSlowMotionValidity(EMoodState PreviousState, EMoodState
 	case Ems_Mood666:
 		if (TimeLeftMood666 <= 0.f)
 		{
-			bIsChangingMood = true;
+			TriggerSlowMotion(NewMoodState);
 			TimeLeftMood666 = TimerSlowMotionReset;
-			OnSlowMotionTriggered.Broadcast(NewMoodState);
 		}
 		break;
 	case Ems_Mood444:
 		if (PreviousState > NewMoodState && TimeLeftMood444 <= 0.f)
 		{
-			bIsChangingMood = true;
+			TriggerSlowMotion(NewMoodState);
 			TimeLeftMood444 = TimerSlowMotionReset;
-			OnSlowMotionTriggered.Broadcast(NewMoodState);
 		}
 		break;
 	case Ems_Mood222:
 		if (PreviousState > NewMoodState && TimeLeftMood222 <= 0.f)
 		{
-			bIsChangingMood = true;
+			TriggerSlowMotion(NewMoodState);
 			TimeLeftMood222 = TimerSlowMotionReset;
-			OnSlowMotionTriggered.Broadcast(NewMoodState);
 		}
 		TimeLeftMood666 = 0.f;
 		break;
@@ -178,7 +175,7 @@ void AMoodGameMode::CheckSlowMotionValidity(EMoodState PreviousState, EMoodState
 	}
 }
 
-void AMoodGameMode::SetSlowMotion()
+void AMoodGameMode::TimeSinceSlowMotion()
 {
 	const auto DeltaTime = GetWorld()->DeltaTimeSeconds;
 	if (TimeLeftMood222 >= 0.f)
@@ -187,36 +184,25 @@ void AMoodGameMode::SetSlowMotion()
 		TimeLeftMood444 -= DeltaTime;
 	if (TimeLeftMood666 >= 0.f)
 		TimeLeftMood666 -= DeltaTime;
+}
 
-	if (!bIsChangingMood)
-		return;
-
+void AMoodGameMode::TriggerSlowMotion(EMoodState NewMoodState)
+{
 	if (bCanLoseMood)
 		bCanLoseMood = false;
-	
-	TimeInSlowMotion += DeltaTime / CurrentTimeDilation;
-	
-	if (!bHasReachedTimeDilationBottom)
-	{
-		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, MoodChangeTimeDilation, MoodChangeAlpha * DeltaTime);
-		if (CurrentTimeDilation <= MoodChangeTimeDilation + 0.01f)
-			bHasReachedTimeDilationBottom = true;
-	}
-	else
-	{
-		if (TimeInSlowMotion < SlowMotionTime)
-			return;
-		
-		CurrentTimeDilation = FMath::Lerp(CurrentTimeDilation, 1.1f, MoodChangeAlpha * DeltaTime);
-		if (CurrentTimeDilation >= 1.f)
-		{
-			CurrentTimeDilation = 1.f;
-			bHasReachedTimeDilationBottom = false;
-			bIsChangingMood = false;
-			TimeInSlowMotion = 0.f;
-			OnSlowMotionEnded.Broadcast();
-		}
-	}
 
-	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), CurrentTimeDilation);
+	bIsChangingMood = true;
+	OnSlowMotionTriggered.Broadcast(NewMoodState);
+	const auto DeltaTime = GetWorld()->DeltaTimeSeconds;
+	
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), MoodChangeTimeDilation);
+
+	GetWorldTimerManager().SetTimer(TimerSlowMotion, this, &AMoodGameMode::EndSlowMotion, SlowMotionTime, false, SlowMotionTime);
+}
+
+void AMoodGameMode::EndSlowMotion()
+{
+	bIsChangingMood = false;
+	UGameplayStatics::SetGlobalTimeDilation(GetWorld(), 1);
+	OnSlowMotionEnded.Broadcast();
 }

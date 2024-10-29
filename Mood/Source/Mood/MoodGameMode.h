@@ -96,8 +96,6 @@ private:
 	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
 	float MoodChangeTimeDilation = 0.05f;
 	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
-	float MoodChangeAlpha = 0.1f;
-	UPROPERTY(EditDefaultsOnly, Category=SlowMotion)
 	float SlowMotionTime = 1.f;
 	float TimeInSlowMotion = 0.f;
 
@@ -117,6 +115,9 @@ private:
 	
 	void DecreaseMoodOverTime();
 
+	FTimerHandle TimerSlowMotion;
 	void CheckSlowMotionValidity(EMoodState PreviousState, EMoodState NewMoodState);
-	void SetSlowMotion();
+	void TimeSinceSlowMotion();
+	void TriggerSlowMotion(EMoodState NewMoodState);
+	void EndSlowMotion();
 };

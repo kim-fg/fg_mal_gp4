@@ -388,7 +388,7 @@ void AMoodCharacter::StopSprinting()
 
 void AMoodCharacter::FindExecutee()
 {
-	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl || bIsExecuting || bIsSlowMotion)
+	if (CurrentState == Eps_ClimbingLedge || CurrentState == Eps_NoControl || bIsExecuting /*|| bIsSlowMotion*/)
 		return;
 	
 	FHitResult HitResult;
