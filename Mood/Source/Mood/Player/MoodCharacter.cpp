@@ -71,6 +71,7 @@ void AMoodCharacter::Tick(float const DeltaTime)
 	FindLedge();
 	MoveToExecutee();
 	FindExecutee();
+	RegenerateHealth();
 }
 
 void AMoodCharacter::Jump()
@@ -230,6 +231,7 @@ void AMoodCharacter::OnMoodChanged(EMoodState NewState)
 		return;
 	}
 
+	ActivateHealthRegen(NewState);
 	WeaponSlotComponent->SetDamageMultiplier(MoodDamagePercent);
 	HealthComponent->AlterHealthLoss(MoodHealthLoss);
 }
@@ -596,6 +598,24 @@ void AMoodCharacter::KillPlayer(AActor* DeadActor)
 void AMoodCharacter::RevivePlayer()
 {
 	HealthComponent->Reset();
+}
+
+void AMoodCharacter::ActivateHealthRegen(EMoodState CurrentMood)
+{
+	bIsGeneratingHealth = CurrentMood == Ems_Mood666 ? 1 : 0;
+}
+
+void AMoodCharacter::RegenerateHealth()
+{
+	if (!bIsGeneratingHealth)
+		return;
+
+	TimeSinceHealthRegenerated += GetWorld()->DeltaTimeSeconds;
+	if (TimeSinceHealthRegenerated >= HealthGenerationDelay)
+	{
+		HealthComponent->Heal(HealthGenerationAmount);
+		TimeSinceHealthRegenerated = 0.f;
+	}
 }
 
 void AMoodCharacter::DeathCamMovement()

@@ -181,6 +181,12 @@ private:
 	FVector ExecuteeLocation = FVector(0, 0, 0);
 	UPROPERTY(EditDefaultsOnly, Category=Execution)
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObstacleObjectTypes;
+
+	UPROPERTY(EditDefaultsOnly, Category=Health)
+	float HealthGenerationDelay = 1.f;
+	UPROPERTY(EditDefaultsOnly, Category=Health)
+	float HealthGenerationAmount = 3.f;
+	float TimeSinceHealthRegenerated = 0.f;
 	
 	bool bIsDead = false;
 	bool bIsMidAir = false;
@@ -188,6 +194,7 @@ private:
 	bool bCanClimb = false;
 	bool bIsExecuting = false;
 	bool bIsSlowMotion = false;
+	bool bIsGeneratingHealth = false;
 
 	float TimeSinceExecutionStart = 0.f;
 
@@ -228,6 +235,8 @@ protected:
 	void KillPlayer(AActor* DeadActor);
 	UFUNCTION()
 	void RevivePlayer();
+	void ActivateHealthRegen(EMoodState CurrentMood);
+	void RegenerateHealth();
 	void DeathCamMovement();
 	
 	void Sprint();
